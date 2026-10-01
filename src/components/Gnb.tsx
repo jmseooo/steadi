@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 
 // 앱 아이콘 에셋은 24px 타일 + 왼쪽 그림자 여백을 포함한 32px 이미지 (inset = 타일 왼쪽 여백)
@@ -13,14 +15,15 @@ const APPS = [
 export default function Gnb() {
   return (
     <header className="absolute inset-x-0 top-0 h-[70px] bg-[linear-gradient(to_bottom,var(--color-canvas)_70%,transparent)]">
-      <Image
-        src="/assets/logo.png"
-        alt="Steadi"
-        width={119}
-        height={30}
-        priority
-        className="absolute top-[25.5px] left-[120px] h-[30px] w-auto"
-      />
+      {/* 로고를 누르면 페이지를 새로고침해 화면 상태를 처음으로 되돌린다 */}
+      <button
+        type="button"
+        aria-label="Steadi 새로고침"
+        onClick={() => window.location.reload()}
+        className="absolute top-[25.5px] left-[120px] block"
+      >
+        <Image src="/assets/logo.png" alt="" width={119} height={30} priority className="h-[30px] w-auto" />
+      </button>
 
       <div className="absolute top-[18px] right-[50px] flex items-center gap-[25px]">
         <div className="flex items-center gap-[10px]">
@@ -42,15 +45,17 @@ export default function Gnb() {
           <div className="flex h-[45px] w-[192px] items-center gap-[8px] rounded-[18px] bg-white pr-[12px] pl-[14px] shadow-soft">
             <ul className="flex">
               {APPS.map((app, i) => (
-                <li key={app.alt} className={`relative size-[24px] ${i > 0 ? "-ml-[2px]" : ""}`}>
-                  <Image
-                    src={app.src}
-                    alt={app.alt}
-                    width={32}
-                    height={32}
-                    className="absolute -top-[4px] size-[32px] max-w-none"
-                    style={{ left: -app.inset }}
-                  />
+                <li key={app.alt} className={i > 0 ? "-ml-[2px]" : ""}>
+                  <button type="button" aria-label={app.alt} className="relative block size-[24px]">
+                    <Image
+                      src={app.src}
+                      alt=""
+                      width={32}
+                      height={32}
+                      className="pointer-events-none absolute -top-[4px] size-[32px] max-w-none"
+                      style={{ left: -app.inset }}
+                    />
+                  </button>
                 </li>
               ))}
             </ul>
@@ -66,13 +71,9 @@ export default function Gnb() {
           </div>
         </div>
 
-        <Image
-          src="/assets/profile.png"
-          alt="프로필"
-          width={35}
-          height={35}
-          className="size-[35px] rounded-[20px] shadow-soft"
-        />
+        <button type="button" aria-label="프로필" className="size-[35px] rounded-[20px] shadow-soft">
+          <Image src="/assets/profile.png" alt="" width={35} height={35} className="size-[35px] rounded-[20px]" />
+        </button>
       </div>
     </header>
   );

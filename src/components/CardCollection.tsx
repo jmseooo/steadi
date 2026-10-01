@@ -58,7 +58,8 @@ export default function CardCollection() {
         </div>
 
         {/* 페이저 에셋은 그림자 여백(좌우 30, 위 26)을 포함한 116×92 이미지 */}
-        <div className="relative mx-auto mt-[24px] h-[32px] w-[56px]">
+        {/* 클릭 영역은 투명 버튼이라, 호버 확대는 이미지를 감싼 틀 전체에 준다 */}
+        <div className="relative mx-auto mt-[24px] h-[32px] w-[56px] transition-[scale] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-110">
           <Image
             src="/assets/card-pager.png"
             alt=""
@@ -95,7 +96,7 @@ function PagerButton({ side, onClick }: { side: "prev" | "next"; onClick: () => 
       type="button"
       aria-label={side === "prev" ? "이전 새 카드" : "다음 새 카드"}
       onClick={onClick}
-      className={`absolute top-0 h-full w-1/2 ${side === "prev" ? "left-0" : "right-0"}`}
+      className={`absolute top-0 h-full w-1/2 hover:scale-100 ${side === "prev" ? "left-0" : "right-0"}`}
     />
   );
 }

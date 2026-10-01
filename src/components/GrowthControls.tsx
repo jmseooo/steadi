@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 
 const TABS = ["경험 카드", "성장의 순간"];
 // 선택된 칩은 테두리가 없어 2px 좁다 (Figma hug 폭 기준)
@@ -34,48 +34,65 @@ export default function GrowthControls({
   onViewChange: (view: View) => void;
 }) {
   const [tab, setTab] = useState(TABS[0]);
+  const tabs = useIndicator(TABS.indexOf(tab));
+  const chips = useIndicator(FILTERS.findIndex((f) => f.label === filter));
 
   return (
     <>
       {/* 탭 */}
       <div role="tablist" className="absolute top-[92px] left-[643.5px] flex gap-[54px]">
-        {TABS.map((label) => {
+        {TABS.map((label, i) => {
           const active = tab === label;
           return (
             <button
               key={label}
+              ref={tabs.ref(i)}
               type="button"
               role="tab"
               aria-selected={active}
               onClick={() => setTab(label)}
-              className="flex h-[36px] flex-col justify-between"
+              className="flex h-[36px] flex-col hover:scale-100"
             >
               <span
-                className={`px-[6px] text-[18px] leading-[1.5] ${
+                className={`block px-[6px] text-[18px] leading-[1.5] transition-colors duration-300 ${
                   active ? "font-semibold text-ink" : "font-medium text-ink-muted"
                 }`}
               >
                 {label}
               </span>
-              <span className={`h-[2px] w-full ${active ? "bg-ink" : ""}`} />
             </button>
           );
         })}
+        {tabs.rect && (
+          <span
+            aria-hidden
+            className={`absolute bottom-0 left-0 h-[2px] bg-ink ${SLIDE}`}
+            style={{ width: tabs.rect.width, translate: `${tabs.rect.left}px 0` }}
+          />
+        )}
       </div>
 
-      {/* 필터 칩 */}
-      <div className="absolute top-[160px] left-[618px] flex gap-[10px]">
-        {FILTERS.map(({ label, width }) => {
+      {/* 필터 칩: 검은 알약이 선택된 칩 뒤로 미끄러진다 */}
+      <div className="absolute top-[160px] left-[618px] flex gap-[10px] [&:has(>button[aria-pressed=true]:hover)>span]:scale-110">
+        {chips.rect && (
+          <span
+            aria-hidden
+            className={`absolute top-0 left-0 h-[40px] rounded-[21px] bg-ink ${SLIDE}`}
+            style={{ width: chips.rect.width, translate: `${chips.rect.left}px 0` }}
+          />
+        )}
+        {FILTERS.map(({ label, width }, i) => {
           const active = filter === label;
           return (
             <button
               key={label}
+              ref={chips.ref(i)}
               type="button"
               aria-pressed={active}
               onClick={() => onFilterChange(label)}
               style={{ width: active ? width : width + 2 }}
-              className={`h-[40px] rounded-[21px] text-[15px] leading-[1.4] font-semibold ${
-                active ? "bg-ink text-white" : "border border-line bg-canvas text-ink-sub"
+              className={`relative h-[40px] rounded-[21px] border text-[15px] leading-[1.4] font-semibold transition-[color,border-color,scale] duration-300 ${
+                active ? "border-transparent text-white" : "border-line text-ink-sub hover:text-ink"
               }`}
             >
               {label}
@@ -122,11 +139,38 @@ function ViewButton({
       aria-label={label}
       aria-pressed={active}
       onClick={onClick}
-      className={`flex size-[34px] items-center justify-center rounded-[17px] ${
+      className={`flex size-[34px] items-center justify-center rounded-[17px] transition-[background-color,fill,box-shadow,scale] duration-300 ${
         active ? "bg-white fill-ink shadow-soft" : "fill-disabled"
       }`}
     >
       {children}
     </button>
   );
+}
+
+const SLIDE = "transition-[translate,width,scale] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]";
+
+// 선택 표시(밑줄·알약)가 index번째 요소 아래로 미끄러지도록 위치·폭을 잰다 (웹폰트 로드 후 한 번 더)
+function useIndicator(index: number) {
+  const els = useRef<(HTMLElement | null)[]>([]);
+  const [rect, setRect] = useState<{ left: number; width: number } | null>(null);
+
+  useLayoutEffect(() => {
+    const measure = () => {
+      const el = els.current[index];
+      if (el) setRect({ left: el.offsetLeft, width: el.offsetWidth });
+    };
+    measure();
+    let cancelled = false;
+    document.fonts.ready.then(() => !cancelled && measure());
+    return () => {
+      cancelled = true;
+    };
+  }, [index]);
+
+  const ref = (i: number) => (el: HTMLElement | null) => {
+    els.current[i] = el;
+  };
+
+  return { rect, ref };
 }
