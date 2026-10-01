@@ -16,10 +16,22 @@
   --shadow-soft: 0 4px 30px rgba(0, 0, 0, 0.03);
 }
 
-@utility scrollbar-none {
-  scrollbar-width: none;
-  &::-webkit-scrollbar {
-    display: none;
+/* 본문 좌우 여백. 데스크톱(1024~)은 Figma 1440 프레임 그대로 왼쪽 120 / 오른쪽 50
+   — 콘텐츠 중심이 x=755로 GNB 안쪽 영역(120~1390)의 가운데와 맞는다. */
+:root {
+  --pad-l: 16px;
+  --pad-r: 16px;
+}
+@media (min-width: 768px) {
+  :root {
+    --pad-l: 24px;
+    --pad-r: 24px;
+  }
+}
+@media (min-width: 1024px) {
+  :root {
+    --pad-l: 120px;
+    --pad-r: 50px;
   }
 }
 

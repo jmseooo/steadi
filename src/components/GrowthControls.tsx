@@ -38,87 +38,91 @@ export default function GrowthControls({
   const chips = useIndicator(FILTERS.findIndex((f) => f.label === filter));
 
   return (
-    <>
-      {/* 탭 */}
-      <div role="tablist" className="absolute top-[92px] left-[643.5px] flex gap-[54px]">
-        {TABS.map((label, i) => {
-          const active = tab === label;
-          return (
-            <button
-              key={label}
-              ref={tabs.ref(i)}
-              type="button"
-              role="tab"
-              aria-selected={active}
-              onClick={() => setTab(label)}
-              className="flex h-[36px] flex-col hover:scale-100"
-            >
-              <span
-                className={`block px-[6px] text-[18px] leading-[1.5] transition-colors duration-300 ${
-                  active ? "font-semibold text-ink" : "font-medium text-ink-muted"
+    <div className="pr-(--pad-r) pl-(--pad-l)">
+      {/* 탭: 마지막 탭 오른쪽 여백(6)은 빼고 가운데 정렬 — Figma 탭 묶음(223) 기준 */}
+      <div className="flex justify-center">
+        <div role="tablist" className="relative -mr-[6px] flex gap-[54px]">
+          {TABS.map((label, i) => {
+            const active = tab === label;
+            return (
+              <button
+                key={label}
+                ref={tabs.ref(i)}
+                type="button"
+                role="tab"
+                aria-selected={active}
+                onClick={() => setTab(label)}
+                className="flex h-[36px] flex-col hover:scale-100"
+              >
+                <span
+                  className={`block px-[6px] text-[18px] leading-[1.5] transition-colors duration-300 ${
+                    active ? "font-semibold text-ink" : "font-medium text-ink-muted"
+                  }`}
+                >
+                  {label}
+                </span>
+              </button>
+            );
+          })}
+          {tabs.rect && (
+            <span
+              aria-hidden
+              className={`absolute bottom-0 left-0 h-[2px] bg-ink ${SLIDE}`}
+              style={{ width: tabs.rect.width, translate: `${tabs.rect.left}px 0` }}
+            />
+          )}
+        </div>
+      </div>
+
+      <div className="relative mt-[32px] flex justify-center">
+        {/* 필터 칩: 검은 알약이 선택된 칩 뒤로 미끄러진다 */}
+        <div className="relative flex gap-[10px] [&:has(>button[aria-pressed=true]:hover)>span]:scale-110">
+          {chips.rect && (
+            <span
+              aria-hidden
+              className={`absolute top-0 left-0 h-[40px] rounded-[21px] bg-ink ${SLIDE}`}
+              style={{ width: chips.rect.width, translate: `${chips.rect.left}px 0` }}
+            />
+          )}
+          {FILTERS.map(({ label, width }, i) => {
+            const active = filter === label;
+            return (
+              <button
+                key={label}
+                ref={chips.ref(i)}
+                type="button"
+                aria-pressed={active}
+                onClick={() => onFilterChange(label)}
+                style={{ width: active ? width : width + 2 }}
+                className={`relative h-[40px] rounded-[21px] border text-[15px] leading-[1.4] font-semibold transition-[color,border-color,scale] duration-300 ${
+                  active ? "border-transparent text-white" : "border-line text-ink-sub hover:text-ink"
                 }`}
               >
                 {label}
-              </span>
-            </button>
-          );
-        })}
-        {tabs.rect && (
-          <span
-            aria-hidden
-            className={`absolute bottom-0 left-0 h-[2px] bg-ink ${SLIDE}`}
-            style={{ width: tabs.rect.width, translate: `${tabs.rect.left}px 0` }}
-          />
-        )}
-      </div>
+              </button>
+            );
+          })}
+        </div>
 
-      {/* 필터 칩: 검은 알약이 선택된 칩 뒤로 미끄러진다 */}
-      <div className="absolute top-[160px] left-[618px] flex gap-[10px] [&:has(>button[aria-pressed=true]:hover)>span]:scale-110">
-        {chips.rect && (
-          <span
-            aria-hidden
-            className={`absolute top-0 left-0 h-[40px] rounded-[21px] bg-ink ${SLIDE}`}
-            style={{ width: chips.rect.width, translate: `${chips.rect.left}px 0` }}
-          />
-        )}
-        {FILTERS.map(({ label, width }, i) => {
-          const active = filter === label;
-          return (
-            <button
-              key={label}
-              ref={chips.ref(i)}
-              type="button"
-              aria-pressed={active}
-              onClick={() => onFilterChange(label)}
-              style={{ width: active ? width : width + 2 }}
-              className={`relative h-[40px] rounded-[21px] border text-[15px] leading-[1.4] font-semibold transition-[color,border-color,scale] duration-300 ${
-                active ? "border-transparent text-white" : "border-line text-ink-sub hover:text-ink"
-              }`}
-            >
-              {label}
-            </button>
-          );
-        })}
+        {/* 보기 전환: 칩과 같은 상태라 칩과 겹칠 만큼 좁은 화면(640 미만)에선 숨긴다 */}
+        <div className="absolute -top-px right-0 flex h-[42px] w-[78px] items-center gap-[2px] rounded-[21px] bg-toggle p-[4px] max-sm:hidden lg:right-[60px]">
+          <ViewButton label="원형 보기" active={view === "wheel"} onClick={() => onViewChange("wheel")}>
+            <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden>
+              {WHEEL_DOTS.map((d, i) => (
+                <circle key={i} {...d} r="1.5" />
+              ))}
+            </svg>
+          </ViewButton>
+          <ViewButton label="격자 보기" active={view === "grid"} onClick={() => onViewChange("grid")}>
+            <svg width="15" height="15" viewBox="0 0 15 15" aria-hidden>
+              {GRID_DOTS.map((d, i) => (
+                <circle key={i} {...d} r="1.5" />
+              ))}
+            </svg>
+          </ViewButton>
+        </div>
       </div>
-
-      {/* 보기 전환 */}
-      <div className="absolute top-[159px] left-[1252px] flex h-[42px] w-[78px] items-center gap-[2px] rounded-[21px] bg-toggle p-[4px]">
-        <ViewButton label="원형 보기" active={view === "wheel"} onClick={() => onViewChange("wheel")}>
-          <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden>
-            {WHEEL_DOTS.map((d, i) => (
-              <circle key={i} {...d} r="1.5" />
-            ))}
-          </svg>
-        </ViewButton>
-        <ViewButton label="격자 보기" active={view === "grid"} onClick={() => onViewChange("grid")}>
-          <svg width="15" height="15" viewBox="0 0 15 15" aria-hidden>
-            {GRID_DOTS.map((d, i) => (
-              <circle key={i} {...d} r="1.5" />
-            ))}
-          </svg>
-        </ViewButton>
-      </div>
-    </>
+    </div>
   );
 }
 

@@ -5,6 +5,7 @@ import CardCollection from "./CardCollection";
 import CardWheel from "./CardWheel";
 import FocusCard from "./FocusCard";
 import GrowthControls, { type Filter, type View } from "./GrowthControls";
+import WheelStage from "./WheelStage";
 
 // 필터 칩과 보기 전환을 묶는다: '경험 카드'는 격자 목록, 나머지는 원형 휠.
 export default function GrowthScreen() {
@@ -18,9 +19,11 @@ export default function GrowthScreen() {
       {view === "grid" ? (
         <CardCollection />
       ) : (
-        <CardWheel>
-          <FocusCard />
-        </CardWheel>
+        <WheelStage>
+          <CardWheel>
+            <FocusCard />
+          </CardWheel>
+        </WheelStage>
       )}
     </>
   );

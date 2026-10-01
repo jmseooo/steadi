@@ -19,13 +19,13 @@ export type TileData = {
   bookmarked?: boolean;
 };
 
-// 경험 카드 목록의 가로형 카드 (330×190). 새 카드는 톤 색 테두리를 두른다.
+// 경험 카드 목록의 가로형 카드 (높이 190, 폭은 칸에 맞춤 — Figma 330). 새 카드는 톤 색 테두리를 두른다.
 export default function CardTile({ tile, isNew = false }: { tile: TileData; isNew?: boolean }) {
   const tone = TONES[tile.tone];
 
   return (
     <article
-      className="flex h-[190px] w-[330px] shrink-0 items-center gap-[20px] rounded-[32px] bg-white py-[5px] pr-[22px] pl-[5px] shadow-soft"
+      className="flex h-[190px] w-full items-center gap-[20px] rounded-[32px] bg-white py-[5px] pr-[22px] pl-[5px] shadow-soft"
       style={isNew ? { border: `0.8px solid ${tone.border}` } : undefined}
     >
       <div
@@ -44,7 +44,8 @@ export default function CardTile({ tile, isNew = false }: { tile: TileData; isNe
           />
         )}
 
-        <div className="w-[182px]">
+        {/* Figma: 182px 글 묶음을 오른쪽 정렬(칸 183이면 왼쪽 1px 여백). 넓은 칸에선 칸을 채운다 */}
+        <div className="w-[max(182px,calc(100%-1px))]">
           <p
             className="flex h-[17px] items-center gap-[6px] text-[12px] leading-[1.4] font-semibold whitespace-nowrap"
             style={{ color: tone.text }}

@@ -1,11 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import CardTile, { type TileData, type Tone } from "./CardTile";
 
-const VISIBLE = 3;
-const STEP = 330 + 20; // 카드 폭 + 간격
+// 카드는 최소 300px, 간격 20px. 줄 폭에 따라 한 줄에 3 → 2 → 1장 (아래 목록 그리드와 같은 기준)
+const columnsFor = (width: number) => (width >= 940 ? 3 : width >= 620 ? 2 : 1);
+// 카드 한 장 폭: (줄 폭 + 간격) / 칸 수 - 간격. 퍼센트 계산이 1/64px 단위로 내려가(330 → 329.98)
+// 글자가 1px 밀리므로 정수 px로 반올림한다.
+const CARD_WIDTH = "round(calc((100% + 20px) / var(--cols) - 20px), 1px)";
 const TONE_CYCLE: Tone[] = ["coral", "magenta", "teal"];
 
 const tile = (i: number, extra?: Partial<TileData>): TileData => ({
@@ -20,35 +23,49 @@ const tile = (i: number, extra?: Partial<TileData>): TileData => ({
 const NEW_TILES = Array.from({ length: 12 }, (_, i) => tile(i));
 const SAVED_TILES = Array.from({ length: 6 }, (_, i) => tile(i, { bookmarked: i === 0 }));
 
-// Figma "레이아웃 17" — 필터 '경험 카드'를 눌렀을 때의 목록.
-// 프레임(810) 아래로 넘치는 목록은 이 영역 안에서 세로 스크롤된다.
+// Figma "레이아웃 17" — 필터 '경험 카드'를 눌렀을 때의 목록. 페이지와 함께 스크롤된다.
 export default function CardCollection() {
+  const carousel = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(3);
+
+  useLayoutEffect(() => {
+    const el = carousel.current;
+    if (!el) return;
+    const observer = new ResizeObserver(([entry]) => setVisible(columnsFor(entry.contentRect.width)));
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   // 한 번 누를 때 카드 한 장씩 밀리고, 양 끝에서는 반대쪽 끝으로 돌아간다.
-  const [index, setIndex] = useState(0);
-  const positions = NEW_TILES.length - VISIBLE + 1;
-  const move = (delta: number) => setIndex((i) => (i + delta + positions) % positions);
+  const [rawIndex, setIndex] = useState(0);
+  const positions = NEW_TILES.length - visible + 1;
+  const index = Math.min(rawIndex, positions - 1);
+  const move = (delta: number) => setIndex((i) => (Math.min(i, positions - 1) + delta + positions) % positions);
 
   return (
-    <div className="scrollbar-none absolute inset-x-0 top-[210px] bottom-0 overflow-y-auto">
-      <div className="ml-[241px] w-[1030px] pt-[32px] pb-[60px]">
+    // 데스크톱에선 Figma처럼 본문 가운데보다 1px 오른쪽(x 241)에 놓는다
+    <div className="pr-(--pad-r) pl-(--pad-l) pt-[42px] pb-[60px] lg:pl-[calc(var(--pad-l)+2px)]">
+      <div className="mx-auto max-w-[1030px]">
         <h2 className="flex h-[33px] items-center gap-[12px] px-[10px]">
           <span className="text-[22px] leading-[1.5] font-semibold text-ink">새로운 경험 카드</span>
           <span className="text-[20px] leading-[1.5] font-medium text-ink-muted">{NEW_TILES.length}</span>
         </h2>
 
         {/* 그림자(blur 30)가 잘리지 않도록 사방 40px 여유를 두고 자르고, 창 밖 카드는 투명하게 숨긴다 */}
-        <div className="mt-[18px] [clip-path:inset(-40px)]">
+        {/* 카드 폭·이동 거리는 --cols(줄 폭 기준 컨테이너 쿼리)로 CSS가 계산해 첫 화면부터 맞는다 */}
+        <div ref={carousel} className="@container mt-[18px] [clip-path:inset(-40px)]">
           <div
-            className="flex gap-[20px] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]"
-            style={{ transform: `translateX(-${index * STEP}px)` }}
+            className="flex gap-[20px] transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] [--cols:1] @min-[620px]:[--cols:2] @min-[940px]:[--cols:3]"
+            style={{ transform: `translateX(calc(${-index} * (${CARD_WIDTH} + 20px)))` }}
           >
             {NEW_TILES.map((t, i) => {
-              const hidden = i < index || i >= index + VISIBLE;
+              const hidden = i < index || i >= index + visible;
               return (
                 <div
                   key={i}
                   aria-hidden={hidden}
-                  className={`transition-opacity duration-500 ${hidden ? "opacity-0" : ""}`}
+                  className={`shrink-0 transition-opacity duration-500 ${hidden ? "opacity-0" : ""}`}
+                  style={{ width: CARD_WIDTH }}
                 >
                   <CardTile tile={t} isNew />
                 </div>
@@ -79,7 +96,7 @@ export default function CardCollection() {
           <Image src="/assets/chevron-down.png" alt="" width={34} height={22} className="h-[7.33px] w-[11.33px]" />
         </button>
 
-        <div className="mt-[24px] grid grid-cols-3 gap-x-[20px] gap-y-[30px]">
+        <div className="mt-[24px] grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-x-[20px] gap-y-[30px]">
           {SAVED_TILES.map((t, i) => (
             <CardTile key={i} tile={t} />
           ))}
