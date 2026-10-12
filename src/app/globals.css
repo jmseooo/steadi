@@ -16,25 +16,6 @@
   --shadow-soft: 0 4px 30px rgba(0, 0, 0, 0.03);
 }
 
-/* 본문 좌우 여백. 데스크톱(1024~)은 Figma 1440 프레임 그대로 왼쪽 120 / 오른쪽 50
-   — 콘텐츠 중심이 x=755로 GNB 안쪽 영역(120~1390)의 가운데와 맞는다. */
-:root {
-  --pad-l: 16px;
-  --pad-r: 16px;
-}
-@media (min-width: 768px) {
-  :root {
-    --pad-l: 24px;
-    --pad-r: 24px;
-  }
-}
-@media (min-width: 1024px) {
-  :root {
-    --pad-l: 120px;
-    --pad-r: 50px;
-  }
-}
-
 /* Tailwind v4는 버튼 기본 커서가 default — 눌리는 요소임을 드러내고, 호버 시 1.1배로 살짝 키운다.
    transition 유틸을 따로 준 버튼은 목록에 scale을 넣어야 애니메이션이 유지된다. */
 @layer base {
