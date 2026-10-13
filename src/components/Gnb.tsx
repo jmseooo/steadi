@@ -1,8 +1,11 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 
 const MENU = ["Home", "Project", "Growth", "Connection"] as const;
+// 화면이 있는 메뉴만 링크 (나머지는 화면 생기면 연결)
+const HREF: Partial<Record<(typeof MENU)[number], string>> = { Project: "/", Connection: "/connection" };
 
 // 앱 아이콘 에셋은 24px 타일 + 그림자 여백을 포함한 32px 이미지 → 22px 타일에 맞춰 22/24로 축소 (inset = 타일 왼쪽 여백)
 const APPS = [
@@ -34,15 +37,19 @@ export default function Gnb({ active }: { active: (typeof MENU)[number] }) {
             <ul className="flex items-center gap-[40px] font-wanted text-[16px] leading-[19.2px] font-medium">
               {MENU.map((item) => (
                 <li key={item}>
-                  <button
-                    type="button"
-                    aria-current={item === active ? "page" : undefined}
-                    className={`transition-[color,scale] duration-300 ${
-                      item === active ? "text-ink" : "text-disabled hover:text-ink-sub"
-                    }`}
-                  >
-                    {item}
-                  </button>
+                  {HREF[item] ? (
+                    <Link
+                      href={HREF[item]}
+                      aria-current={item === active ? "page" : undefined}
+                      className={`block hover:scale-108 ${menuClass(item === active)}`}
+                    >
+                      {item}
+                    </Link>
+                  ) : (
+                    <button type="button" className={menuClass(false)}>
+                      {item}
+                    </button>
+                  )}
                 </li>
               ))}
             </ul>
@@ -97,3 +104,9 @@ export default function Gnb({ active }: { active: (typeof MENU)[number] }) {
     </header>
   );
 }
+
+// 링크는 버튼 기본 호버(globals.css)가 안 걸려 hover:scale-108을 따로 준다
+const menuClass = (active: boolean) =>
+  `transition-[color,scale] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+    active ? "text-ink" : "text-disabled hover:text-ink-sub"
+  }`;

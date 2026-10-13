@@ -1,13 +1,5 @@
 import Image from "next/image";
-
-export type FolderColor = "pink" | "orange" | "blue";
-
-// Figma: 폴더 뒷면 방사형 그라데이션(시작·끝 색)과 제목 색
-const PALETTE: Record<FolderColor, { from: string; to: string; title: string }> = {
-  pink: { from: "#ff7ac8", to: "#ffe2f3", title: "#a80c55" },
-  orange: { from: "#ffae6b", to: "#ffe9d7", title: "#9c2b10" },
-  blue: { from: "#44bcf8", to: "#dbf3ff", title: "#02578a" },
-};
+import { PROJECT_COLORS, radial, type ProjectColor } from "./projectColors";
 
 // 폴더 안 종이 3장 (뒤 → 앞). 위치는 180×146 폴더 기준 px
 const PAPERS = [
@@ -18,21 +10,21 @@ const PAPERS = [
 
 export type Project = {
   title: string;
-  color: FolderColor;
+  color: ProjectColor;
   experiences: number;
   hours: number;
   startedAt: string;
 };
 
 export default function ProjectFolder({ project }: { project: Project }) {
-  const c = PALETTE[project.color];
+  const c = PROJECT_COLORS[project.color];
 
   return (
     <button type="button" className="flex w-[180px] flex-col gap-[12px] text-left">
       <div className="relative h-[146.12px] w-[180px]">
         <div
           className="absolute inset-0 rounded-[27.53px] opacity-90"
-          style={{ background: `radial-gradient(127.4px 126px at 49.7% 31%, ${c.from}, ${c.to})` }}
+          style={{ background: radial(c.from, c.to) }}
         />
         {PAPERS.map((p) => (
           <div
