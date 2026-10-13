@@ -40,6 +40,13 @@ export default function ConnectionHome() {
   const [filter, setFilter] = useState<(typeof FILTERS)[number]>("전체");
   const [selected, setSelected] = useState(() => new Date(2026, 9, 27));
   const feedbacks = FEEDBACKS.filter((f) => filter === "전체" || f.project === filter);
+  // 프로젝트를 고르면 달력 점도 그 프로젝트 색만 남긴다 (Figma "커넥션 | 홈 (프로젝트 선택 시)")
+  const dots =
+    filter === "전체"
+      ? DOTS
+      : Object.fromEntries(
+          Object.entries(DOTS).map(([day, colors]) => [day, colors.filter((c) => c === PROJECTS[filter])]),
+        );
 
   return (
     <main className="px-5 pt-[40px] pb-[80px]">
@@ -55,7 +62,7 @@ export default function ConnectionHome() {
         </div>
 
         <div className="flex gap-[20px] max-lg:flex-col max-lg:items-center">
-          <FeedbackCalendar dots={DOTS} selected={selected} onSelect={setSelected} />
+          <FeedbackCalendar dots={dots} selected={selected} onSelect={setSelected} />
 
           <ul className="flex min-w-0 flex-1 flex-col gap-[12px] max-lg:w-full">
             {feedbacks.map((f) => (
