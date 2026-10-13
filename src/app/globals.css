@@ -16,7 +16,7 @@
   --shadow-soft: 0 4px 30px rgba(0, 0, 0, 0.03);
 }
 
-/* Tailwind v4는 버튼 기본 커서가 default — 눌리는 요소임을 드러내고, 호버 시 1.1배로 살짝 키운다.
+/* Tailwind v4는 버튼 기본 커서가 default — 눌리는 요소임을 드러내고, 호버 시 1.08배로 살짝 키운다.
    transition 유틸을 따로 준 버튼은 목록에 scale을 넣어야 애니메이션이 유지된다. */
 @layer base {
   button:not(:disabled),
@@ -29,7 +29,7 @@
 
   button:not(:disabled):hover,
   [role="button"]:not(:disabled):hover {
-    scale: 1.1;
+    scale: 1.08;
   }
 }
 
