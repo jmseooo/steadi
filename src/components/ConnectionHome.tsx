@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import FeedbackCalendar from "./FeedbackCalendar";
+import FeedbackCalendar, { dateKey } from "./FeedbackCalendar";
 import FilterChips from "./FilterChips";
 import { PROJECT_COLORS, type ProjectColor } from "./projectColors";
 
@@ -15,14 +15,14 @@ type ProjectName = keyof typeof PROJECTS;
 
 const FILTERS = ["전체", ...Object.keys(PROJECTS)] as const;
 
-type Feedback = { id: number; type: string; source: string; project: ProjectName; text: string; date: string };
+type Feedback = { id: number; type: string; source: string; project: ProjectName; text: string; date: string; day: string };
 
 const FEEDBACKS: Feedback[] = [
-  { id: 1, type: "자리이동 요청", source: "카카오톡", project: "밴드 동아리", text: "밴드 연습 중에 원래 자리였던 A구간에서 C구간으로 이동할 것을 팀원이 요청했어요.", date: "26.10.27 (화)" },
-  { id: 2, type: "자리이동 요청", source: "카카오톡", project: "마케팅 공모전", text: "밴드 연습 중에 원래 자리였던 A구간에서 C구간으로 이동할 것을 팀원이 요청했어요.", date: "26.10.27 (화)" },
-  { id: 3, type: "자리이동 요청", source: "카카오톡", project: "마케팅 공모전", text: "밴드 연습 중에 원래 자리였던 A구간에서 C구간으로 이동할 것을 팀원이 요청했어요.", date: "26.10.27 (화)" },
-  { id: 4, type: "자리이동 요청", source: "카카오톡", project: "자기소개서", text: "밴드 연습 중에 원래 자리였던 A구간에서 C구간으로 이동할 것을 팀원이 요청했어요.", date: "26.10.27 (화)" },
-  { id: 5, type: "자리이동 요청", source: "카카오톡", project: "밴드 동아리", text: "밴드 연습 중에 원래 자리였던 A구간에서 C구간으로 이동할 것을 팀원이 요청했어요.", date: "26.10.27 (화)" },
+  { id: 1, type: "자리이동 요청", source: "카카오톡", project: "밴드 동아리", text: "밴드 연습 중에 원래 자리였던 A구간에서 C구간으로 이동할 것을 팀원이 요청했어요.", date: "26.10.27 (화)", day: "2026-10-27" },
+  { id: 2, type: "자리이동 요청", source: "카카오톡", project: "마케팅 공모전", text: "밴드 연습 중에 원래 자리였던 A구간에서 C구간으로 이동할 것을 팀원이 요청했어요.", date: "26.10.27 (화)", day: "2026-10-27" },
+  { id: 3, type: "자리이동 요청", source: "카카오톡", project: "마케팅 공모전", text: "밴드 연습 중에 원래 자리였던 A구간에서 C구간으로 이동할 것을 팀원이 요청했어요.", date: "26.10.27 (화)", day: "2026-10-27" },
+  { id: 4, type: "자리이동 요청", source: "카카오톡", project: "자기소개서", text: "밴드 연습 중에 원래 자리였던 A구간에서 C구간으로 이동할 것을 팀원이 요청했어요.", date: "26.10.27 (화)", day: "2026-10-27" },
+  { id: 5, type: "자리이동 요청", source: "카카오톡", project: "밴드 동아리", text: "밴드 연습 중에 원래 자리였던 A구간에서 C구간으로 이동할 것을 팀원이 요청했어요.", date: "26.10.27 (화)", day: "2026-10-27" },
 ];
 
 // 날짜별 피드백이 있는 프로젝트 점 (Figma 2026년 10월 달력 기준)
@@ -36,10 +36,16 @@ const DOTS: Record<string, ProjectColor[]> = {
   "2026-10-25": [P, B], "2026-10-26": [P, B], "2026-10-27": [P, O, B],
 };
 
+// 목업 기준 오늘 날짜
+const TODAY = new Date(2026, 9, 27);
+
 export default function ConnectionHome() {
   const [filter, setFilter] = useState<(typeof FILTERS)[number]>("전체");
-  const [selected, setSelected] = useState(() => new Date(2026, 9, 27));
-  const feedbacks = FEEDBACKS.filter((f) => filter === "전체" || f.project === filter);
+  const [selected, setSelected] = useState(TODAY);
+  // 선택한 날짜 + 프로젝트 필터에 맞는 피드백만
+  const feedbacks = FEEDBACKS.filter(
+    (f) => f.day === dateKey(selected) && (filter === "전체" || f.project === filter),
+  );
   // 프로젝트를 고르면 달력 점도 그 프로젝트 색만 남긴다 (Figma "커넥션 | 홈 (프로젝트 선택 시)")
   const dots =
     filter === "전체"
@@ -62,15 +68,22 @@ export default function ConnectionHome() {
         </div>
 
         <div className="flex gap-[20px] max-lg:flex-col max-lg:items-center">
-          <FeedbackCalendar dots={dots} selected={selected} onSelect={setSelected} />
+          <FeedbackCalendar dots={dots} today={TODAY} selected={selected} onSelect={setSelected} />
 
-          <ul className="flex min-w-0 flex-1 flex-col gap-[12px] max-lg:w-full">
-            {feedbacks.map((f) => (
-              <li key={f.id}>
-                <FeedbackItem feedback={f} />
-              </li>
-            ))}
-          </ul>
+          {feedbacks.length > 0 ? (
+            <ul className="flex min-w-0 flex-1 flex-col gap-[12px] max-lg:w-full">
+              {feedbacks.map((f) => (
+                <li key={f.id}>
+                  <FeedbackItem feedback={f} />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="flex min-w-0 flex-1 flex-col items-center gap-[6px] pt-[181px] text-center font-semibold max-lg:pt-[60px]">
+              <p className="text-[16px] leading-[20px] font-bold text-ink-sub">받은 피드백이 없어요</p>
+              <p className="text-[14px] leading-[17.5px] text-ink-muted">피드백을 받으면 이곳으로 모여요</p>
+            </div>
+          )}
         </div>
       </div>
     </main>

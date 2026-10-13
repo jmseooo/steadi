@@ -22,10 +22,12 @@ function monthWeeks(year: number, month: number) {
 
 export default function FeedbackCalendar({
   dots,
+  today,
   selected,
   onSelect,
 }: {
   dots: Record<string, ProjectColor[]>;
+  today: Date;
   selected: Date;
   onSelect: (date: Date) => void;
 }) {
@@ -62,6 +64,8 @@ export default function FeedbackCalendar({
               {week.map((day) => {
                 const inMonth = day.getMonth() === view.month;
                 const active = sameDay(day, selected);
+                // 오늘은 회색 원, 다른 날을 고르면 그날이 검은 원 (Figma "오늘 기준 다른 날짜 선택시")
+                const isToday = sameDay(day, today);
                 return (
                   <div key={key(day)} className="flex w-[28px] flex-col items-center gap-[5px]">
                     <button
@@ -70,7 +74,7 @@ export default function FeedbackCalendar({
                       aria-pressed={active}
                       onClick={() => onSelect(day)}
                       className={`flex size-[28px] items-center justify-center rounded-[20px] text-[14px] leading-[19.6px] font-semibold transition-[background-color,color,scale] duration-300 ${
-                        active ? "bg-ink text-white" : inMonth ? "text-ink-muted" : "text-line"
+                        active ? "bg-ink text-white" : isToday ? "bg-disabled text-white" : inMonth ? "text-ink-muted" : "text-line"
                       }`}
                     >
                       {day.getDate()}
