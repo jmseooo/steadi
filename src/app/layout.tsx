@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import OnboardingGate from "@/components/OnboardingGate";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -19,7 +20,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           href="https://cdn.jsdelivr.net/gh/wanteddev/wanted-sans@v1.0.3/packages/wanted-sans/fonts/webfonts/variable/split/WantedSansVariable.min.css"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <OnboardingGate>{children}</OnboardingGate>
+      </body>
     </html>
   );
 }
