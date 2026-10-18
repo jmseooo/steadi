@@ -363,21 +363,31 @@ export default function ConnectedStory({
 
       {/* 아래: 이전·재생/일시정지·다음, 건너뛰기, 진행 막대 5칸 */}
       <div className="absolute top-[718px] left-[120px] flex gap-[8px]">
+        {/* Figma "재생 set": 30px 원, 아이콘 선 1.2 — 마우스를 올리거나 누르면 검정 바탕 + 흰 아이콘 */}
         <RoundButton label="이전" onClick={prev}>
-          <path d="M6 1L1.5 5.5L6 10" stroke="#8E8F93" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          <path
+            d="M16.5 11L11.5 15L16.5 19"
+            stroke="currentColor"
+            strokeWidth="1.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         </RoundButton>
         <RoundButton label={playing ? "일시정지" : "재생"} onClick={() => setPlaying((p) => !p)}>
           {playing ? (
-            <path d="M2 1.5V9.5M6 1.5V9.5" stroke="#8E8F93" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M12.5 11V19M17.5 11V19" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
           ) : (
-            <path d="M2 1.5L7.5 5.5L2 9.5Z" fill="#8E8F93" />
+            <path
+              d="M12 11.6C12 11.2 12.4 11 12.7 11.2L18.6 14.6C18.9 14.8 18.9 15.2 18.6 15.4L12.7 18.8C12.4 19 12 18.8 12 18.4Z"
+              fill="currentColor"
+            />
           )}
         </RoundButton>
         <RoundButton label="다음" onClick={next}>
           <path
-            d="M1.5 1L6 5.5L1.5 10"
-            stroke="#8E8F93"
-            strokeWidth="1.5"
+            d="M13.5 11L18.5 15L13.5 19"
+            stroke="currentColor"
+            strokeWidth="1.2"
             strokeLinecap="round"
             strokeLinejoin="round"
           />
@@ -387,7 +397,7 @@ export default function ConnectedStory({
         <button
           type="button"
           onClick={() => jump(LAST)}
-          className="absolute top-[718px] left-[1256px] h-[30px] w-[64px] rounded-[15px] bg-toggle text-[12px] leading-[15.6px] font-medium text-ink-muted"
+          className="absolute top-[718px] left-[1256px] h-[30px] w-[64px] rounded-[15px] bg-toggle text-[12px] leading-[15.6px] font-medium text-ink-muted transition-colors duration-200 hover:scale-100 hover:bg-ink hover:text-white"
         >
           건너뛰기
         </button>
@@ -446,9 +456,9 @@ function RoundButton({ label, onClick, children }: { label: string; onClick?: ()
       type="button"
       aria-label={label}
       onClick={onClick}
-      className="flex size-[30px] items-center justify-center rounded-full bg-toggle"
+      className="size-[30px] rounded-full bg-toggle text-ink-muted transition-colors duration-200 hover:scale-100 hover:bg-ink hover:text-white"
     >
-      <svg width="8" height="11" viewBox="0 0 8 11" fill="none" aria-hidden>
+      <svg width="30" height="30" viewBox="0 0 30 30" fill="none" aria-hidden>
         {children}
       </svg>
     </button>
