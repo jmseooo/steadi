@@ -28,10 +28,12 @@ export default function GoalChat({
   projects,
   index,
   onNext,
+  onThinking,
 }: {
   projects: FoundProject[];
   index: number;
   onNext: () => void;
+  onThinking?: (thinking: boolean) => void;
 }) {
   const project = projects[index];
   const color = project.color!;
@@ -96,7 +98,12 @@ export default function GoalChat({
       setTurns((n) => n + 1);
     }
     setMessages((m) => [...m, mine]);
-    setTimeout(() => setMessages((m) => [...m, reply]), 600);
+    // 스테디가 답을 정리하는 동안(배경이 숨 쉬듯 커졌다 작아짐) 잠시 뒤 답한다
+    onThinking?.(true);
+    setTimeout(() => {
+      setMessages((m) => [...m, reply]);
+      onThinking?.(false);
+    }, 2200);
   };
 
   return (

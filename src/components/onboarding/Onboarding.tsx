@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { createContext, use, useCallback, useEffect, useLayoutEffect, useState, type ReactNode } from "react";
+import { createContext, use, useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode, type RefObject } from "react";
 import FolderArt, { FolderTitle } from "../FolderArt";
 import { markOnboarded } from "../OnboardingGate";
 import GoalChat from "./GoalChat";
@@ -52,7 +52,8 @@ function glow(from: string, to: string) {
     const [r, g, bl, al] = a.map((v, i) => v + (b[i] - v) * t);
     return `rgba(${Math.round(r)},${Math.round(g)},${Math.round(bl)},${(al / 255).toFixed(3)}) ${t * 100}%`;
   });
-  return `radial-gradient(closest-side, ${stops.join(", ")})`;
+  // 반지름은 --glow-s 배율로: 크기 변환(scale) 대신 값을 바꿔 다시 그려야 큰 그라데이션이 깨지지 않는다
+  return `radial-gradient(calc(804px * var(--glow-s)) calc(804px * var(--glow-s)) at 50% 50%, ${stops.join(", ")})`;
 }
 const GLOW: Record<Accent, string> = {
   default: glow("#ffcbeccc", "#ffd2a900"),
@@ -82,6 +83,13 @@ export default function Onboarding({ debug = {} }: { debug?: OnboardingDebug }) 
   );
   const accent: Accent = step === "goal" ? (goalProjects[goalIndex]?.color ?? "default") : "default";
 
+  // 스테디가 스스로 작업하는 동안(연결·찾기 진행, 대화 답변 준비) 배경이 숨 쉬듯 커졌다 작아진다
+  const [progressWorking, setProgressWorking] = useState(false);
+  const [thinking, setThinking] = useState(false);
+  const working = ((step === "device" || step === "finding") && progressWorking) || (step === "goal" && thinking);
+  const glowRef = useRef<HTMLDivElement>(null);
+  useBreathe(glowRef, working);
+
   const nextGoal = useCallback(() => {
     if (goalIndex + 1 < goalProjects.length) setGoalIndex(goalIndex + 1);
     else setStep("done");
@@ -91,15 +99,20 @@ export default function Onboarding({ debug = {} }: { debug?: OnboardingDebug }) 
     <Stage
       background={
         <>
-          {/* 배경: 색이 바뀔 때 겹쳐서 서서히 전환 */}
-          {(Object.keys(GLOW) as Accent[]).map((a) => (
-            <div
-              key={a}
-              aria-hidden
-              className="pointer-events-none absolute top-[170px] left-[-84px] size-[1608px] transition-opacity duration-700"
-              style={{ background: GLOW[a], opacity: a === accent ? 1 : 0 }}
-            />
-          ))}
+          {/* 배경: 색이 바뀔 때 겹쳐서 서서히 전환. 스테디가 작업하는 동안 원이 커졌다 작아진다.
+              원(1608px, Figma 기준 -84·170)보다 사방 400px 넓은 판에 그려 커져도 가장자리가 잘리지 않게 */}
+          <div ref={glowRef} className="pointer-events-none absolute top-[-230px] left-[-484px] size-[2408px]">
+            {(Object.keys(GLOW) as Accent[]).map((a) => (
+              <div
+                key={a}
+                aria-hidden
+                className="absolute inset-0 transition-opacity duration-700"
+                style={{ background: GLOW[a], opacity: a === accent ? 1 : 0 }}
+              />
+            ))}
+            {/* 같은 배경을 한 겹 더 겹쳐, 작업 중엔 색이 진해졌다 옅어진다 */}
+            <div aria-hidden className="absolute inset-0 opacity-(--glow-k)" style={{ background: GLOW[accent] }} />
+          </div>
           <Image
             src="/assets/onboarding/decor-lines.png"
             alt=""
@@ -199,6 +212,7 @@ export default function Onboarding({ debug = {} }: { debug?: OnboardingDebug }) 
           steps={DEVICE_PROGRESS.steps}
           onCancel={() => setStep("method")}
           onDone={() => setStep("service")}
+          onWorking={setProgressWorking}
         />
       )}
 
@@ -219,6 +233,7 @@ export default function Onboarding({ debug = {} }: { debug?: OnboardingDebug }) 
           steps={FIND_PROGRESS.steps}
           onCancel={() => setStep("service")}
           onDone={() => setStep("found")}
+          onWorking={setProgressWorking}
         />
       )}
 
@@ -243,7 +258,15 @@ export default function Onboarding({ debug = {} }: { debug?: OnboardingDebug }) 
               desc={"기록에서 프로젝트 목표를 정리했어요.\n바꾸고 싶은 내용은 대화로 알려주세요."}
             />
           </div>
-          <GoalChat projects={goalProjects} index={goalIndex} onNext={nextGoal} />
+          <GoalChat projects={goalProjects} index={goalIndex} onNext={nextGoal} onThinking={setThinking} />
+          {/* 목표 확인을 건너뛰고 바로 완료 화면으로 (오른쪽 아래 1295·714, 95×46) */}
+          <Button
+            variant="secondary"
+            className="absolute top-[714px] left-[1295px] w-[95px]"
+            onClick={() => setStep("done")}
+          >
+            건너뛰기
+          </Button>
         </>
       )}
 
@@ -287,6 +310,28 @@ export default function Onboarding({ debug = {} }: { debug?: OnboardingDebug }) 
   );
 }
 
+// active 동안 원이 커지며(--glow-s 1 → 1.4) 색이 진해졌다(--glow-k 0 → 0.9) 돌아오기를 반복,
+// 끝나면 지금 상태에서 부드럽게 원래대로
+function useBreathe(ref: RefObject<HTMLElement | null>, active: boolean) {
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const css = getComputedStyle(el);
+    const now = { "--glow-s": css.getPropertyValue("--glow-s").trim() || "1", "--glow-k": css.getPropertyValue("--glow-k").trim() || "0" };
+    el.getAnimations().forEach((a) => a.cancel());
+    const rest = { "--glow-s": "1", "--glow-k": "0" };
+    if (active) {
+      el.animate([now, { "--glow-s": "1.4", "--glow-k": "0.9" }, rest], {
+        duration: 2400,
+        iterations: Infinity,
+        easing: "ease-in-out",
+      });
+    } else {
+      el.animate([now, rest], { duration: 900, easing: "ease-out" });
+    }
+  }, [ref, active]);
+}
+
 // "노션, 슬랙과 카카오톡" — 마지막 받침에 따라 과/와
 function joinKo(words: string[]) {
   if (words.length <= 1) return words[0] ?? "";
@@ -315,20 +360,26 @@ function Stage({ background, overlay, children }: { background: ReactNode; overl
   return (
     <ScaleContext value={fit}>
       <main className="fixed inset-0 overflow-hidden bg-white">
-        <Frame1440 scale={cover}>{background}</Frame1440>
-        <Frame1440 scale={fit}>{children}</Frame1440>
+        {/* 배경은 zoom으로 실제 해상도에서 다시 그린다 (scale로 키우면 그림처럼 확대돼 거칠어짐) */}
+        <div
+          className="absolute h-[810px] w-[1440px]"
+          style={{ zoom: cover, left: (view.w / cover - 1440) / 2, top: (view.h / cover - 810) / 2 }}
+        >
+          {background}
+        </div>
+        <Frame1440>{children}</Frame1440>
         {overlay}
       </main>
     </ScaleContext>
   );
 }
 
-function Frame1440({ scale, children }: { scale?: number; children: ReactNode }) {
+function Frame1440({ children }: { children: ReactNode }) {
   const fit = use(ScaleContext);
   return (
     <div
       className="absolute top-1/2 left-1/2 h-[810px] w-[1440px]"
-      style={{ translate: "-50% -50%", scale: String(scale ?? fit) }}
+      style={{ translate: "-50% -50%", scale: String(fit) }}
     >
       {children}
     </div>
@@ -355,16 +406,23 @@ function ProgressScreen({
   steps,
   onCancel,
   onDone,
+  onWorking,
 }: {
   titles: string[];
   desc: string;
   steps: { pending: string; active: string; done: string }[];
   onCancel: () => void;
   onDone: () => void;
+  onWorking?: (working: boolean) => void;
 }) {
   const [stage, setStage] = useState(0);
   const [left, setLeft] = useState(AUTO_SEC);
   const finished = stage >= steps.length;
+
+  useEffect(() => {
+    onWorking?.(!finished);
+    return () => onWorking?.(false);
+  }, [finished, onWorking]);
 
   useEffect(() => {
     if (finished) return;

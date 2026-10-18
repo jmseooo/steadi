@@ -16,6 +16,10 @@
   --shadow-soft: 0 4px 30px rgba(0, 0, 0, 0.03);
 }
 
+/* 온보딩 배경 그라데이션 반지름 배율 — 등록해야 숫자처럼 부드럽게 보간된다 (스테디가 작업할 때 커졌다 작아짐) */
+@property --glow-s { syntax: "<number>"; inherits: true; initial-value: 1; }
+@property --glow-k { syntax: "<number>"; inherits: true; initial-value: 0; }
+
 /* Tailwind v4는 버튼 기본 커서가 default — 눌리는 요소임을 드러내고, 호버 시 1.08배로 살짝 키운다.
    transition 유틸을 따로 준 버튼은 목록에 scale을 넣어야 애니메이션이 유지된다. */
 @layer base {
