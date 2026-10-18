@@ -46,7 +46,11 @@ export default function Gnb({ active }: { active: (typeof MENU)[number] }) {
                       {item}
                     </Link>
                   ) : (
-                    <button type="button" className={menuClass(false)}>
+                    <button
+                      type="button"
+                      aria-current={item === active ? "page" : undefined}
+                      className={menuClass(item === active)}
+                    >
                       {item}
                     </button>
                   )}

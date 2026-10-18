@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useLayoutEffect, useRef, useState } from "react";
+import Breadcrumb from "../Breadcrumb";
 import FilterChips from "../FilterChips";
 import FolderArt from "../FolderArt";
 import { ConnectedCard, ExperienceCard, type ConnectedCardData } from "./Cards";
@@ -28,22 +28,7 @@ export default function ProjectDetail({ project }: { project: ProjectDetailData 
   return (
     <main className="px-5 pt-[25px] pb-[67px]">
       <div className="mx-auto max-w-[1200px]">
-        <nav aria-label="경로" className="flex h-[19px] items-center text-[15px] leading-[19.5px] font-semibold">
-          <Link href="/" className="text-disabled transition-colors hover:text-ink-sub">
-            내 프로젝트
-          </Link>
-          {/* Figma 화살표: 5.5×10, 선 1.5 (#b9bbc0), 양옆 글자와 8.75px */}
-          <svg width="8" height="12" viewBox="0 0 8 12" fill="none" className="mx-[8.75px] mt-[0.5px]" aria-hidden>
-            <path
-              d="M1.25 1.25L6.5 6.25L1.25 11.25"
-              stroke="#B9BBC0"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-          </svg>
-          <span className="text-ink-sub">{project.name}</span>
-        </nav>
+        <Breadcrumb parent="내 프로젝트" href="/" current={project.name} />
 
         {/* 위쪽: 왼쪽 프로젝트 정보·단계, 오른쪽 스테디 인사이트 */}
         <div className="mt-[21px] flex justify-between gap-[45px] max-xl:flex-col">

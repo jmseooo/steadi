@@ -28,7 +28,8 @@ const noop = () => () => {};
 export default function OnboardingGate({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const exempt = pathname.startsWith("/onboarding");
+  // 온보딩 자신과, 주소로 바로 보는 화면(성장 > 연결된 경험 자세히 보기)은 온보딩 없이 연다
+  const exempt = pathname.startsWith("/onboarding") || pathname.startsWith("/growth/connected");
   // 서버 렌더에선 알 수 없음(null) → 브라우저에서 저장소를 읽은 뒤 판단
   const onboarded = useSyncExternalStore(noop, isOnboarded, () => null);
 

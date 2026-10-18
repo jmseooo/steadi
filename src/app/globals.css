@@ -16,6 +16,12 @@
   --shadow-soft: 0 4px 30px rgba(0, 0, 0, 0.03);
 }
 
+/* 성장 > 연결된 경험 자세히 보기: 진행 막대 한 칸이 차오름 */
+@keyframes story-fill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
 /* Tailwind v4는 버튼 기본 커서가 default — 눌리는 요소임을 드러내고, 호버 시 1.08배로 살짝 키운다.
    transition 유틸을 따로 준 버튼은 목록에 scale을 넣어야 애니메이션이 유지된다. */
 @layer base {
