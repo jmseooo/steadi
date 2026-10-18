@@ -20,22 +20,23 @@ const EASE: Record<Ease, string> = {
   linear: "linear",
 };
 
-// 장면 k에 도착하는 전환(초·곡선)과 도착 후 다음 장면까지 대기(초)
+// 장면 k에 도착하는 전환(초·곡선)과 도착 후 다음 장면까지 대기(초).
+// 반짝이는 문구가 있는 장면(6·7·13·14)은 빛이 한 번 왕복하는 걸 볼 수 있게 Figma보다 대기를 늘림
 const FLOW: { in: number; ease: Ease; wait: number }[] = [
   { in: 0, ease: "gentle", wait: 0.1 }, // 1
   { in: 1.02, ease: "gentle", wait: 0.4 }, // 2 분홍 카드 떠오름
   { in: 1.02, ease: "gentle", wait: 0.4 }, // 3 파랑 카드
   { in: 1.02, ease: "gentle", wait: 0.8 }, // 4 주황 카드
   { in: 1, ease: "easeOut", wait: 0.5 }, // 5 흐려짐
-  { in: 1.02, ease: "gentle", wait: 0.8 }, // 6 "새로운 연결을 발견했어요"
-  { in: 1.02, ease: "gentle", wait: 1 }, // 7 설명
+  { in: 1.02, ease: "gentle", wait: 2.2 }, // 6 "새로운 연결을 발견했어요"
+  { in: 1.02, ease: "gentle", wait: 2.8 }, // 7 설명
   { in: 1.53, ease: "gentle", wait: 0.5 }, // 8 모두 사라짐
   { in: 1.92, ease: "gentle", wait: 0 }, // 9 카드 3장 한 줄
   { in: 1.25, ease: "slow", wait: 0 }, // 10 스캔 시작
   { in: 2, ease: "linear", wait: 0.01 }, // 11 스캔 끝
   { in: 2.5, ease: "slow", wait: 0 }, // 12 왼쪽으로 겹쳐 쌓임
-  { in: 1, ease: "easeOut", wait: 0.8 }, // 13 공통점
-  { in: 4.17, ease: "slow", wait: 0.8 }, // 14 하나의 연결된 경험으로
+  { in: 1, ease: "easeOut", wait: 3 }, // 13 공통점
+  { in: 4.17, ease: "slow", wait: 2.5 }, // 14 하나의 연결된 경험으로
   { in: 4.17, ease: "slow", wait: Infinity }, // 15 저장 안내
 ];
 const LAST = FLOW.length;
@@ -205,8 +206,8 @@ export default function ConnectedStory({
       />
 
       <p
-        className="absolute top-[355px] left-[569px] w-[303px] bg-clip-text text-center text-[30px] leading-[45px] font-bold text-transparent"
-        style={{ backgroundImage: SHIMMER, ...swap(scene === 6 || scene === 7) }}
+        className="text-shimmer absolute top-[355px] left-[569px] w-[303px] text-center text-[30px] leading-[45px] font-bold"
+        style={swap(scene === 6 || scene === 7)}
       >
         새로운 연결을 발견했어요
       </p>
@@ -280,8 +281,8 @@ export default function ConnectedStory({
       {/* 오른쪽 문구: 13 공통점 / 14 판단 / 15 저장 안내 */}
       <Fade style={swap(scene === 13)} className="top-[336px]">
         <h2
-          className="w-fit bg-clip-text text-[28px] leading-[42px] font-bold text-transparent"
-          style={{ backgroundImage: SHIMMER }}
+          className="text-shimmer w-fit text-[28px] leading-[42px] font-bold"
+          
         >
           스테디는 다음과 같은 공통점을 발견했습니다
         </h2>
@@ -314,8 +315,8 @@ export default function ConnectedStory({
 
       <Fade style={swap(scene === 14)} className="top-[302px]">
         <h2
-          className="w-fit bg-clip-text text-[28px] leading-[42px] font-bold whitespace-pre text-transparent"
-          style={{ backgroundImage: SHIMMER }}
+          className="text-shimmer w-fit text-[28px] leading-[42px] font-bold whitespace-pre"
+          
         >
           {"스테디는 이 경험들이 하나의 성장 패턴으로\n이어질 가능성이 높다고 판단했습니다"}
         </h2>
@@ -338,8 +339,8 @@ export default function ConnectedStory({
       <Fade style={swap(scene === 15)} className="top-[282px] w-[494px]">
         <p className="text-[18px] leading-[28.8px] font-bold text-ink-muted">이 연결을 성장의 순간으로 저장하면</p>
         <h2
-          className="mt-[20px] w-fit bg-clip-text text-[28px] leading-[42px] font-bold whitespace-pre text-transparent"
-          style={{ backgroundImage: SHIMMER }}
+          className="text-shimmer mt-[20px] w-fit text-[28px] leading-[42px] font-bold whitespace-pre"
+          
         >
           {"나만의 성장패턴으로 축적되고\n앞으로 비슷한 경험이 생겼을 때\n자동으로 이어 분석할 수 있습니다"}
         </h2>
@@ -428,8 +429,6 @@ export default function ConnectedStory({
   );
 }
 
-// 검정 → 회색 → 검정 가로 그라데이션 글자 (Figma)
-const SHIMMER = "linear-gradient(90deg, #1a1a1a, #c1c5cd 50%, #1a1a1a)";
 
 // 이야기 카드 263×300 = 경험 카드(228×260)를 1.154배로
 function StoryCard({ k }: { k: keyof typeof CARDS }) {

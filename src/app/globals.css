@@ -22,6 +22,26 @@
   to { transform: scaleX(1); }
 }
 
+/* 연한 빛이 글자 위를 좌우로 오가는 텍스트 (Figma: 검정 → #c1c5cd → 검정 그라데이션).
+   그라데이션을 글자 폭의 2배로 깔고 위치를 왔다갔다 움직인다 */
+.text-shimmer {
+  /* 빛 띠 가장자리가 선처럼 보이지 않게 가우시안 모양으로 번지게 */
+  background-image: linear-gradient(90deg, #1a1a1a 10%, #1a1a1a 14%, #1b1b1b 18%, #1d1d1d 22%, #232323 26%, #303031 30%, #47484a 34%, #6a6c70 38%, #92959b 42%, #b4b8bf 46%, #c1c5cd 50%, #b4b8bf 54%, #92959b 58%, #6a6c70 62%, #47484a 66%, #303031 70%, #232323 74%, #1d1d1d 78%, #1b1b1b 82%, #1a1a1a 86%, #1a1a1a 90%);
+  background-size: 250% 100%;
+  background-position: 50% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: text-shimmer 1.6s ease-in-out infinite alternate;
+}
+@keyframes text-shimmer {
+  from { background-position: 100% 0; }
+  to { background-position: 0% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .text-shimmer { animation: none; }
+}
+
 /* Tailwind v4는 버튼 기본 커서가 default — 눌리는 요소임을 드러내고, 호버 시 1.08배로 살짝 키운다.
    transition 유틸을 따로 준 버튼은 목록에 scale을 넣어야 애니메이션이 유지된다. */
 @layer base {
