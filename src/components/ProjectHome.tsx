@@ -9,7 +9,7 @@ type Status = "진행 중" | "종료";
 
 const PROJECTS: (Project & { status: Status })[] = [
   { title: "마케팅 공모전", color: "pink", experiences: 32, hours: 2, startedAt: "2026.09.01", status: "진행 중", href: "/projects/marketing" },
-  { title: "자기소개서", color: "orange", experiences: 32, hours: 2, startedAt: "2026.09.01", status: "진행 중" },
+  { title: "자기소개서", color: "orange", experiences: 32, hours: 2, startedAt: "2026.09.01", status: "진행 중", href: "/projects/resume" },
   { title: "밴드 동아리", color: "blue", experiences: 32, hours: 2, startedAt: "2026.09.01", status: "진행 중", href: "/projects/band" },
 ];
 

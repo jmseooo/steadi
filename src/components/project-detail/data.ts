@@ -13,10 +13,10 @@ export type DetailTheme = {
   goalEnd: string;
   insightLabel: [string, string];
   insightTitle: [string, string];
-  expTone: "pink" | "blue";
+  expTone: ProjectColor;
 };
 
-export const THEMES: Record<"pink" | "blue", DetailTheme> = {
+export const THEMES: Record<ProjectColor, DetailTheme> = {
   pink: {
     dot: { ring: ["#ff7ac899", "#fef1f91a"], inner: "#ffa1da", border: "#fee5f5" },
     currentDot: "#ff7ac8",
@@ -38,6 +38,17 @@ export const THEMES: Record<"pink" | "blue", DetailTheme> = {
     insightLabel: ["#06a2f1", "#06a2f133"],
     insightTitle: ["#062d4b", "#02578a"],
     expTone: "blue",
+  },
+  orange: {
+    dot: { ring: ["#fe863999", "#fff6ed1a"], inner: "#ffae6b", border: "#ffead4" },
+    currentDot: "#fe8639",
+    currentBg: "rgba(255,174,107,0.1)",
+    currentLabel: "#fe8639",
+    currentText: "#7e2610",
+    goalEnd: "#9c2b10",
+    insightLabel: ["#fc6513", "#fc651333"],
+    insightTitle: ["#441006", "#9c2b10"],
+    expTone: "orange",
   },
 };
 
@@ -161,6 +172,49 @@ const BAND_EXPERIENCES: ExperienceCardData[] = [
     tag: "밴드 동아리",
     source: "kakao",
     text: "곡 사이의 대기 시간을 줄이려\n악기 교체와 시작 신호를 정해\n여러 곡을 이어 연주할\n순서를 맞췄어요",
+  },
+];
+
+const RESUME_EXPERIENCES: ExperienceCardData[] = [
+  {
+    tag: "자기소개서",
+    source: "notion",
+    text: "채용 공고의 주요 업무와\n지원 자격을 나눠 읽고\n자기소개서에 담을 역량을\n정리했어요",
+  },
+  {
+    tag: "자기소개서",
+    source: "notion",
+    text: "자기소개서 문항을 나눠\n각 질문이 요구하는 내용을\n경험·행동·결과로 구분해\n작성 기준을 정했어요",
+  },
+  {
+    tag: "자기소개서",
+    source: "notion",
+    text: "공모전과 동아리 활동에서\n기억에 남는 장면을 모으고\n지원 직무와 관련된 경험을\n추렸어요",
+  },
+  {
+    tag: "자기소개서",
+    source: "notion",
+    text: "활동 전체의 성과와\n직접 맡았던 역할을 구분해\n내가 한 일을 중심으로\n경험을 다시 정리했어요",
+  },
+  {
+    tag: "자기소개서",
+    source: "notion",
+    text: "문제 해결 경험을 돌아보며\n당시의 상황과 선택한 행동을\n순서대로 나눠 적고\n결정한 이유를 덧붙였어요",
+  },
+  {
+    tag: "자기소개서",
+    source: "notion",
+    text: "경험의 결과를 확인하려고\n당시 자료와 기록을 찾아\n설명에 활용할 근거를\n연결했어요",
+  },
+  {
+    tag: "자기소개서",
+    source: "notion",
+    text: "한 경험이 여러 문항에 겹쳐\n각 문항에서 보여줄 내용을\n비교한 뒤 경험을 나눠\n배치했어요",
+  },
+  {
+    tag: "자기소개서",
+    source: "notion",
+    text: "성과 위주로 적었던 경험에\n어려움과 해결 과정을 더해\n결과에 이르기까지의 행동을\n구체적으로 정리했어요",
   },
 ];
 
@@ -331,5 +385,82 @@ export const PROJECT_DETAILS: Record<string, ProjectDetailData> = {
       },
     ],
     experiences: BAND_EXPERIENCES,
+  },
+  resume: {
+    id: "resume",
+    name: "자기소개서",
+    color: "orange",
+    theme: THEMES.orange,
+    status: "진행 중",
+    goal: "직무에 맞는 경험을 정리하고, 문항별 답변 완성하기",
+    startedAt: "2026.08.22",
+    steps: [
+      { label: "요건\n확인", state: "done" },
+      { label: "문항\n분석", state: "done" },
+      { label: "경험 정리", state: "current", current: "문항에 맞는 경험을 고르고\n행동과 결과를 정리하고 있어요" },
+      { label: "초안\n작성", state: "todo" },
+      { label: "검토 및\n수정", state: "todo" },
+      { label: "최종\n제출", state: "todo" },
+    ],
+    insight: {
+      title: "활동을 나열하는 데서\n행동을 구체화하는 과정으로 이어지고 있어요",
+      desc: "노션 ‘경험 정리’에서 활동별 역할과 행동을 구분했어요\n결과를 뒷받침할 자료도 경험별로 연결하고 있어요",
+    },
+    bundles: {
+      connected: { count: 24, createdAgo: "2시간 전", cards: CONNECTED_BUNDLE },
+      experience: { count: 58, createdAgo: "2시간 전", cards: RESUME_EXPERIENCES.slice(0, 8) },
+    },
+    connected: [
+      {
+        art: 1,
+        tone: "orange",
+        tags: ["자기소개서", "마케팅 공모전"],
+        title: "전달할 내용을 고를 때,\n상대가 찾는 정보부터 살폈어요",
+        confidence: 85,
+      },
+      {
+        art: 2,
+        tone: "pink",
+        tags: ["마케팅 공모전", "자기소개서", "밴드 동..."],
+        title: "선택지가 여러 개일 때,\n비교할 기준을 먼저 정했어요",
+        confidence: 92,
+      },
+      {
+        art: 4,
+        tone: "pink",
+        tags: ["마케팅 공모전", "자기소개서"],
+        title: "주장을 구체적으로 설명하려고,\n기록에서 근거를 골랐어요",
+        confidence: 91,
+      },
+      {
+        art: 6,
+        tone: "pink",
+        tags: ["마케팅 공모전", "자기소개서"],
+        title: "피드백에서 부족한 점을 찾아,\n내용을 구체적으로 다듬었어요",
+        confidence: 96,
+      },
+      {
+        art: 7,
+        tone: "blue",
+        tags: ["밴드 동아리", "자기소개서", "마케팅 공..."],
+        title: "복잡한 내용을 작게 나누고,\n순서를 정해 하나씩 정리했어요",
+        confidence: 93,
+      },
+      {
+        art: 8,
+        tone: "orange",
+        tags: ["자기소개서", "마케팅 공모전"],
+        title: "여러 기록을 목적에 맞게 골라,\n하나의 흐름으로 구성했어요",
+        confidence: 88,
+      },
+      {
+        art: 12,
+        tone: "blue",
+        tags: ["밴드 동아리", "자기소개서"],
+        title: "기록을 되짚어 보며,\n보완할 부분을 찾았어요",
+        confidence: 82,
+      },
+    ],
+    experiences: RESUME_EXPERIENCES,
   },
 };

@@ -79,13 +79,14 @@ export function ConnectedCard({ card, size = 280 }: { card: ConnectedCardData; s
 export type ExperienceCardData = { tag: string; text: string; source: "notion" | "kakao" };
 
 // 경험 카드 글자 그라데이션 (프로젝트 색별)
-const EXP_TEXT: Record<"pink" | "blue", string> = {
+const EXP_TEXT: Record<ProjectColor, string> = {
   pink: "linear-gradient(90deg, #560128, #a80c55)",
   blue: "linear-gradient(90deg, #062d4b, #02578a)",
+  orange: "linear-gradient(90deg, #441006, #9c2b10)",
 };
 
 // 경험 카드 228×260: 프로젝트 색 빛 + 유리 도형 + 페이드 위에 프로젝트 태그·출처 아이콘·내용(아래 정렬)
-export function ExperienceCard({ card, tone }: { card: ExperienceCardData; tone: "pink" | "blue" }) {
+export function ExperienceCard({ card, tone }: { card: ExperienceCardData; tone: ProjectColor }) {
   return (
     <article className="relative h-[260px] w-[228px] shrink-0 overflow-hidden rounded-[28px] border-2 border-white bg-white">
       <div className="pointer-events-none absolute -top-[2px] -left-[2px] h-[260px] w-[228px]">
