@@ -6,7 +6,7 @@ import { useLayoutEffect, useRef, useState } from "react";
 import FilterChips from "../FilterChips";
 import FolderArt from "../FolderArt";
 import { ConnectedCard, ExperienceCard, type ConnectedCardData } from "./Cards";
-import type { ProjectDetailData, Step } from "./data";
+import type { DetailTheme, ProjectDetailData, Step } from "./data";
 
 const TABS = ["경험 모음", "성장의 순간", "피드백", "제안 카드"] as const;
 const VIEWS = ["연결된 경험 카드", "경험 카드"] as const;
@@ -49,9 +49,9 @@ export default function ProjectDetail({ project }: { project: ProjectDetailData 
         <div className="mt-[21px] flex justify-between gap-[45px] max-xl:flex-col">
           <div className="flex flex-col gap-[28px] pt-[28px]">
             <Header project={project} />
-            <Steps steps={project.steps} />
+            <Steps steps={project.steps} theme={project.theme} />
           </div>
-          <Insight insight={project.insight} />
+          <Insight insight={project.insight} theme={project.theme} />
         </div>
 
         <section className="mt-[35px] flex flex-col items-center gap-[20px]">
@@ -80,9 +80,9 @@ export default function ProjectDetail({ project }: { project: ProjectDetailData 
               meta={`카드 ${project.bundles.experience.count}개 · ${project.bundles.experience.createdAgo} 생성`}
               onOpen={() => setView("경험 카드")}
             >
-              {project.experiences.slice(0, 8).map((e, i) => (
+              {project.bundles.experience.cards.map((e, i) => (
                 <div key={i} className={i > 0 ? "-ml-[206px]" : ""}>
-                  <ExperienceCard tag={e.tag} text={e.text} />
+                  <ExperienceCard card={e} tone={project.theme.expTone} />
                 </div>
               ))}
             </Bundle>
@@ -97,7 +97,7 @@ export default function ProjectDetail({ project }: { project: ProjectDetailData 
           <ul className="mt-[30px] grid grid-cols-[repeat(auto-fill,228px)] justify-between gap-y-[30px] max-xl:justify-center max-xl:gap-x-[15px]">
             {project.experiences.map((e) => (
               <li key={e.text}>
-                <ExperienceCard tag={e.tag} text={e.text} />
+                <ExperienceCard card={e} tone={project.theme.expTone} />
               </li>
             ))}
           </ul>
@@ -170,14 +170,17 @@ function Header({ project }: { project: ProjectDetailData }) {
         <div className="flex items-center gap-[15px]">
           <h1 className="text-[24px] leading-[34px] font-bold">{project.name}</h1>
           <span className="flex h-[34px] items-center gap-[5px] rounded-[20px] bg-white pr-[12px] pl-[8px] text-[13px] leading-[18px] font-bold text-[#47484c]">
-            <Dot inner="#ffa1da" />
+            <Dot ring={project.theme.dot.ring} inner={project.theme.dot.inner} border={project.theme.dot.border} />
             {project.status}
           </span>
         </div>
         <dl className="flex flex-col gap-[8px] text-[16px] leading-[22.4px]">
           <div className="flex items-center gap-[12px]">
             <dt className="font-medium text-disabled">목표</dt>
-            <dd className="w-fit bg-[linear-gradient(90deg,#1a1a1a,#a80c55)] bg-clip-text font-semibold text-transparent">
+            <dd
+              className="w-fit bg-clip-text font-semibold text-transparent"
+              style={{ backgroundImage: `linear-gradient(90deg, #1a1a1a, ${project.theme.goalEnd})` }}
+            >
               {project.goal}
             </dd>
             <button type="button" aria-label="목표 수정" className="size-[20px] shrink-0">
@@ -195,35 +198,39 @@ function Header({ project }: { project: ProjectDetailData }) {
 }
 
 // 바깥 연한 빛(22px) + 가운데 진한 점(8px)
-function Dot({ inner }: { inner: string }) {
+function Dot({ ring, inner, border }: { ring: [string, string]; inner: string; border: string }) {
   return (
     <span
       aria-hidden
       className="flex size-[22px] shrink-0 items-center justify-center rounded-full"
-      style={{
-        background: "radial-gradient(closest-side, #ff7ac899, #fef1f91a)",
-      }}
+      style={{ background: `radial-gradient(closest-side, ${ring[0]}, ${ring[1]})` }}
     >
-      <span className="size-[8px] rounded-full border border-[#fee5f5]" style={{ background: inner }} />
+      <span className="size-[8px] rounded-full border" style={{ background: inner, borderColor: border }} />
     </span>
   );
 }
 
 // 진행 단계: 끝난 단계·남은 단계는 좁은 칸, 지금 단계는 넓게 펼쳐 설명
-function Steps({ steps }: { steps: Step[] }) {
+function Steps({ steps, theme }: { steps: Step[]; theme: DetailTheme }) {
   return (
     <ol className="flex h-[100px] gap-[5px]">
       {steps.map((s, i) =>
         s.state === "current" ? (
           <li
             key={i}
-            className="flex items-center gap-[12px] rounded-[18px] bg-[rgba(255,161,218,0.1)] pt-[16px] pr-[24px] pb-[16px] pl-[16px]"
+            className="flex items-center gap-[12px] rounded-[18px] pt-[16px] pr-[24px] pb-[16px] pl-[16px]"
+            style={{ background: theme.currentBg }}
           >
             <div className="flex gap-[12px]">
-              <Dot inner="#ff7ac8" />
+              <Dot ring={theme.dot.ring} inner={theme.currentDot} border={theme.dot.border} />
               <div className="flex flex-col gap-[2px]">
-                <span className="text-[13px] leading-[22px] font-medium text-[#ff7ac8]">현재 · {s.label}</span>
-                <span className="text-[15px] leading-[19.5px] font-semibold whitespace-pre-line text-[#8c0f49]">
+                <span className="text-[13px] leading-[22px] font-medium" style={{ color: theme.currentLabel }}>
+                  현재 · {s.label}
+                </span>
+                <span
+                  className="text-[15px] leading-[19.5px] font-semibold whitespace-pre-line"
+                  style={{ color: theme.currentText }}
+                >
                   {s.current}
                 </span>
               </div>
@@ -257,7 +264,7 @@ function Steps({ steps }: { steps: Step[] }) {
   );
 }
 
-function Insight({ insight }: { insight: ProjectDetailData["insight"] }) {
+function Insight({ insight, theme }: { insight: ProjectDetailData["insight"]; theme: DetailTheme }) {
   return (
     <section className="relative h-[315px] w-[535px] max-w-full shrink-0 overflow-hidden rounded-[32px] bg-white/50">
       <Image
@@ -269,14 +276,20 @@ function Insight({ insight }: { insight: ProjectDetailData["insight"] }) {
       />
       <div className="absolute top-[112px] left-[48px] flex w-[395px] flex-col gap-[15px]">
         <div className="flex flex-col gap-[8px]">
-          <h2 className="w-fit bg-[linear-gradient(90deg,#fa3aa5,#fa3aa533)] bg-clip-text text-[16px] leading-[24.8px] font-bold text-transparent">
+          <h2
+            className="w-fit bg-clip-text text-[16px] leading-[24.8px] font-bold text-transparent"
+            style={{ backgroundImage: `linear-gradient(90deg, ${theme.insightLabel[0]}, ${theme.insightLabel[1]})` }}
+          >
             스테디가 보고 있는 지금
           </h2>
-          <p className="w-fit bg-[linear-gradient(90deg,#560128,#a80c55)] bg-clip-text text-[22px] leading-[31.9px] font-bold whitespace-pre-line text-transparent">
+          <p
+            className="w-fit bg-clip-text text-[22px] leading-[31.9px] font-bold whitespace-pre text-transparent"
+            style={{ backgroundImage: `linear-gradient(90deg, ${theme.insightTitle[0]}, ${theme.insightTitle[1]})` }}
+          >
             {insight.title}
           </p>
         </div>
-        <p className="text-[15px] leading-[24px] font-semibold whitespace-pre-line text-ink-muted">{insight.desc}</p>
+        <p className="text-[15px] leading-[24px] font-semibold whitespace-pre text-ink-muted">{insight.desc}</p>
       </div>
     </section>
   );

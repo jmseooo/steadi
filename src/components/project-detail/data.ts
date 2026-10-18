@@ -1,12 +1,51 @@
 import type { ProjectColor } from "../projectColors";
-import type { ConnectedCardData } from "./Cards";
+import type { ConnectedCardData, ExperienceCardData } from "./Cards";
 
 export type Step = { label: string; state: "done" | "current" | "todo"; detail?: string; current?: string };
+
+// 화면 강조색 (Figma 프로젝트별): 상태·현재 단계 점, 현재 단계 칸, 목표·인사이트 글자 그라데이션, 경험 카드 색
+export type DetailTheme = {
+  dot: { ring: [string, string]; inner: string; border: string }; // 상태 칩 점
+  currentDot: string; // 현재 단계 점 가운데
+  currentBg: string;
+  currentLabel: string;
+  currentText: string;
+  goalEnd: string;
+  insightLabel: [string, string];
+  insightTitle: [string, string];
+  expTone: "pink" | "blue";
+};
+
+export const THEMES: Record<"pink" | "blue", DetailTheme> = {
+  pink: {
+    dot: { ring: ["#ff7ac899", "#fef1f91a"], inner: "#ffa1da", border: "#fee5f5" },
+    currentDot: "#ff7ac8",
+    currentBg: "rgba(255,161,218,0.1)",
+    currentLabel: "#ff7ac8",
+    currentText: "#8c0f49",
+    goalEnd: "#a80c55",
+    insightLabel: ["#fa3aa5", "#fa3aa533"],
+    insightTitle: ["#560128", "#a80c55"],
+    expTone: "pink",
+  },
+  blue: {
+    dot: { ring: ["#3dbeff99", "#eff8ff1a"], inner: "#7dd0fc", border: "#e0f1fe" },
+    currentDot: "#44bcf8",
+    currentBg: "rgba(120,208,255,0.1)",
+    currentLabel: "#44bcf8",
+    currentText: "#0c476e",
+    goalEnd: "#02578a",
+    insightLabel: ["#06a2f1", "#06a2f133"],
+    insightTitle: ["#062d4b", "#02578a"],
+    expTone: "blue",
+  },
+};
 
 export type ProjectDetailData = {
   id: string;
   name: string;
   color: ProjectColor;
+  theme: DetailTheme;
   status: string;
   goal: string;
   startedAt: string;
@@ -15,18 +54,122 @@ export type ProjectDetailData = {
   // 경험 모음 처음 화면의 두 묶음 (카드를 겹쳐 쌓은 미리보기)
   bundles: {
     connected: { count: number; createdAgo: string; cards: ConnectedCardData[] };
-    experience: { count: number; createdAgo: string };
+    experience: { count: number; createdAgo: string; cards: ExperienceCardData[] };
   };
   // 묶음을 눌렀을 때 목록: 연결된 경험 카드(여러 프로젝트에 걸친 경험), 경험 카드(이 프로젝트에서 쌓인 경험)
   connected: ConnectedCardData[];
-  experiences: { tag: string; text: string }[];
+  experiences: ExperienceCardData[];
 };
+
+// 연결된 경험 카드 묶음 미리보기 (두 프로젝트 공통, 뒤 → 앞 순서. 맨 앞 카드만 전용 그림 c9)
+const CONNECTED_BUNDLE: ConnectedCardData[] = [
+  { art: 2, tone: "pink", title: "따로 준비한 내용을 연결하며,\n전체 흐름을 조정했어요", confidence: 82 },
+  { art: 2, tone: "pink", title: "기록에서 구체적인 근거를 찾아\n선택한 이유를 설명했어요", confidence: 82 },
+  { art: 1, tone: "orange", title: "여러 방법을 작게 시도하고,\n결과를 비교해 방향을 정했어요", confidence: 82 },
+  { art: 4, tone: "pink", title: "피드백에서 바꿀 부분을 찾고,\n다음 시도에 반영했어요", confidence: 82 },
+  { art: 8, tone: "orange", title: "한 번에 해결하기 어려운 일을,\n작은 단위로 나눠 진행했어요", confidence: 82 },
+  { art: 3, tone: "blue", title: "서로 다른 의견을 모아,\n함께 선택할 기준을 찾았어요", confidence: 82 },
+  { art: 6, tone: "pink", title: "계획대로 진행하기 어려울 때,\n가능한 조건부터 다시 살폈어요", confidence: 82 },
+  { art: 9, tone: "blue", title: "선택지가 여러 개일 때,\n비교할 기준부터 정했어요", confidence: 82 },
+];
+
+const MARKETING_EXPERIENCES: ExperienceCardData[] = [
+  {
+    tag: "마케팅 공모전",
+    text: "공모전의 평가 기준을 읽고\n주제와 제출 요건을 나눠\n기획에서 놓치지 않을\n항목을 정리했어요",
+    source: "notion",
+  },
+  {
+    tag: "마케팅 공모전",
+    text: "브랜드의 기존 캠페인을 살펴\n반복되는 메시지를 모으고\n이번 기획에서 달리할\n부분을 찾았어요.",
+    source: "notion",
+  },
+  {
+    tag: "마케팅 공모전",
+    text: "처음에는 1020을 생각했지만\n소비 상황과 관심사를 비교해\n핵심 타깃을 대학생으로\n좁혔어요",
+    source: "notion",
+  },
+  {
+    tag: "마케팅 공모전",
+    text: "대학생의 이용 후기를 모아\n반복해서 등장하는 불편을 찾고\n캠페인에서 다룰 문제를\n한 문장으로 정리했어요",
+    source: "notion",
+  },
+  {
+    tag: "마케팅 공모전",
+    text: "처음 세운 타깃이 넓다는\n피드백을 바탕으로 자료를 살펴\n타깃을 나눈 이유와 근거를\n보완했어요",
+    source: "notion",
+  },
+  {
+    tag: "마케팅 공모전",
+    text: "경쟁 브랜드의 사례를 비교해\n비슷한 접근과 차이를 나누고\n이번 캠페인에서 강조할\n차별점을 정리했어요",
+    source: "notion",
+  },
+  {
+    tag: "마케팅 공모전",
+    text: "여러 캠페인 방향을 놓고\n타깃 적합성과 실행 가능성을\n비교할 기준으로 삼아\n우선할 방향을 골랐어요",
+    source: "notion",
+  },
+  {
+    tag: "마케팅 공모전",
+    text: "아이디어를 뒷받침할 자료에서\n주장과 직접 연결되는 근거를\n골라 출처와 함께 정리했어요",
+    source: "notion",
+  },
+  {
+    tag: "마케팅 공모전",
+    text: "캠페인 메시지 후보를 적고\n타깃의 문제와 연결해 보며\n전달할 핵심 내용을\n한 문장으로 좁혔어요",
+    source: "notion",
+  },
+];
+
+const BAND_EXPERIENCES: ExperienceCardData[] = [
+  {
+    tag: "밴드 동아리",
+    source: "kakao",
+    text: "팀원마다 가능한 시간을 모아\n함께 참여할 수 있는 날을 찾고\n정기 합주 일정을 정했어요",
+  },
+  {
+    tag: "밴드 동아리",
+    source: "kakao",
+    text: "공연 후보곡을 비교하며\n난이도와 파트 구성을 살피고\n팀원이 함께 연주할\n곡을 골랐어요",
+  },
+  {
+    tag: "밴드 동아리",
+    source: "notion",
+    text: "곡마다 연습할 구간을 나누고\n파트별 준비 내용을 정리해\n다음 합주 전까지\n맞춰 볼 범위를 정했어요",
+  },
+  {
+    tag: "밴드 동아리",
+    source: "kakao",
+    text: "팀원의 불참으로 계획을 바꿔\n참여 가능한 인원을 기준으로\n연습할 곡과 순서를\n다시 정했어요",
+  },
+  {
+    tag: "밴드 동아리",
+    source: "kakao",
+    text: "빠른 구간에서 박자가 어긋나\n팀원들과 속도를 낮춰 맞춘 뒤\n원래 속도로 돌아가\n함께 연주했어요",
+  },
+  {
+    tag: "밴드 동아리",
+    source: "notion",
+    text: "합주 녹음에서 어긋난 부분을\n곡과 구간별로 표시하고\n다음 연습에서 확인할\n내용을 정리했어요",
+  },
+  {
+    tag: "밴드 동아리",
+    source: "notion",
+    text: "각 파트가 겹치는 구간을 찾아\n악기별로 소리를 줄여 보며\n보컬이 들리는 음량을\n비교했어요",
+  },
+  {
+    tag: "밴드 동아리",
+    source: "kakao",
+    text: "곡 사이의 대기 시간을 줄이려\n악기 교체와 시작 신호를 정해\n여러 곡을 이어 연주할\n순서를 맞췄어요",
+  },
+];
 
 export const PROJECT_DETAILS: Record<string, ProjectDetailData> = {
   marketing: {
     id: "marketing",
     name: "마케팅 공모전",
     color: "pink",
+    theme: THEMES.pink,
     status: "진행 중",
     goal: "타깃층에 맞는 전략을 수립하고 성과를 도출하기",
     startedAt: "2026.09.01",
@@ -47,39 +190,146 @@ export const PROJECT_DETAILS: Record<string, ProjectDetailData> = {
         count: 24,
         createdAgo: "2시간 전",
         // 뒤 → 앞 순서. 뒤 카드는 왼쪽 25px만 보여 그림은 색별 빛만 의미 있고, 맨 앞 카드만 전용 그림(c9)
-        cards: [
-          { art: 2, tone: "pink", title: "따로 준비한 내용을 연결하며,\n전체 흐름을 조정했어요", confidence: 82 },
-          { art: 2, tone: "pink", title: "기록에서 구체적인 근거를 찾아\n선택한 이유를 설명했어요", confidence: 82 },
-          { art: 1, tone: "orange", title: "여러 방법을 작게 시도하고,\n결과를 비교해 방향을 정했어요", confidence: 82 },
-          { art: 4, tone: "pink", title: "피드백에서 바꿀 부분을 찾고,\n다음 시도에 반영했어요", confidence: 82 },
-          { art: 8, tone: "orange", title: "한 번에 해결하기 어려운 일을,\n작은 단위로 나눠 진행했어요", confidence: 82 },
-          { art: 3, tone: "blue", title: "서로 다른 의견을 모아,\n함께 선택할 기준을 찾았어요", confidence: 82 },
-          { art: 6, tone: "pink", title: "계획대로 진행하기 어려울 때,\n가능한 조건부터 다시 살폈어요", confidence: 82 },
-          { art: 9, tone: "blue", title: "선택지가 여러 개일 때,\n비교할 기준부터 정했어요", confidence: 82 },
-        ],
+        cards: CONNECTED_BUNDLE,
       },
-      experience: { count: 58, createdAgo: "2시간 전" },
+      experience: { count: 58, createdAgo: "2시간 전", cards: MARKETING_EXPERIENCES.slice(0, 8) },
     },
     connected: [
-      { art: 1, tone: "orange", tags: ["자기소개서", "마케팅 공모전"], title: "전달할 내용을 고를 때,\n상대가 찾는 정보부터 살폈어요", confidence: 85 },
-      { art: 2, tone: "pink", tags: ["마케팅 공모전", "자기소개서", "밴드 동..."], title: "선택지가 여러 개일 때,\n비교할 기준을 먼저 정했어요", confidence: 92 },
-      { art: 3, tone: "blue", tags: ["밴드 동아리", "마케팅 공모전"], title: "처음 계획이 맞지 않을 때,\n조건을 다시 살펴 조정했어요", confidence: 83 },
-      { art: 4, tone: "pink", tags: ["마케팅 공모전", "자기소개서"], title: "주장을 구체적으로 설명하려고,\n기록에서 근거를 골랐어요", confidence: 91 },
-      { art: 5, tone: "blue", tags: ["밴드 동아리", "마케팅 공모전"], title: "여러 방법을 비교해 보고,\n목적에 맞는 방향을 골랐어요", confidence: 81 },
-      { art: 6, tone: "pink", tags: ["마케팅 공모전", "자기소개서"], title: "피드백에서 부족한 점을 찾아,\n내용을 구체적으로 다듬었어요", confidence: 96 },
-      { art: 7, tone: "blue", tags: ["밴드 동아리", "자기소개서", "마케팅 공..."], title: "복잡한 내용을 작게 나누고,\n순서를 정해 하나씩 정리했어요", confidence: 93 },
-      { art: 8, tone: "orange", tags: ["자기소개서", "마케팅 공모전"], title: "여러 기록을 목적에 맞게 골라,\n하나의 흐름으로 구성했어요", confidence: 88 },
+      {
+        art: 1,
+        tone: "orange",
+        tags: ["자기소개서", "마케팅 공모전"],
+        title: "전달할 내용을 고를 때,\n상대가 찾는 정보부터 살폈어요",
+        confidence: 85,
+      },
+      {
+        art: 2,
+        tone: "pink",
+        tags: ["마케팅 공모전", "자기소개서", "밴드 동..."],
+        title: "선택지가 여러 개일 때,\n비교할 기준을 먼저 정했어요",
+        confidence: 92,
+      },
+      {
+        art: 3,
+        tone: "blue",
+        tags: ["밴드 동아리", "마케팅 공모전"],
+        title: "처음 계획이 맞지 않을 때,\n조건을 다시 살펴 조정했어요",
+        confidence: 83,
+      },
+      {
+        art: 4,
+        tone: "pink",
+        tags: ["마케팅 공모전", "자기소개서"],
+        title: "주장을 구체적으로 설명하려고,\n기록에서 근거를 골랐어요",
+        confidence: 91,
+      },
+      {
+        art: 5,
+        tone: "blue",
+        tags: ["밴드 동아리", "마케팅 공모전"],
+        title: "여러 방법을 비교해 보고,\n목적에 맞는 방향을 골랐어요",
+        confidence: 81,
+      },
+      {
+        art: 6,
+        tone: "pink",
+        tags: ["마케팅 공모전", "자기소개서"],
+        title: "피드백에서 부족한 점을 찾아,\n내용을 구체적으로 다듬었어요",
+        confidence: 96,
+      },
+      {
+        art: 7,
+        tone: "blue",
+        tags: ["밴드 동아리", "자기소개서", "마케팅 공..."],
+        title: "복잡한 내용을 작게 나누고,\n순서를 정해 하나씩 정리했어요",
+        confidence: 93,
+      },
+      {
+        art: 8,
+        tone: "orange",
+        tags: ["자기소개서", "마케팅 공모전"],
+        title: "여러 기록을 목적에 맞게 골라,\n하나의 흐름으로 구성했어요",
+        confidence: 88,
+      },
     ],
-    experiences: [
-      { tag: "마케팅 공모전", text: "공모전의 평가 기준을 읽고\n주제와 제출 요건을 나눠\n기획에서 놓치지 않을\n항목을 정리했어요" },
-      { tag: "마케팅 공모전", text: "브랜드의 기존 캠페인을 살펴\n반복되는 메시지를 모으고\n이번 기획에서 달리할\n부분을 찾았어요." },
-      { tag: "마케팅 공모전", text: "처음에는 1020을 생각했지만\n소비 상황과 관심사를 비교해\n핵심 타깃을 대학생으로\n좁혔어요" },
-      { tag: "마케팅 공모전", text: "대학생의 이용 후기를 모아\n반복해서 등장하는 불편을 찾고\n캠페인에서 다룰 문제를\n한 문장으로 정리했어요" },
-      { tag: "마케팅 공모전", text: "처음 세운 타깃이 넓다는\n피드백을 바탕으로 자료를 살펴\n타깃을 나눈 이유와 근거를\n보완했어요" },
-      { tag: "마케팅 공모전", text: "경쟁 브랜드의 사례를 비교해\n비슷한 접근과 차이를 나누고\n이번 캠페인에서 강조할\n차별점을 정리했어요" },
-      { tag: "마케팅 공모전", text: "여러 캠페인 방향을 놓고\n타깃 적합성과 실행 가능성을\n비교할 기준으로 삼아\n우선할 방향을 골랐어요" },
-      { tag: "마케팅 공모전", text: "아이디어를 뒷받침할 자료에서\n주장과 직접 연결되는 근거를\n골라 출처와 함께 정리했어요" },
-      { tag: "마케팅 공모전", text: "캠페인 메시지 후보를 적고\n타깃의 문제와 연결해 보며\n전달할 핵심 내용을\n한 문장으로 좁혔어요" },
+    experiences: MARKETING_EXPERIENCES,
+  },
+  band: {
+    id: "band",
+    name: "밴드 동아리",
+    color: "blue",
+    theme: THEMES.blue,
+    status: "진행 중",
+    goal: "분위기에 맞는 무대를 준비하고, 정한 순서대로 마치기",
+    startedAt: "2026.07.14",
+    steps: [
+      { label: "방향\n설정", state: "done" },
+      { label: "곡\n선정", state: "done" },
+      { label: "합주 및 편곡", state: "current", current: "곡별 연주를 맞추며\n합주 배치를 조정하고 있어요" },
+      { label: "무대\n구성", state: "todo" },
+      { label: "무대\n리허설", state: "todo" },
+      { label: "공연\n진행", state: "todo" },
     ],
+    insight: {
+      title: "곡별 연주를 맞추는 데서\n곡 사이의 흐름을 연결하는 논의로 이어지고 있어요",
+      desc: "곡 순서와 곡 사이의 대기 시간에 관한 의견이 오갔어요\n다음 합주에서는 여러 곡을 이어 연주해 보자는 제안이 나왔어요",
+    },
+    bundles: {
+      connected: { count: 24, createdAgo: "2시간 전", cards: CONNECTED_BUNDLE },
+      // Figma: 묶음 8장 모두 첫 경험 카드
+      experience: { count: 58, createdAgo: "2시간 전", cards: Array(8).fill(BAND_EXPERIENCES[0]) },
+    },
+    connected: [
+      {
+        art: 2,
+        tone: "pink",
+        tags: ["마케팅 공모전", "자기소개서", "밴드 동..."],
+        title: "선택지가 여러 개일 때,\n비교할 기준을 먼저 정했어요",
+        confidence: 91,
+      },
+      {
+        art: 3,
+        tone: "blue",
+        tags: ["밴드 동아리", "마케팅 공모전"],
+        title: "처음 계획이 맞지 않을 때,\n조건을 다시 살펴 조정했어요",
+        confidence: 83,
+      },
+      {
+        art: 5,
+        tone: "blue",
+        tags: ["밴드 동아리", "마케팅 공모전"],
+        title: "여러 방법을 비교해 보고,\n목적에 맞는 방향을 골랐어요",
+        confidence: 81,
+      },
+      {
+        art: 7,
+        tone: "blue",
+        tags: ["밴드 동아리", "자기소개서", "마케팅 공..."],
+        title: "복잡한 내용을 작게 나누고,\n순서를 정해 하나씩 정리했어요",
+        confidence: 93,
+      },
+      {
+        art: 3,
+        tone: "blue",
+        tags: ["밴드 동아리", "마케팅 공모전"],
+        title: "피드백에서 바꿀 부분을 찾아,\n다음 시도에 반영했어요",
+        confidence: 93,
+      },
+      {
+        art: 10,
+        tone: "blue",
+        tags: ["밴드 동아리", "자기소개서"],
+        title: "기록을 되짚어 보며,\n보완할 부분을 찾았어요",
+        confidence: 95,
+      },
+      {
+        art: 11,
+        tone: "orange",
+        tags: ["자기소개서", "밴드 동아리"],
+        title: "따로 준비한 내용을 연결해,\n흐름이 이어지도록 다듬었어요",
+        confidence: 88,
+      },
+    ],
+    experiences: BAND_EXPERIENCES,
   },
 };

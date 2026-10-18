@@ -29,9 +29,27 @@ export function ConnectedCard({ card, size = 280 }: { card: ConnectedCardData; s
     >
       {/* 그림 에셋은 카드(테두리 포함) 기준 좌표. 2px 테두리 안쪽이라 -2px 보정 */}
       <div className="pointer-events-none absolute -top-[2px] -left-[2px] h-[350px] w-[280px]">
-        <Image src={`/assets/cards/glow-${card.tone}.png`} alt="" width={280} height={313} className="absolute top-0 left-0 h-[313px] w-[280px]" />
-        <Image src={`/assets/cards/c${card.art}.png`} alt="" width={195} height={235} className="absolute top-[25px] left-[85px] h-auto w-[195px] max-w-none" />
-        <Image src="/assets/cards/fade.png" alt="" width={280} height={221} className="absolute top-[79px] left-0 h-[221px] w-[280px]" />
+        <Image
+          src={`/assets/cards/glow-${card.tone}.png`}
+          alt=""
+          width={280}
+          height={313}
+          className="absolute top-0 left-0 h-[313px] w-[280px]"
+        />
+        <Image
+          src={`/assets/cards/c${card.art}.png`}
+          alt=""
+          width={195}
+          height={235}
+          className="absolute top-[25px] left-[85px] h-auto w-[195px] max-w-none"
+        />
+        <Image
+          src="/assets/cards/fade.png"
+          alt=""
+          width={280}
+          height={221}
+          className="absolute top-[79px] left-0 h-[221px] w-[280px]"
+        />
       </div>
       {card.tags && (
         <div className="absolute top-[16px] left-[18px] flex gap-[5.82px]">
@@ -58,21 +76,66 @@ export function ConnectedCard({ card, size = 280 }: { card: ConnectedCardData; s
   );
 }
 
-// 경험 카드 228×260: 분홍 빛 + 유리 도형 + 페이드 위에 프로젝트 태그·노션 아이콘·내용(아래 정렬)
-export function ExperienceCard({ tag, text }: { tag: string; text: string }) {
+export type ExperienceCardData = { tag: string; text: string; source: "notion" | "kakao" };
+
+// 경험 카드 글자 그라데이션 (프로젝트 색별)
+const EXP_TEXT: Record<"pink" | "blue", string> = {
+  pink: "linear-gradient(90deg, #560128, #a80c55)",
+  blue: "linear-gradient(90deg, #062d4b, #02578a)",
+};
+
+// 경험 카드 228×260: 프로젝트 색 빛 + 유리 도형 + 페이드 위에 프로젝트 태그·출처 아이콘·내용(아래 정렬)
+export function ExperienceCard({ card, tone }: { card: ExperienceCardData; tone: "pink" | "blue" }) {
   return (
     <article className="relative h-[260px] w-[228px] shrink-0 overflow-hidden rounded-[28px] border-2 border-white bg-white">
       <div className="pointer-events-none absolute -top-[2px] -left-[2px] h-[260px] w-[228px]">
-        <Image src="/assets/cards/exp-glow.png" alt="" width={228} height={260} className="absolute inset-0 size-full" />
-        <Image src="/assets/cards/exp-shape.png" alt="" width={156} height={224} className="absolute top-[36px] left-[72px] h-[224px] w-[156px]" />
-        <Image src="/assets/cards/exp-fade.png" alt="" width={228} height={168} className="absolute top-[92px] left-0 h-[168px] w-[228px]" />
+        <Image
+          src={`/assets/cards/exp-glow-${tone}.png`}
+          alt=""
+          width={228}
+          height={260}
+          className="absolute inset-0 size-full"
+        />
+        <Image
+          src={`/assets/cards/exp-shape-${tone}.png`}
+          alt=""
+          width={156}
+          height={224}
+          className="absolute top-[36px] left-[72px] h-[224px] w-[156px]"
+        />
+        <Image
+          src="/assets/cards/exp-fade.png"
+          alt=""
+          width={228}
+          height={168}
+          className="absolute top-[92px] left-0 h-[168px] w-[228px]"
+        />
       </div>
       <div className="absolute top-[16px] left-[18px] flex items-center gap-[8px]">
-        <Tag>{tag}</Tag>
-        <Image src="/assets/cards/icon-notion-sm.png" alt="노션" width={25} height={25} className="rounded-[5.5px] border-[0.22px] border-canvas" />
+        <Tag>{card.tag}</Tag>
+        {card.source === "notion" ? (
+          <Image
+            src="/assets/cards/icon-notion-sm.png"
+            alt="노션"
+            width={25}
+            height={25}
+            className="rounded-[5.5px] border-[0.22px] border-canvas"
+          />
+        ) : (
+          <Image
+            src="/assets/cards/icon-kakao-sm.png"
+            alt="카카오톡"
+            width={25}
+            height={25}
+            className="rounded-[5.5px]"
+          />
+        )}
       </div>
-      <p className="absolute bottom-[26px] left-[25px] w-fit bg-[linear-gradient(90deg,#560128,#a80c55)] bg-clip-text text-[15px] leading-[23.25px] font-bold whitespace-pre text-transparent">
-        {text}
+      <p
+        className="absolute bottom-[26px] left-[25px] w-fit bg-clip-text text-[15px] leading-[23.25px] font-bold whitespace-pre text-transparent"
+        style={{ backgroundImage: EXP_TEXT[tone] }}
+      >
+        {card.text}
       </p>
     </article>
   );
