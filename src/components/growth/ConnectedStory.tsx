@@ -3,6 +3,7 @@
 import { useEffect, useLayoutEffect, useState, type CSSProperties, type ReactNode } from "react";
 import Breadcrumb from "../Breadcrumb";
 import Gnb from "../Gnb";
+import SuggestionCards from "./SuggestionCards";
 import { ConnectedCard, ExperienceCard, type ExperienceCardData } from "../project-detail/Cards";
 import type { ProjectColor } from "../projectColors";
 
@@ -111,6 +112,8 @@ export default function ConnectedStory({
   startScene?: number;
 }) {
   const [scene, setScene] = useState(startScene);
+  // 마지막 장면에서 "성장의 순간으로 저장"을 누르면 제안 카드가 뜬다
+  const [suggest, setSuggest] = useState(false);
   const [playing, setPlaying] = useState(true);
   // 버튼으로 건너뛸 때는 전환 없이 바로 그 장면으로
   const [instant, setInstant] = useState(false);
@@ -280,10 +283,7 @@ export default function ConnectedStory({
 
       {/* 오른쪽 문구: 13 공통점 / 14 판단 / 15 저장 안내 */}
       <Fade style={swap(scene === 13)} className="top-[336px]">
-        <h2
-          className="text-shimmer w-fit text-[28px] leading-[42px] font-bold"
-          
-        >
+        <h2 className="text-shimmer w-fit text-[28px] leading-[42px] font-bold">
           스테디는 다음과 같은 공통점을 발견했습니다
         </h2>
         <ul className="mt-[24px] flex flex-col gap-[10px]">
@@ -314,10 +314,7 @@ export default function ConnectedStory({
       </Fade>
 
       <Fade style={swap(scene === 14)} className="top-[302px]">
-        <h2
-          className="text-shimmer w-fit text-[28px] leading-[42px] font-bold whitespace-pre"
-          
-        >
+        <h2 className="text-shimmer w-fit text-[28px] leading-[42px] font-bold whitespace-pre">
           {"스테디는 이 경험들이 하나의 성장 패턴으로\n이어질 가능성이 높다고 판단했습니다"}
         </h2>
         <p className="mt-[25px] text-[18px] leading-[28.8px] font-bold text-ink-muted">
@@ -338,15 +335,12 @@ export default function ConnectedStory({
 
       <Fade style={swap(scene === 15)} className="top-[282px] w-[494px]">
         <p className="text-[18px] leading-[28.8px] font-bold text-ink-muted">이 연결을 성장의 순간으로 저장하면</p>
-        <h2
-          className="text-shimmer mt-[20px] w-fit text-[28px] leading-[42px] font-bold whitespace-pre"
-          
-        >
+        <h2 className="text-shimmer mt-[20px] w-fit text-[28px] leading-[42px] font-bold whitespace-pre">
           {"나만의 성장패턴으로 축적되고\n앞으로 비슷한 경험이 생겼을 때\n자동으로 이어 분석할 수 있습니다"}
         </h2>
-        {/* 저장 후 이동할 곳은 미정 */}
         <button
           type="button"
+          onClick={() => setSuggest(true)}
           className="absolute top-[220px] left-[328px] h-[46px] w-[166px] rounded-[30px] bg-ink text-[16px] leading-[20px] font-bold text-white shadow-[0_4px_30px_rgba(0,0,0,0.03)]"
         >
           성장의 순간으로 저장
@@ -422,13 +416,27 @@ export default function ConnectedStory({
         ))}
       </div>
 
+      {/* 저장 후: 지금 화면을 흐리게 덮고(Figma 배경 블러 25 + #f4f5f7 50%) 제안 카드 캐러셀 */}
+      <div
+        className="absolute inset-0 bg-[rgba(244,245,247,0.5)] backdrop-blur-[12.5px] transition-opacity duration-700"
+        style={{ opacity: suggest ? 1 : 0, pointerEvents: suggest ? "auto" : "none" }}
+      >
+        <div
+          aria-hidden
+          className="pointer-events-none absolute top-[60px] left-0 h-[80px] w-[1440px] bg-[linear-gradient(to_bottom,#f4f5f7,#f4f5f700)]"
+        />
+        <div className="absolute top-[85px] left-[120px]">
+          <Breadcrumb parent="연결된 경험" href="/" current={title} />
+        </div>
+        {suggest && <SuggestionCards onLater={() => setSuggest(false)} />}
+      </div>
+
       <div className="absolute top-0 left-0 w-[1440px]">
         <Gnb active="Growth" />
       </div>
     </Stage>
   );
 }
-
 
 // 이야기 카드 263×300 = 경험 카드(228×260)를 1.154배로
 function StoryCard({ k }: { k: keyof typeof CARDS }) {
