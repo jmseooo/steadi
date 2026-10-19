@@ -5,7 +5,11 @@ import Link from "next/link";
 
 const MENU = ["Home", "Project", "Growth", "Connection"] as const;
 // 화면이 있는 메뉴만 링크 (나머지는 화면 생기면 연결)
-const HREF: Partial<Record<(typeof MENU)[number], string>> = { Project: "/", Connection: "/connection" };
+const HREF: Partial<Record<(typeof MENU)[number], string>> = {
+  Project: "/",
+  Growth: "/growth/connected",
+  Connection: "/connection",
+};
 
 // 앱 아이콘 에셋은 24px 타일 + 그림자 여백을 포함한 32px 이미지 → 22px 타일에 맞춰 22/24로 축소 (inset = 타일 왼쪽 여백)
 const APPS = [
