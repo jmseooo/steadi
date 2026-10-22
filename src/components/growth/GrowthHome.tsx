@@ -151,7 +151,7 @@ export default function GrowthHome() {
   const active = GROWTH_CARDS[wrap(index)];
 
   return (
-    <Stage>
+    <Stage bleed>
       {/* 카드 바퀴: 가운데에서 가까운 카드가 위로 */}
       {GROWTH_CARDS.map((card, i) => {
         let t = i - pos;
@@ -191,7 +191,7 @@ export default function GrowthHome() {
       {/* 위쪽: GNB 아래 흐림 띠 + 제목 · 칩 */}
       <div
         aria-hidden
-        className="pointer-events-none absolute top-[60px] left-0 z-20 h-[80px] w-[1440px] bg-[linear-gradient(to_bottom,#f4f5f7,#f4f5f700)]"
+        className="pointer-events-none absolute top-[60px] -left-[1000px] z-20 h-[80px] w-[3440px] bg-[linear-gradient(to_bottom,#f4f5f7,#f4f5f700)]"
       />
       <div className="absolute top-[100px] left-0 z-20 flex w-[1440px] flex-col items-center gap-[18px]">
         <div className="flex flex-col items-center gap-[5px]">
