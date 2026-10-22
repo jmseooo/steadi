@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import Breadcrumb from "../Breadcrumb";
 import Gnb from "../Gnb";
+import Stage from "./Stage";
 import SuggestionCards from "./SuggestionCards";
 import { ConnectedCard, ExperienceCard, type ExperienceCardData } from "../project-detail/Cards";
 import type { ProjectColor } from "../projectColors";
@@ -353,7 +354,7 @@ export default function ConnectedStory({
         className="pointer-events-none absolute top-[60px] left-0 h-[80px] w-[1440px] bg-[linear-gradient(to_bottom,#f4f5f7,#f4f5f700)]"
       />
       <div className="absolute top-[85px] left-[120px]">
-        <Breadcrumb parent="연결된 경험" href="/" current={title} />
+        <Breadcrumb parent="연결된 경험" href="/growth" current={title} />
       </div>
 
       {/* 아래: 이전·재생/일시정지·다음, 건너뛰기, 진행 막대 5칸 */}
@@ -426,7 +427,7 @@ export default function ConnectedStory({
           className="pointer-events-none absolute top-[60px] left-0 h-[80px] w-[1440px] bg-[linear-gradient(to_bottom,#f4f5f7,#f4f5f700)]"
         />
         <div className="absolute top-[85px] left-[120px]">
-          <Breadcrumb parent="연결된 경험" href="/" current={title} />
+          <Breadcrumb parent="연결된 경험" href="/growth" current={title} />
         </div>
         {suggest && <SuggestionCards onLater={() => setSuggest(false)} />}
       </div>
@@ -472,23 +473,3 @@ function RoundButton({ label, onClick, children }: { label: string; onClick?: ()
   );
 }
 
-// 1440×810 Figma 프레임을 창에 맞춰 축소(확대 안 함)해 가운데. 바깥은 같은 배경색
-function Stage({ children }: { children: ReactNode }) {
-  const [scale, setScale] = useState(1);
-  useLayoutEffect(() => {
-    const fit = () => setScale(Math.min(1, window.innerWidth / 1440, window.innerHeight / 810));
-    fit();
-    window.addEventListener("resize", fit);
-    return () => window.removeEventListener("resize", fit);
-  }, []);
-  return (
-    <main className="fixed inset-0 overflow-hidden bg-canvas">
-      <div
-        className="absolute top-1/2 left-1/2 h-[810px] w-[1440px] overflow-hidden"
-        style={{ translate: "-50% -50%", scale: String(scale) }}
-      >
-        {children}
-      </div>
-    </main>
-  );
-}

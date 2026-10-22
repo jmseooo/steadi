@@ -32,7 +32,7 @@
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  animation: text-shimmer 1.6s ease-in-out infinite alternate;
+  animation: text-shimmer 2.8s ease-in-out infinite alternate;
 }
 @keyframes text-shimmer {
   from { background-position: 100% 0; }
@@ -45,6 +45,12 @@
 /* 온보딩 배경 그라데이션 반지름 배율 — 등록해야 숫자처럼 부드럽게 보간된다 (스테디가 작업할 때 커졌다 작아짐) */
 @property --glow-s { syntax: "<number>"; inherits: true; initial-value: 1; }
 @property --glow-k { syntax: "<number>"; inherits: true; initial-value: 0; }
+
+/* 성장 홈: 가운데 카드가 바뀔 때 아래 제목이 살짝 올라오며 나타남 */
+@keyframes growth-fade {
+  from { opacity: 0; translate: 0 6px; }
+  to { opacity: 1; translate: 0 0; }
+}
 
 /* Tailwind v4는 버튼 기본 커서가 default — 눌리는 요소임을 드러내고, 호버 시 1.08배로 살짝 키운다.
    transition 유틸을 따로 준 버튼은 목록에 scale을 넣어야 애니메이션이 유지된다. */
