@@ -46,6 +46,13 @@
 @property --glow-s { syntax: "<number>"; inherits: true; initial-value: 1; }
 @property --glow-k { syntax: "<number>"; inherits: true; initial-value: 0; }
 
+/* 홈 > 오늘의 브리핑: 맨 앞 카드의 프로젝트 색(배경 빛·제목 끝색). 색으로 등록해야 카드가 바뀔 때 부드럽게 섞인다 */
+@property --brief-tint { syntax: "<color>"; inherits: true; initial-value: #44bcf8; }
+@property --brief-title { syntax: "<color>"; inherits: true; initial-value: #02578a; }
+.brief-tint {
+  transition: --brief-tint 0.7s ease, --brief-title 0.7s ease;
+}
+
 /* 성장 홈: 가운데 카드가 바뀔 때 아래 제목이 살짝 올라오며 나타남 */
 @keyframes growth-fade {
   from { opacity: 0; translate: 0 6px; }

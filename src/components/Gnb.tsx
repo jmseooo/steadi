@@ -6,7 +6,8 @@ import Link from "next/link";
 const MENU = ["Home", "Project", "Growth", "Connection"] as const;
 // 화면이 있는 메뉴만 링크 (나머지는 화면 생기면 연결)
 const HREF: Partial<Record<(typeof MENU)[number], string>> = {
-  Project: "/",
+  Home: "/",
+  Project: "/projects",
   Growth: "/growth",
   Connection: "/connection",
 };

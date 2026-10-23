@@ -1,11 +1,11 @@
 import Gnb from "@/components/Gnb";
-import ProjectHome from "@/components/ProjectHome";
+import HomeScreen from "@/components/home/HomeScreen";
 
 export default function Home() {
   return (
     <>
-      <Gnb active="Project" />
-      <ProjectHome />
+      <Gnb active="Home" />
+      <HomeScreen />
     </>
   );
 }

@@ -3,16 +3,19 @@
 import { useLayoutEffect, useRef, useState } from "react";
 
 // 필터 칩: 검은 알약이 선택된 칩 뒤로 미끄러지고, 선택된 칩 호버 시 알약도 함께 확대
+// height: 기본 36, 홈 화면 칩은 34 (Figma)
 export default function FilterChips<T extends string>({
   items,
   value,
   onChange,
+  height = 36,
 }: {
   items: readonly T[];
   value: T;
   onChange: (value: T) => void;
+  height?: number;
 }) {
-  const pill = useIndicator(items.indexOf(value));
+  const pill = useIndicator(items.indexOf(value), items.join());
 
   return (
     <div
@@ -22,8 +25,8 @@ export default function FilterChips<T extends string>({
       {pill.rect && (
         <span
           aria-hidden
-          className={`absolute top-0 left-0 h-[36px] rounded-[20px] bg-ink ${SLIDE}`}
-          style={{ width: pill.rect.width, translate: `${pill.rect.left}px ${pill.rect.top}px` }}
+          className={`absolute top-0 left-0 rounded-[20px] bg-ink ${SLIDE}`}
+          style={{ height, width: pill.rect.width, translate: `${pill.rect.left}px ${pill.rect.top}px` }}
         />
       )}
       {items.map((item, i) => {
@@ -36,7 +39,8 @@ export default function FilterChips<T extends string>({
             role="tab"
             aria-selected={active}
             onClick={() => onChange(item)}
-            className={`relative h-[36px] rounded-[20px] px-[14px] text-[14px] leading-[19.6px] font-semibold transition-[background-color,color,scale] duration-300 ${
+            style={{ height }}
+            className={`relative rounded-[20px] px-[14px] text-[14px] leading-[19.6px] font-semibold transition-[background-color,color,scale] duration-300 ${
               active ? "text-white" : "bg-toggle text-ink-muted hover:text-ink"
             }`}
           >
@@ -51,7 +55,8 @@ export default function FilterChips<T extends string>({
 const SLIDE = "transition-[translate,width,scale] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]";
 
 // 선택 표시(알약)가 index번째 칩 뒤로 미끄러지도록 위치·폭을 잰다 (웹폰트 로드 후 한 번 더)
-function useIndicator(index: number) {
+// key: 칩 글자가 바뀌면(개수 표시 등) 폭이 달라지므로 다시 잰다
+function useIndicator(index: number, key: string) {
   const els = useRef<(HTMLElement | null)[]>([]);
   const [rect, setRect] = useState<{ left: number; top: number; width: number } | null>(null);
 
@@ -66,7 +71,7 @@ function useIndicator(index: number) {
     return () => {
       cancelled = true;
     };
-  }, [index]);
+  }, [index, key]);
 
   return { rect, ref: (i: number) => (el: HTMLElement | null) => void (els.current[i] = el) };
 }

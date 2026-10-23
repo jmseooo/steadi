@@ -28,7 +28,7 @@ export default function ProjectDetail({ project }: { project: ProjectDetailData 
   return (
     <main className="px-5 pt-[25px] pb-[67px]">
       <div className="mx-auto max-w-[1200px]">
-        <Breadcrumb parent="내 프로젝트" href="/" current={project.name} />
+        <Breadcrumb parent="내 프로젝트" href="/projects" current={project.name} />
 
         {/* 위쪽: 왼쪽 프로젝트 정보·단계, 오른쪽 스테디 인사이트 */}
         <div className="mt-[21px] flex justify-between gap-[45px] max-xl:flex-col">
