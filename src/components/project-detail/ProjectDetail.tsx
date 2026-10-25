@@ -1,12 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import Breadcrumb from "../Breadcrumb";
 import FilterChips from "../FilterChips";
 import FolderArt from "../FolderArt";
-import { ConnectedCard, ExperienceCard, type ConnectedCardData } from "./Cards";
+import { ConnectedCard, ExperienceCard, type ConnectedCardData, type ExperienceCardData } from "./Cards";
 import type { DetailTheme, ProjectDetailData, Step } from "./data";
+import ExperienceModal from "./ExperienceModal";
 
 const TABS = ["경험 모음", "성장의 순간", "피드백", "제안 카드"] as const;
 const VIEWS = ["연결된 경험 카드", "경험 카드"] as const;
@@ -20,6 +21,10 @@ export default function ProjectDetail({ project }: { project: ProjectDetailData 
   const [view, setView] = useState<View>("묶음");
   // 연결된 경험 카드 묶음을 눌러 들어왔을 때만 카드가 한 장씩 나타난다 (칩 전환은 바로)
   const [reveal, setReveal] = useState(false);
+  // 누른 경험 카드 (자세히 보기 창) · 보관한 카드 (카드 글로 구분)
+  const [opened, setOpened] = useState<ExperienceCardData | null>(null);
+  const [archived, setArchived] = useState<string[]>([]);
+  const closeModal = useCallback(() => setOpened(null), []);
   const selectTab = (t: (typeof TABS)[number]) => {
     setTab(t);
     if (t === "경험 모음") setView("묶음");
@@ -82,10 +87,30 @@ export default function ProjectDetail({ project }: { project: ProjectDetailData 
           <ul className="mt-[30px] grid grid-cols-[repeat(auto-fill,228px)] justify-between gap-y-[30px] max-xl:justify-center max-xl:gap-x-[15px]">
             {project.experiences.map((e) => (
               <li key={e.text}>
-                <ExperienceCard card={e} tone={project.theme.expTone} />
+                <button
+                  type="button"
+                  aria-label={`경험 카드 자세히 보기: ${e.text.replaceAll("\n", " ")}`}
+                  onClick={() => setOpened(e)}
+                  className="block rounded-[28px] hover:scale-[1.02]"
+                >
+                  <ExperienceCard card={e} tone={project.theme.expTone} />
+                </button>
               </li>
             ))}
           </ul>
+        )}
+
+        {opened && (
+          <ExperienceModal
+            card={opened}
+            project={project.name}
+            color={project.color}
+            archived={archived.includes(opened.text)}
+            onArchive={() =>
+              setArchived((a) => (a.includes(opened.text) ? a.filter((t) => t !== opened.text) : [...a, opened.text]))
+            }
+            onClose={closeModal}
+          />
         )}
       </div>
     </main>

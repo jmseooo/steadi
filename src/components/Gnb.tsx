@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
 import NotificationPanel from "./Notifications";
+import { ProfileMenu, ProfileModal, type ProfileTab } from "./Profile";
 
 const MENU = ["Home", "Project", "Growth", "Connection"] as const;
 // 화면이 있는 메뉴만 링크 (나머지는 화면 생기면 연결)
@@ -27,19 +28,13 @@ const APPS = [
 export default function Gnb({ active }: { active: (typeof MENU)[number] }) {
   const [notiOpen, setNotiOpen] = useState(false);
   const notiRef = useRef<HTMLDivElement>(null);
+  useDismiss(notiOpen, notiRef, () => setNotiOpen(false));
 
-  // 알림 패널: 바깥을 누르거나 Esc로 닫힘
-  useEffect(() => {
-    if (!notiOpen) return;
-    const onDown = (e: PointerEvent) => !notiRef.current?.contains(e.target as Node) && setNotiOpen(false);
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setNotiOpen(false);
-    document.addEventListener("pointerdown", onDown);
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("pointerdown", onDown);
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [notiOpen]);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  useDismiss(menuOpen, menuRef, () => setMenuOpen(false));
+  const [profileTab, setProfileTab] = useState<ProfileTab | null>(null); // 설정 창에서 연 탭 (null = 닫힘)
+  const closeProfile = useCallback(() => setProfileTab(null), []);
 
   return (
     <header className="sticky top-0 z-20 bg-canvas px-5">
@@ -137,13 +132,45 @@ export default function Gnb({ active }: { active: (typeof MENU)[number] }) {
             </div>
           </div>
 
-          <button type="button" aria-label="프로필" className="block size-[32px]">
-            <Image src="/assets/profile.png" alt="" width={32} height={32} className="size-[32px] rounded-[20px]" />
-          </button>
+          <div ref={menuRef} className="relative">
+            <button
+              type="button"
+              aria-label="프로필"
+              aria-expanded={menuOpen}
+              aria-controls="profile-menu"
+              onClick={() => setMenuOpen((o) => !o)}
+              className="block size-[32px]"
+            >
+              <Image src="/assets/profile.png" alt="" width={32} height={32} className="size-[32px] rounded-[20px]" />
+            </button>
+            <ProfileMenu
+              open={menuOpen}
+              onSelect={(tab) => {
+                setMenuOpen(false);
+                setProfileTab(tab);
+              }}
+            />
+          </div>
+          <ProfileModal tab={profileTab} onTab={setProfileTab} onClose={closeProfile} />
         </div>
       </div>
     </header>
   );
+}
+
+// 열린 패널·메뉴: 바깥을 누르거나 Esc로 닫힘
+function useDismiss(open: boolean, ref: RefObject<HTMLElement | null>, close: () => void) {
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: PointerEvent) => !ref.current?.contains(e.target as Node) && close();
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && close();
+    document.addEventListener("pointerdown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open, ref, close]);
 }
 
 // 링크는 버튼 기본 호버(globals.css)가 안 걸려 hover:scale-108을 따로 준다
