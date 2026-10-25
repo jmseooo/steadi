@@ -64,6 +64,7 @@ const GLOW: Record<GlowKey, string> = {
   pink: glow("#ffcbec80", "#ffcbec00"),
   orange: glow("#ffd2a980", "#ffd2a900"),
   blue: glow("#b8e5ff80", "#b8e5ff00"),
+  purple: glow("#cbb8ff80", "#cbb8ff00"),
 };
 
 const STAGE_MS = 1600; // 진행 단계 하나에 걸리는 시간
@@ -78,7 +79,7 @@ export default function Onboarding({ debug = {} }: { debug?: OnboardingDebug }) 
   const [methods, setMethods] = useState<string[]>(debug.modal ? ["device"] : []);
   const [askPermission, setAskPermission] = useState(Boolean(debug.modal));
   const [services, setServices] = useState<ServiceId[]>(["notion", "kakao"]);
-  const [picked, setPicked] = useState<string[]>(["marketing", "band", "resume"]);
+  const [picked, setPicked] = useState<string[]>(["marketing", "band", "resume", "english"]);
   const [goalIndex, setGoalIndex] = useState(Number(debug.goal ?? 0));
 
   // 목표를 확인할 프로젝트: 고른 것 중 목표 데이터가 있는 것, Figma 순서대로
@@ -278,7 +279,11 @@ export default function Onboarding({ debug = {} }: { debug?: OnboardingDebug }) 
       )}
 
       {step === "done" && (
-        <div className="absolute top-[220px] left-[365px] flex w-[711px] flex-col">
+        // 폴더 수만큼 넓어지고 화면 가운데(720)에 맞춘다: 3개 711 · 4개 770 (Figma)
+        <div
+          className="absolute top-[220px] flex -translate-x-1/2 flex-col"
+          style={{ left: 720, width: Math.max(711, goalProjects.length * 200 - 30) }}
+        >
           <Heading
             title={`프로젝트 ${goalProjects.length}개를 만들었어요`}
             desc={"확인한 목표를 각 프로젝트에 반영했어요.\n이제 스테디와 함께 시작해봐요."}
@@ -287,7 +292,7 @@ export default function Onboarding({ debug = {} }: { debug?: OnboardingDebug }) 
             {goalProjects.map((p) => (
               <li key={p.id}>
                 <FolderArt color={p.color!} size={170}>
-                  <FolderTitle color={p.color!}>{p.name}</FolderTitle>
+                  <FolderTitle color={p.color!}>{p.folder ?? p.name}</FolderTitle>
                 </FolderArt>
               </li>
             ))}

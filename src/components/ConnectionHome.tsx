@@ -5,12 +5,13 @@ import { useCallback, useState } from "react";
 import FeedbackCalendar, { dateKey } from "./FeedbackCalendar";
 import FeedbackDetail, { type FeedbackDetailData } from "./FeedbackDetail";
 import FilterChips from "./FilterChips";
-import { PROJECT_COLORS, type ProjectColor } from "./projectColors";
+import { toneColors, type ProjectTone } from "./projectColors";
 
-const PROJECTS: Record<string, ProjectColor> = {
+const PROJECTS: Record<string, ProjectTone> = {
   "마케팅 공모전": "pink",
   자기소개서: "orange",
   "밴드 동아리": "blue",
+  "영어 스터디": "purple",
 };
 type ProjectName = keyof typeof PROJECTS;
 
@@ -26,14 +27,14 @@ const FEEDBACKS: Feedback[] = [
   { id: 5, type: "자리이동 요청", source: "카카오톡", project: "밴드 동아리", text: "밴드 연습 중에 원래 자리였던 A구간에서 C구간으로 이동할 것을 팀원이 요청했어요.", date: "26.10.27 (화)", day: "2026-10-27" },
 ];
 
-// 날짜별 피드백이 있는 프로젝트 점 (Figma 2026년 10월 달력 기준)
-const P = "pink", O = "orange", B = "blue";
-const DOTS: Record<string, ProjectColor[]> = {
-  "2026-9-27": [P, B], "2026-9-28": [P, O], "2026-9-29": [B], "2026-9-30": [B],
+// 날짜별 피드백이 있는 프로젝트 점 (Figma 2026년 10월 달력 기준, 보라 = 영어 스터디)
+const P = "pink", O = "orange", B = "blue", V = "purple";
+const DOTS: Record<string, ProjectTone[]> = {
+  "2026-9-27": [P, B], "2026-9-28": [P, O], "2026-9-29": [B, V], "2026-9-30": [B],
   "2026-10-1": [O, B], "2026-10-2": [P, B], "2026-10-3": [P, O],
-  "2026-10-4": [P, B], "2026-10-5": [P, B], "2026-10-6": [P, B], "2026-10-9": [P, O], "2026-10-10": [P, B],
-  "2026-10-11": [P, B], "2026-10-12": [P, B], "2026-10-14": [O, B], "2026-10-15": [P, B], "2026-10-16": [P], "2026-10-17": [P, B],
-  "2026-10-18": [O, B], "2026-10-19": [P, B], "2026-10-20": [O, B], "2026-10-21": [P, B], "2026-10-23": [P, B], "2026-10-24": [P, B],
+  "2026-10-4": [P, B], "2026-10-5": [P, B], "2026-10-6": [P, B], "2026-10-8": [V], "2026-10-9": [P, O], "2026-10-10": [P, B],
+  "2026-10-11": [P, B], "2026-10-12": [P, B], "2026-10-13": [V], "2026-10-14": [O, B], "2026-10-15": [P, B], "2026-10-16": [P], "2026-10-17": [P, B],
+  "2026-10-18": [O, B], "2026-10-19": [P, B], "2026-10-20": [O, B, V], "2026-10-21": [P, B], "2026-10-23": [P, B], "2026-10-24": [P, B],
   "2026-10-25": [P, B], "2026-10-26": [P, B], "2026-10-27": [P, O, B],
 };
 
@@ -135,7 +136,7 @@ export default function ConnectionHome() {
 }
 
 function FeedbackItem({ feedback: f, onOpen }: { feedback: Feedback; onOpen: () => void }) {
-  const c = PROJECT_COLORS[PROJECTS[f.project]];
+  const c = toneColors(PROJECTS[f.project]);
 
   return (
     // 카드가 넓어 기본 호버(1.08배) 대신 1.02배만

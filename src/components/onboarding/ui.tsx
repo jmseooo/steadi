@@ -3,7 +3,7 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
 
 // 화면별 강조색: 제목·진행 막대 그라데이션 끝색 (Figma)
-export const ACCENT_END = { default: "#8c0f49", pink: "#8c0f49", orange: "#7e2610", blue: "#084872" } as const;
+export const ACCENT_END = { default: "#8c0f49", pink: "#8c0f49", orange: "#7e2610", blue: "#084872", purple: "#280c69" } as const;
 export type Accent = keyof typeof ACCENT_END;
 
 // 검정 → 강조색 가로 그라데이션 글자

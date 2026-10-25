@@ -2,11 +2,11 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import { PROJECT_COLORS, type ProjectColor } from "./projectColors";
+import { toneColors, type ProjectTone } from "./projectColors";
 
 export type FeedbackDetailData = {
   project: string;
-  color: ProjectColor;
+  color: ProjectTone;
   title: string;
   meta: string;
   original: string;
@@ -21,7 +21,7 @@ const GRADIENT_TEXT = "w-fit bg-[linear-gradient(90deg,#1a1a1a,#0e9fe9)] bg-clip
 const THUMB_TRAVEL = 184;
 
 export default function FeedbackDetail({ data, onClose }: { data: FeedbackDetailData; onClose: () => void }) {
-  const c = PROJECT_COLORS[data.color];
+  const c = toneColors(data.color);
   const body = useRef<HTMLDivElement>(null);
   const [progress, setProgress] = useState(0);
 

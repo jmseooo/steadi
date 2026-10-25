@@ -1,10 +1,10 @@
 import Link from "next/link";
 import FolderArt, { FolderTitle } from "./FolderArt";
-import type { ProjectColor } from "./projectColors";
+import type { ProjectTone } from "./projectColors";
 
 export type Project = {
   title: string;
-  color: ProjectColor;
+  color: ProjectTone;
   experiences: number;
   hours: number;
   startedAt: string;

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { DOT, type ProjectColor } from "./projectColors";
+import { DOT, type ProjectTone } from "./projectColors";
 
 const WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
 
@@ -26,7 +26,7 @@ export default function FeedbackCalendar({
   selected,
   onSelect,
 }: {
-  dots: Record<string, ProjectColor[]>;
+  dots: Record<string, ProjectTone[]>;
   today: Date;
   selected: Date;
   onSelect: (date: Date) => void;

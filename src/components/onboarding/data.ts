@@ -1,4 +1,4 @@
-import type { ProjectColor } from "../projectColors";
+import type { ProjectTone } from "../projectColors";
 
 export const METHODS = [
   { id: "device", title: "기기에서 서비스 찾기", desc: "연결한 기기에서 사용하는 서비스를 찾아요." },
@@ -50,7 +50,8 @@ export type FoundProject = {
   id: string;
   name: string;
   source: string;
-  color?: ProjectColor; // 목표 확인 화면이 있는 프로젝트만 색이 있다
+  folder?: string; // 폴더에 쓰는 이름 (Figma: 영어스터디는 붙여 씀)
+  color?: ProjectTone; // 목표 확인 화면이 있는 프로젝트만 색이 있다
   intro?: string;
   goal?: string;
 };
@@ -80,17 +81,30 @@ export const FOUND_PROJECTS: FoundProject[] = [
     intro: "노션 ‘경험 정리 및 자기소개서’에서 지원 직무와 문항별 초안을 확인했어요.",
     goal: "지원 직무에 맞는 경험을 정리하고, 문항별 자기소개서를 완성해 제출하기",
   },
-  { id: "english", name: "영어 스터디", source: "카카오톡 ‘영어 스터디’" },
+  {
+    id: "english",
+    name: "영어 스터디",
+    folder: "영어스터디",
+    source: "카카오톡 ‘영어 스터디’",
+    color: "purple",
+    intro: "카카오톡 ‘영어 스터디’의 기록에서 영어 말하기 연습과 피드백에 관한 대화를 발견했어요.",
+    goal: "영어스터디에 꾸준히 참여하고, 영어 말하기 실력 키우기",
+  },
 ];
 
-// 목표 확인 순서: 마케팅 공모전 → 자기소개서 → 밴드 동아리 (Figma 흐름)
-export const GOAL_ORDER = ["marketing", "resume", "band"];
+// 목표 확인 순서: 마케팅 공모전 → 자기소개서 → 밴드 동아리 → 영어 스터디 (Figma 흐름)
+export const GOAL_ORDER = ["marketing", "resume", "band", "english"];
 
-// 목표 대화에서 스테디가 되묻는 말 (밴드 동아리는 Figma 대화 그대로)
+// 목표 대화에서 스테디가 되묻는 말 (밴드 동아리·영어 스터디는 Figma 대화 그대로)
 export const FOLLOW_UP: Record<string, { ask: string; reflected: string; goal: string }> = {
   band: {
     ask: "기획한 방향을 목표에 반영하려고 해요.\n공연에서 꼭 구현하고 싶은 부분은 무엇인가요?",
     reflected: "곡의 분위기에 맞는 무대 구성과 공연 진행 순서를 목표에 반영했어요.",
     goal: "곡의 분위기에 맞는 무대를 준비하고, 정한 순서대로 공연을 마치기",
+  },
+  english: {
+    ask: "대화에 참여하는 경험을 목표에 반영하려고 해요.\n영어로 말할 때 특히 달라지고 싶은 부분은 무엇인가요?",
+    reflected: "매주 말해보는 연습과 스터디원 피드백을 반영하는 과정을 목표에 담았어요.",
+    goal: "매주 영어로 말해보고, 피드백을 반영해 익숙한 주제는 자신 있게 말하기",
   },
 };

@@ -10,7 +10,10 @@ const CHAT_COLORS = {
   pink: { hiBg: "rgba(255,122,200,0.3)", hiText: "#cc0a67", send: "#ff7ac8", sendOn: "#fa3aa5" },
   orange: { hiBg: "rgba(254,134,57,0.3)", hiText: "#c53509", send: "#fe8639", sendOn: "#fc6513" },
   blue: { hiBg: "rgba(61,190,255,0.3)", hiText: "#0365a1", send: "#3dbeff", sendOn: "#0e9fe9" },
+  purple: { hiBg: "rgba(155,121,255,0.3)", hiText: "#6120e1", send: "#9b79ff", sendOn: "#7f55fd" },
 };
+// 끝난 프로젝트 옆 체크 동그라미: 프로젝트별 진한 색 (Figma)
+const DONE_COLOR = { pink: "#560128", orange: "#441006", blue: "#082d49", purple: "#320872" };
 
 type Message =
   | { from: "bot"; lines: { text: string; highlight?: boolean; strong?: boolean; countdown?: boolean }[] }
@@ -74,11 +77,19 @@ export default function GoalChat({
 
     let reply: Message;
     if (isConfirm(text)) {
+      // 다음 프로젝트가 있으면 이름을 알려 준다 (마지막 하나 남았으면 "이제 마지막으로")
+      const next = projects[index + 1];
+      const nextIsLast = index + 2 === projects.length;
       reply = {
         from: "bot",
         lines: [
-          { text: `알겠습니다. ‘${project.name}’ 프로젝트의 목표를 생성했습니다!\n목표는 이후 수정할 수 있습니다.`, strong: true },
-          { text: `5초 뒤에 ${last ? "완료 화면" : "다음 프로젝트"}으로 이동해요.`, countdown: true },
+          {
+            text: `알겠습니다. ‘${project.name}’ 프로젝트의 목표를 생성했습니다!\n목표는 이후 수정할 수 있습니다.${
+              next ? ` 이제 ${nextIsLast ? "마지막으로 " : ""}‘${next.name}’ 목표를 함께 정리해 볼게요.` : ""
+            }`,
+            strong: true,
+          },
+          { text: last ? "5초 뒤에 완료 화면으로 이동해요." : `5초 뒤에 ‘${next.name}' 프로젝트로 이동해요.`, countdown: true },
         ],
       };
       setDone(true);
@@ -114,14 +125,14 @@ export default function GoalChat({
           i === index ? (
             <li key={p.id} className="transition-all duration-500">
               <FolderArt color={p.color!} size={170}>
-                <FolderTitle color={p.color!}>{p.name}</FolderTitle>
+                <FolderTitle color={p.color!}>{p.folder ?? p.name}</FolderTitle>
               </FolderArt>
             </li>
           ) : (
             <li key={p.id} className="flex items-center gap-[15px] opacity-40 transition-all duration-500">
-              {i < index && <StepIcon state="done" doneColor="#560128" />}
+              {i < index && <StepIcon state="done" doneColor={DONE_COLOR[p.color!]} />}
               <FolderArt color={p.color!} size={120}>
-                <FolderTitle color={p.color!}>{p.name}</FolderTitle>
+                <FolderTitle color={p.color!}>{p.folder ?? p.name}</FolderTitle>
               </FolderArt>
             </li>
           ),
@@ -134,7 +145,7 @@ export default function GoalChat({
             m.from === "me" ? (
               <p
                 key={i}
-                className="max-w-[450px] self-end rounded-[16px] bg-ink px-[14px] py-[10px] text-[13px] leading-[18.85px] font-semibold text-white"
+                className="max-w-[480px] self-end rounded-[16px] bg-ink px-[14px] py-[10px] text-[13px] leading-[18.85px] font-semibold text-white"
               >
                 {m.text}
               </p>
@@ -152,7 +163,9 @@ export default function GoalChat({
                   ) : (
                     <p
                       key={j}
-                      className={`max-w-[450px] px-[10px] py-[6px] text-[13px] leading-[18.85px] font-medium whitespace-pre-line ${
+                      className={`px-[10px] py-[6px] text-[13px] leading-[18.85px] font-medium whitespace-pre-line ${
+                        l.strong ? "max-w-[583px]" : "max-w-[450px]"
+                      } ${
                         l.strong ? "text-ink" : "text-[#47484c]"
                       }`}
                     >

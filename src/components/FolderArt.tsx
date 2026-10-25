@@ -1,8 +1,8 @@
 import Image from "next/image";
 import type { ReactNode } from "react";
-import { PROJECT_COLORS, radial, type ProjectColor } from "./projectColors";
+import { radial, toneColors, type ProjectTone } from "./projectColors";
 
-export type FolderColor = ProjectColor | "gray";
+export type FolderColor = ProjectTone | "gray";
 
 // 폴더 안 종이 3장 (뒤 → 앞). 위치는 180×146 폴더 기준 px
 const PAPERS = [
@@ -20,7 +20,7 @@ const BASE = 180;
 
 // 폴더 그림(뒷면 + 종이 + 반투명 앞면). 180px 기준으로 그리고 size에 맞춰 zoom으로 통째로 줄인다
 export default function FolderArt({ color, size = BASE, children }: { color: FolderColor; size?: number; children?: ReactNode }) {
-  const back = color === "gray" ? "#d8dade" : radial(PROJECT_COLORS[color].from, PROJECT_COLORS[color].to);
+  const back = color === "gray" ? "#d8dade" : radial(toneColors(color).from, toneColors(color).to);
   const papers = PAPER_BG[color === "gray" ? "gray" : "color"];
 
   return (
@@ -47,11 +47,11 @@ export default function FolderArt({ color, size = BASE, children }: { color: Fol
 }
 
 // 색 폴더 제목 (180 기준 위치·크기)
-export function FolderTitle({ color, children }: { color: ProjectColor; children: ReactNode }) {
+export function FolderTitle({ color, children }: { color: ProjectTone; children: ReactNode }) {
   return (
     <span
       className="absolute top-[103.77px] left-[23.29px] text-[17px] leading-[23.8px] font-semibold whitespace-nowrap"
-      style={{ color: PROJECT_COLORS[color].title }}
+      style={{ color: toneColors(color).title }}
     >
       {children}
     </span>

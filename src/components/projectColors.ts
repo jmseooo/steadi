@@ -14,7 +14,13 @@ export const PROJECT_COLORS: Record<
   blue: { from: "#44bcf8", to: "#dbf3ff", title: "#02578a", tagBg: "#f0f9ff", tagText: "#0e9fe9", chipBg: "#e0f1fe" },
 };
 
+// 영어 스터디(보라): 프로젝트 홈 폴더·커넥션 필터·달력 점·온보딩에만 나오는 네 번째 프로젝트 색 (Figma 156:13330)
+// 그라데이션·제목은 Figma, 태그 배경·글자는 시안이 없어 같은 밝기로 맞춘 색
+export type ProjectTone = ProjectColor | "purple";
+export const PURPLE = { from: "#9a81ff", to: "#ece8ff", title: "#511abd", tagBg: "#f5f2ff", tagText: "#7f55fd", chipBg: "#ece7ff" };
+export const toneColors = (c: ProjectTone) => (c === "purple" ? PURPLE : PROJECT_COLORS[c]);
+
 // 달력 점 배경
 export const DOT = Object.fromEntries(
-  Object.entries(PROJECT_COLORS).map(([k, c]) => [k, radial(c.from, c.to)]),
-) as Record<ProjectColor, string>;
+  Object.entries({ ...PROJECT_COLORS, purple: PURPLE }).map(([k, c]) => [k, radial(c.from, c.to)]),
+) as Record<ProjectTone, string>;
