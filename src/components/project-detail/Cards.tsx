@@ -23,7 +23,7 @@ export function ConnectedCard({ card, size = 280 }: { card: ConnectedCardData; s
   return (
     <article
       className={`relative h-[350px] w-[280px] shrink-0 overflow-hidden rounded-[26px] border-2 border-white bg-white ${
-        size === 280 ? "shadow-[0_4px_30px_rgba(0,0,0,0.03)]" : "" /* 묶음 안 작은 카드는 그림자 없음 (Figma) */
+        size >= 224 ? "shadow-[0_4px_30px_rgba(0,0,0,0.03)]" : "" /* 묶음 안 작은 카드(208)는 그림자 없음 (Figma) */
       }`}
       style={{ zoom: size / 280 }}
     >

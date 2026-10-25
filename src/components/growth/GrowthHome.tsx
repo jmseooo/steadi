@@ -1,11 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import FilterChips from "../FilterChips";
 import Gnb from "../Gnb";
 import { ConnectedCard } from "../project-detail/Cards";
 import { GROWTH_CARDS } from "./growthCards";
+import MomentGrid from "./MomentGrid";
+import { MOMENT_TOTAL } from "./moments";
 import Stage from "./Stage";
 
 /*
@@ -112,13 +115,19 @@ function toMatrix3d(q: Quad) {
 
 const easeOut = (x: number) => 1 - Math.pow(1 - x, 3);
 
+// 위 칩: 연결된 경험(카드 바퀴) · 성장의 순간(카테고리 카드, Figma 150:2171)
+const TABS = [`연결된 경험 ${GROWTH_CARDS.length}`, `성장의 순간 ${MOMENT_TOTAL}`] as const;
+
 export default function GrowthHome() {
   const n = GROWTH_CARDS.length;
   const [index, setIndex] = useState(0); // 가운데 카드 (목표)
   const [pos, setPos] = useState(0); // 지금 그려지는 위치 (움직이는 동안 실수)
   const posRef = useRef(0);
   const anim = useRef<number | null>(null);
-  const [tab, setTab] = useState<"연결된 경험 27" | "성장의 순간 12">("연결된 경험 27");
+  // 고른 칩은 주소(?tab=moments)에 둔다: 카테고리 화면에서 뒤로 오면 성장의 순간이 열려 있도록
+  const tab = useSearchParams().get("tab") === "moments" ? "moments" : "connected";
+  const changeTab = (label: (typeof TABS)[number]) =>
+    window.history.replaceState(null, "", label === TABS[1] ? "/growth?tab=moments" : "/growth");
 
   // pos를 target까지 0.6초 동안 감속하며 이동
   const goTo = useCallback((target: number) => {
@@ -139,19 +148,21 @@ export default function GrowthHome() {
   const move = useCallback((d: number) => goTo(Math.round(posRef.current) + d), [goTo]);
 
   useEffect(() => {
+    if (tab !== "connected") return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") move(-1);
       if (e.key === "ArrowRight") move(1);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [move]);
+  }, [move, tab]);
 
   const wrap = (v: number) => ((v % n) + n) % n;
   const active = GROWTH_CARDS[wrap(index)];
 
-  return (
-    <Stage bleed>
+  // 연결된 경험: 카드 바퀴 + 아래 제목·화살표·자세히 보기·보관함
+  const carousel = (
+    <>
       {/* 카드 바퀴: 가운데에서 가까운 카드가 위로 */}
       {GROWTH_CARDS.map((card, i) => {
         let t = i - pos;
@@ -187,19 +198,6 @@ export default function GrowthHome() {
           </div>
         );
       })}
-
-      {/* 위쪽: GNB 아래 흐림 띠 + 제목 · 칩 */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute top-[60px] -left-[1000px] z-20 h-[80px] w-[3440px] bg-[linear-gradient(to_bottom,#f4f5f7,#f4f5f700)]"
-      />
-      <div className="absolute top-[100px] left-0 z-20 flex w-[1440px] flex-col items-center gap-[18px]">
-        <div className="flex flex-col items-center gap-[5px]">
-          <h1 className="text-[24px] leading-[33.6px] font-bold">내 경험</h1>
-          <p className="text-[14px] leading-[19.6px] font-semibold text-ink-muted">3개의 프로젝트에서 모인 나의 경험</p>
-        </div>
-        <FilterChips items={["연결된 경험 27", "성장의 순간 12"] as const} value={tab} onChange={setTab} />
-      </div>
 
       {/* 아래: 가운데 카드 제목 · 연결 수, 양옆 화살표, 자세히 보기 */}
       <div className="absolute top-[571px] left-0 z-20 flex w-[1440px] justify-center">
@@ -251,6 +249,25 @@ export default function GrowthHome() {
           <path d="M8.5 13.4H13.5" stroke="#fff" strokeWidth="1.25" strokeLinecap="round" />
         </svg>
       </button>
+    </>
+  );
+
+  return (
+    <Stage bleed>
+      {tab === "moments" ? <MomentGrid /> : carousel}
+
+      {/* 위쪽: GNB 아래 흐림 띠 + 제목 · 칩 */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute top-[60px] -left-[1000px] z-20 h-[80px] w-[3440px] bg-[linear-gradient(to_bottom,#f4f5f7,#f4f5f700)]"
+      />
+      <div className="absolute top-[100px] left-0 z-20 flex w-[1440px] flex-col items-center gap-[18px]">
+        <div className="flex flex-col items-center gap-[5px]">
+          <h1 className="text-[24px] leading-[33.6px] font-bold">내 경험</h1>
+          <p className="text-[14px] leading-[19.6px] font-semibold text-ink-muted">3개의 프로젝트에서 모인 나의 경험</p>
+        </div>
+        <FilterChips items={TABS} value={TABS[tab === "moments" ? 1 : 0]} onChange={changeTab} />
+      </div>
 
       <div className="absolute top-0 left-0 z-30 w-[1440px]">
         <Gnb active="Growth" />
