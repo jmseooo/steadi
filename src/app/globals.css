@@ -86,3 +86,7 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
 }
+
+/* GNB 알림 목록 스크롤 막대 (Figma 5px #ebedef, 둥근 끝) */
+.noti-scroll::-webkit-scrollbar { width: 5px; }
+.noti-scroll::-webkit-scrollbar-thumb { background: var(--color-toggle); border-radius: 3px; }

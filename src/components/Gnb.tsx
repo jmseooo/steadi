@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
+import NotificationPanel from "./Notifications";
 
 const MENU = ["Home", "Project", "Growth", "Connection"] as const;
 // 화면이 있는 메뉴만 링크 (나머지는 화면 생기면 연결)
@@ -23,19 +25,39 @@ const APPS = [
 ];
 
 export default function Gnb({ active }: { active: (typeof MENU)[number] }) {
+  const [notiOpen, setNotiOpen] = useState(false);
+  const notiRef = useRef<HTMLDivElement>(null);
+
+  // 알림 패널: 바깥을 누르거나 Esc로 닫힘
+  useEffect(() => {
+    if (!notiOpen) return;
+    const onDown = (e: PointerEvent) => !notiRef.current?.contains(e.target as Node) && setNotiOpen(false);
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setNotiOpen(false);
+    document.addEventListener("pointerdown", onDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [notiOpen]);
+
   return (
     <header className="sticky top-0 z-20 bg-canvas px-5">
       <div className="mx-auto flex h-[60px] max-w-[1200px] items-center justify-between">
         <div className="flex items-center gap-[80px]">
-          {/* 로고를 누르면 페이지를 새로고침해 화면 상태를 처음으로 되돌린다 */}
-          <button
-            type="button"
-            aria-label="Steadi 새로고침"
-            onClick={() => window.location.reload()}
-            className="block shrink-0"
+          {/* 로고를 누르면 홈으로. 이미 홈이면 새로고침해 화면 상태를 처음으로 되돌린다 */}
+          <Link
+            href="/"
+            aria-label="Steadi 홈"
+            onClick={(e) => {
+              if (window.location.pathname !== "/") return;
+              e.preventDefault();
+              window.location.reload();
+            }}
+            className="block shrink-0 transition-[scale] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-108"
           >
             <Image src="/assets/logo.png" alt="" width={96} height={22} priority className="h-[22px] w-[96.08px]" />
-          </button>
+          </Link>
 
           {/* 메뉴는 1024 이상에서만 (그 미만은 툴 묶음과 겹침) */}
           <nav className="max-lg:hidden">
@@ -71,9 +93,19 @@ export default function Gnb({ active }: { active: (typeof MENU)[number] }) {
             <button type="button" aria-label="설정" className="block size-[36px]">
               <Image src="/assets/btn-settings.png" alt="" width={36} height={36} />
             </button>
-            <button type="button" aria-label="알림" className="block size-[36px]">
-              <Image src="/assets/btn-bell.png" alt="" width={36} height={36} />
-            </button>
+            <div ref={notiRef} className="relative">
+              <button
+                type="button"
+                aria-label="알림"
+                aria-expanded={notiOpen}
+                aria-controls="notifications"
+                onClick={() => setNotiOpen((o) => !o)}
+                className="block size-[36px]"
+              >
+                <Image src="/assets/btn-bell.png" alt="" width={36} height={36} />
+              </button>
+              <NotificationPanel open={notiOpen} />
+            </div>
 
             {/* 툴 연결 묶음은 태블릿 이상에서만 (모바일 GNB 폭 부족). 아이콘마다 따로 호버 확대 */}
             <div className="flex h-[36px] items-center gap-[8px] rounded-[10px] bg-white pr-[10px] pl-[12px] max-md:hidden">
