@@ -52,8 +52,8 @@ export default function NotificationPanel({ open }: { open: boolean }) {
       role="dialog"
       aria-label="알림"
       inert={!open}
-      className={`absolute top-[53px] -left-[105px] z-40 flex h-[431px] w-[410px] origin-top flex-col gap-[10px] rounded-[36px] bg-white px-[22px] py-[24px] shadow-[0_4px_30px_rgba(0,0,0,0.06)] transition-[opacity,translate] duration-200 ease-out ${
-        open ? "" : "pointer-events-none -translate-y-[6px] opacity-0"
+      className={`absolute top-[53px] -left-[105px] z-40 h-[431px] w-[410px] max-md:right-[-68px] max-md:left-auto max-md:w-[min(410px,calc(100vw-32px))] origin-top flex-col gap-[10px] rounded-[36px] bg-white px-[22px] py-[24px] shadow-[0_4px_30px_rgba(0,0,0,0.06)] transition-[opacity,translate,display] transition-discrete duration-200 ease-out ${
+        open ? "flex starting:-translate-y-[6px] starting:opacity-0" : "hidden -translate-y-[6px] opacity-0"
       }`}
     >
       <div className="flex flex-col gap-[8px] px-[4px]">

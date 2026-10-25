@@ -19,8 +19,8 @@ export function ProfileMenu({ open, onSelect }: { open: boolean; onSelect: (tab:
       id="profile-menu"
       role="menu"
       inert={!open}
-      className={`absolute top-[51px] -left-[302px] z-40 flex w-[350px] flex-col gap-[15px] rounded-[36px] bg-white/95 px-[30px] pt-[26px] pb-[28px] shadow-[0_4px_30px_rgba(0,0,0,0.06)] transition-[opacity,translate] duration-200 ease-out ${
-        open ? "" : "pointer-events-none -translate-y-[6px] opacity-0"
+      className={`absolute top-[51px] -left-[302px] z-40 w-[350px] flex-col gap-[15px] rounded-[36px] bg-white/95 px-[30px] pt-[26px] pb-[28px] shadow-[0_4px_30px_rgba(0,0,0,0.06)] transition-[opacity,translate,display] transition-discrete duration-200 ease-out ${
+        open ? "flex starting:-translate-y-[6px] starting:opacity-0" : "hidden -translate-y-[6px] opacity-0"
       }`}
     >
       <div className="flex flex-col gap-[4px]">

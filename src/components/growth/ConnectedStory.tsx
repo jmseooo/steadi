@@ -458,7 +458,7 @@ function Fade({ style, className = "", children }: { style: CSSProperties; class
   );
 }
 
-function RoundButton({ label, onClick, children }: { label: string; onClick?: () => void; children: ReactNode }) {
+export function RoundButton({ label, onClick, children }: { label: string; onClick?: () => void; children: ReactNode }) {
   return (
     <button
       type="button"

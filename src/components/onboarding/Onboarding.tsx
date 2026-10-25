@@ -28,10 +28,11 @@ import {
   type StepState,
 } from "./ui";
 
-type Step = "welcome" | "method" | "device" | "service" | "finding" | "found" | "goal" | "done";
+type Step = "login" | "welcome" | "method" | "device" | "service" | "finding" | "found" | "goal" | "done";
 
 // 진행 막대: 시작 방식·기기 연결 1/3, 서비스 연결·프로젝트 찾기 2/3, 이후 꽉 참
 const PROGRESS: Record<Step, number> = {
+  login: 0,
   welcome: 0,
   method: 1 / 3,
   device: 1 / 3,
@@ -55,7 +56,10 @@ function glow(from: string, to: string) {
   // 반지름은 --glow-s 배율로: 크기 변환(scale) 대신 값을 바꿔 다시 그려야 큰 그라데이션이 깨지지 않는다
   return `radial-gradient(calc(804px * var(--glow-s)) calc(804px * var(--glow-s)) at 50% 50%, ${stops.join(", ")})`;
 }
-const GLOW: Record<Accent, string> = {
+// login: 회원가입 화면만 보라 → 하늘 (Figma 154:7360)
+type GlowKey = Accent | "login";
+const GLOW: Record<GlowKey, string> = {
+  login: glow("#d9d4ffcc", "#b8e5ff00"),
   default: glow("#ffcbeccc", "#ffd2a900"),
   pink: glow("#ffcbec80", "#ffcbec00"),
   orange: glow("#ffd2a980", "#ffd2a900"),
@@ -70,7 +74,7 @@ export type OnboardingDebug = { step?: string; goal?: string; modal?: string };
 
 export default function Onboarding({ debug = {} }: { debug?: OnboardingDebug }) {
   const router = useRouter();
-  const [step, setStep] = useState<Step>(debug.step && debug.step in PROGRESS ? (debug.step as Step) : "welcome");
+  const [step, setStep] = useState<Step>(debug.step && debug.step in PROGRESS ? (debug.step as Step) : "login");
   const [methods, setMethods] = useState<string[]>(debug.modal ? ["device"] : []);
   const [askPermission, setAskPermission] = useState(Boolean(debug.modal));
   const [services, setServices] = useState<ServiceId[]>(["notion", "kakao"]);
@@ -82,6 +86,7 @@ export default function Onboarding({ debug = {} }: { debug?: OnboardingDebug }) 
     picked.includes(p.id),
   );
   const accent: Accent = step === "goal" ? (goalProjects[goalIndex]?.color ?? "default") : "default";
+  const glowKey: GlowKey = step === "login" ? "login" : accent;
 
   // 스테디가 스스로 작업하는 동안(연결·찾기 진행, 대화 답변 준비) 배경이 숨 쉬듯 커졌다 작아진다
   const [progressWorking, setProgressWorking] = useState(false);
@@ -102,16 +107,16 @@ export default function Onboarding({ debug = {} }: { debug?: OnboardingDebug }) 
           {/* 배경: 색이 바뀔 때 겹쳐서 서서히 전환. 스테디가 작업하는 동안 원이 커졌다 작아진다.
               원(1608px, Figma 기준 -84·170)보다 사방 400px 넓은 판에 그려 커져도 가장자리가 잘리지 않게 */}
           <div ref={glowRef} className="pointer-events-none absolute top-[-230px] left-[-484px] size-[2408px]">
-            {(Object.keys(GLOW) as Accent[]).map((a) => (
+            {(Object.keys(GLOW) as GlowKey[]).map((a) => (
               <div
                 key={a}
                 aria-hidden
                 className="absolute inset-0 transition-opacity duration-700"
-                style={{ background: GLOW[a], opacity: a === accent ? 1 : 0 }}
+                style={{ background: GLOW[a], opacity: a === glowKey ? 1 : 0 }}
               />
             ))}
             {/* 같은 배경을 한 겹 더 겹쳐, 작업 중엔 색이 진해졌다 옅어진다 */}
-            <div aria-hidden className="absolute inset-0 opacity-(--glow-k)" style={{ background: GLOW[accent] }} />
+            <div aria-hidden className="absolute inset-0 opacity-(--glow-k)" style={{ background: GLOW[glowKey] }} />
           </div>
           <Image
             src="/assets/onboarding/decor-lines.png"
@@ -135,7 +140,9 @@ export default function Onboarding({ debug = {} }: { debug?: OnboardingDebug }) 
         )
       }
     >
-      {step !== "welcome" && <ProgressBar value={PROGRESS[step]} accent={accent} />}
+      {step === "login" && <Login onNext={() => setStep("welcome")} />}
+
+      {step !== "login" && step !== "welcome" && <ProgressBar value={PROGRESS[step]} accent={accent} />}
 
       {step === "welcome" && (
         <button
@@ -346,6 +353,46 @@ const ScaleContext = createContext(1);
 
 // 1440×810 Figma 프레임을 창에 맞춘다.
 // 내용은 잘리지 않게 창 안에 들어오도록(축소만), 배경·어두운 막은 창 전체를 빈틈없이 덮는다.
+// 회원가입 (Figma "로그인" 154:7359): 소셜 버튼은 그림만 — 어떤 버튼을 눌러도 다음(안녕하세요)으로
+const SOCIAL = [
+  // Figma: 카카오만 아이콘·글자 간격 0
+  { id: "kakao", label: "카카오로 회원가입", className: "bg-[#fae64d] text-ink" },
+  { id: "google", label: "구글로 회원가입", className: "gap-[10px] border border-toggle bg-white text-ink" },
+  { id: "apple", label: "애플로 회원가입", className: "gap-[10px] bg-ink text-white" },
+] as const;
+
+function Login({ onNext }: { onNext: () => void }) {
+  return (
+    <div className="absolute top-[226px] left-[545px] flex w-[350px] flex-col gap-[70px]">
+      <div className="flex flex-col items-center gap-[15px]">
+        <Image src="/assets/onboarding/logo-lg.png" alt="Steadi" width={209} height={42} priority className="mr-[10px] h-[42px] w-[208.5px]" />
+        <p className="text-[16px] leading-[23.2px] font-semibold text-ink-muted">스테디에 오신 것을 환영합니다</p>
+      </div>
+      <div className="flex flex-col gap-[30px]">
+        <div className="flex flex-col gap-[10px]">
+          {SOCIAL.map((b) => (
+            <button
+              key={b.id}
+              type="button"
+              onClick={onNext}
+              className={`flex h-[46px] items-center rounded-[14px] px-[20px] text-[15px] leading-[21px] font-semibold hover:scale-[1.03] ${b.className}`}
+            >
+              <Image src={`/assets/onboarding/login-${b.id}.png`} alt="" width={22} height={22} className="size-[22px]" />
+              <span className="flex-1 text-center">{b.label}</span>
+            </button>
+          ))}
+        </div>
+        <p className="flex justify-center gap-[10px] text-[14px] leading-[19.6px] font-semibold">
+          <span className="text-[rgba(41,44,45,0.4)]">이미 계정이 있으신가요?</span>
+          <button type="button" onClick={onNext} className="text-[#292c2d]">
+            로그인
+          </button>
+        </p>
+      </div>
+    </div>
+  );
+}
+
 function Stage({ background, overlay, children }: { background: ReactNode; overlay?: ReactNode; children: ReactNode }) {
   const [view, setView] = useState({ w: 1440, h: 810 });
   useLayoutEffect(() => {

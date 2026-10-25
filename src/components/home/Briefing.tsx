@@ -1,10 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from "react";
 import { ConnectedCard } from "../project-detail/Cards";
 import { PROJECT_COLORS } from "../projectColors";
+import BriefingStory from "./BriefingStory";
 import { BRIEFING_CARDS } from "./data";
 
 /*
@@ -12,6 +12,7 @@ import { BRIEFING_CARDS } from "./data";
  * 오른쪽 466 패널의 카드 묶음: 맨 앞 카드를 클릭하거나 옆으로 던지면 날아갔다가 맨 뒤로 들어가고,
  * 나머지는 한 칸씩 앞으로 온다 (Figma Make "Simple Card Stack" 참고).
  * 박스 배경 빛과 제목 그라데이션 끝색은 맨 앞 카드의 프로젝트 색을 따라 바뀐다 (globals.css --brief-tint).
+ * "브리핑 받을게요"를 누르면 박스가 1200×692로 커지며 브리핑이 재생된다 (BriefingStory).
  */
 
 // 카드 자리 (패널 기준 좌상단 + 회전, 카드 가운데 기준 회전). 0 맨 앞 · 1 가운데 · 2 맨 뒤
@@ -33,6 +34,7 @@ export default function Briefing() {
   const start = useRef<{ x: number; y: number; moved: boolean } | null>(null);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const [panelRef, scale] = usePanelScale();
+  const [story, setStory] = useState(false);
 
   useEffect(() => () => clearTimeout(timer.current), []);
 
@@ -83,6 +85,18 @@ export default function Briefing() {
     }
   };
 
+  if (story)
+    return (
+      <StorySection
+        onClose={() => setStory(false)}
+        onNext={() => {
+          // 다음 브리핑: 박스를 닫고 카드 묶음을 한 장 넘긴다
+          setStory(false);
+          setOrder((o) => [...o.slice(1), o[0]]);
+        }}
+      />
+    );
+
   return (
     <section
       aria-label="오늘의 브리핑"
@@ -122,12 +136,13 @@ export default function Briefing() {
           <p className="mt-[5px] text-[16px] leading-[1.45] text-ink-muted sm:text-[18px] sm:leading-[26.1px]">
             서로 다른 프로젝트에서 비슷하게 행동했던 순간을 정리했어요
           </p>
-          <Link
-            href="/growth/connected"
+          <button
+            type="button"
+            onClick={() => setStory(true)}
             className="mt-[35px] flex h-[46px] w-fit items-center rounded-[30px] bg-ink px-[18px] text-[16px] leading-[22.4px] font-semibold text-white transition-[scale] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-108"
           >
             브리핑 받을게요
-          </Link>
+          </button>
         </div>
 
         {/* 카드 패널 466×466: 좁은 화면에선 폭에 맞춰 통째로 줄인다 */}
@@ -180,6 +195,45 @@ export default function Briefing() {
         </div>
       </div>
     </section>
+  );
+}
+
+// 브리핑 재생 화면 크기 (Figma 박스 1200×692). 좁은 화면에선 폭에 맞춰 통째로 줄인다
+const STORY_W = 1200;
+const STORY_H = 692;
+
+// 박스를 폭과 창 높이 둘 다에 맞춰 줄인다: 박스 아래가 화면 밖으로 넘치지 않게 (Figma: 위 80 · 아래 38 여백)
+const STORY_TOP = 80;
+const STORY_BOTTOM = 38;
+
+function StorySection({ onClose, onNext }: { onClose: () => void; onNext: () => void }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+  useLayoutEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const fit = () =>
+      setScale(Math.min(1, el.clientWidth / STORY_W, Math.max(0.5, (window.innerHeight - STORY_TOP - STORY_BOTTOM) / STORY_H)));
+    const ro = new ResizeObserver(fit);
+    ro.observe(el);
+    window.addEventListener("resize", fit);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", fit);
+    };
+  }, []);
+  return (
+    <div ref={ref} className="w-full">
+      <section
+        aria-label="오늘의 브리핑"
+        className="relative mx-auto animate-[brief-grow_0.6s_cubic-bezier(0.22,1,0.36,1)] overflow-hidden rounded-[52px] bg-white break-keep"
+        style={{ width: STORY_W * scale, height: STORY_H * scale, borderRadius: 52 * scale }}
+      >
+        <div className="absolute top-0 left-0 origin-top-left animate-[growth-fade_0.6s_ease-out]" style={{ scale }}>
+          <BriefingStory onClose={onClose} onNext={onNext} />
+        </div>
+      </section>
+    </div>
   );
 }
 

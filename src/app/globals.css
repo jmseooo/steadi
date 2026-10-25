@@ -94,3 +94,9 @@ body {
 /* 경험 카드 창 본문 스크롤 막대 (Figma 6px #ebedef) */
 .modal-scroll::-webkit-scrollbar { width: 6px; }
 .modal-scroll::-webkit-scrollbar-thumb { background: var(--color-toggle); border-radius: 3px; }
+
+/* 홈 > 브리핑 받기: 오늘의 브리핑 박스(530)가 재생 화면(692)으로 커짐 */
+@keyframes brief-grow {
+  from { max-height: 530px; }
+  to { max-height: 692px; }
+}
