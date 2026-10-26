@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import FilterChips from "../FilterChips";
-import Gnb from "../Gnb";
 import { ConnectedCard } from "../project-detail/Cards";
 import { GROWTH_CARDS } from "./growthCards";
 import MomentGrid from "./MomentGrid";
@@ -253,7 +252,7 @@ export default function GrowthHome() {
   );
 
   return (
-    <Stage bleed>
+    <Stage bleed gnb="Growth">
       {tab === "moments" ? <MomentGrid /> : carousel}
 
       {/* 위쪽: GNB 아래 흐림 띠 + 제목 · 칩 */}
@@ -269,9 +268,6 @@ export default function GrowthHome() {
         <FilterChips items={TABS} value={TABS[tab === "moments" ? 1 : 0]} onChange={changeTab} />
       </div>
 
-      <div className="absolute top-0 left-0 z-30 w-[1440px]">
-        <Gnb active="Growth" />
-      </div>
     </Stage>
   );
 }

@@ -1,4 +1,3 @@
-import Gnb from "../Gnb";
 import { ConnectedCard } from "../project-detail/Cards";
 import { MomentIcon } from "./MomentShape";
 import { momentCards, type Moment } from "./moments";
@@ -8,7 +7,7 @@ import Stage from "./Stage";
 // 아이콘 · 제목 · 설명, 오른쪽 수정·메모·삭제(동작 미정), 아래 저장된 연결 카드(280×350 카드를 224×280으로 축소)
 export default function MomentDetail({ moment }: { moment: Moment }) {
   return (
-    <Stage>
+    <Stage gnb="Growth">
       <div className="absolute top-[100px] left-[130px] flex flex-col gap-[18px]">
         <MomentIcon shape={moment.shape} />
         <div className="flex flex-col gap-[5px]">
@@ -37,9 +36,6 @@ export default function MomentDetail({ moment }: { moment: Moment }) {
         ))}
       </ul>
 
-      <div className="absolute top-0 left-0 z-30 w-[1440px]">
-        <Gnb active="Growth" />
-      </div>
     </Stage>
   );
 }

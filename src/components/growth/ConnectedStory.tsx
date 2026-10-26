@@ -2,7 +2,6 @@
 
 import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import Breadcrumb from "../Breadcrumb";
-import Gnb from "../Gnb";
 import Stage from "./Stage";
 import SuggestionCards from "./SuggestionCards";
 import { ConnectedCard, ExperienceCard, type ExperienceCardData } from "../project-detail/Cards";
@@ -162,7 +161,7 @@ export default function ConnectedStory({
   const part1Visible = scene <= 7;
 
   return (
-    <Stage>
+    <Stage gnb="Growth">
       {/* 1부 빛 3개 (레이어 블러 300 → CSS blur 150px) */}
       {part1 &&
         ORDER.map((k) => {
@@ -433,9 +432,6 @@ export default function ConnectedStory({
         {suggest && <SuggestionCards onLater={() => setSuggest(false)} />}
       </div>
 
-      <div className="absolute top-0 left-0 w-[1440px]">
-        <Gnb active="Growth" />
-      </div>
     </Stage>
   );
 }
