@@ -1,6 +1,7 @@
 import type { ConnectedCardData } from "../project-detail/Cards";
+import { STORIES } from "./stories";
 
-// 성장 홈 연결된 경험 카드 27장 (Figma "Section 1" 옆 카드 격자, 93:366~93:754)
+// 성장 홈 연결된 경험 카드: Figma "Section 1" 옆 카드 격자 27장(93:366~93:754) + 아래 이야기 카드 5장
 // 순서는 바퀴 순서: 0번이 처음 가운데, 1·2번이 오른쪽, 마지막 두 장이 왼쪽 (Figma 첫 화면 그대로)
 export type GrowthCard = ConnectedCardData & { tags: string[] };
 
@@ -12,7 +13,7 @@ const c = (art: number, tone: GrowthCard["tone"], tags: string[], title: string,
   confidence,
 });
 
-export const GROWTH_CARDS: GrowthCard[] = [
+const BASE_CARDS: GrowthCard[] = [
   c(
     7,
     "blue",
@@ -77,3 +78,7 @@ export const GROWTH_CARDS: GrowthCard[] = [
   c(12, "blue", ["밴드 동아리", "자기소개서"], "녹음과 글을 다시 확인하며,\n기억만으로 놓친 점을 찾았어요", 86),
   c(23, "pink", ["마케팅 공모전", "밴드 동아리"], "예상과 다른 결과를 살펴,\n다음 시도에 바꿀 점을 찾았어요", 86),
 ];
+
+// 이야기가 있는 연결된 경험 카드 5장 (Figma 181:1226). 첫 화면(가운데 ±3장)은 Figma 그대로 두려고 오른쪽 네 번째 카드 다음에 넣는다
+const STORY_CARDS = Object.values(STORIES).map((s) => s.connected as GrowthCard);
+export const GROWTH_CARDS: GrowthCard[] = [...BASE_CARDS.slice(0, 4), ...STORY_CARDS, ...BASE_CARDS.slice(4)];
