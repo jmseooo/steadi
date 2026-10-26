@@ -1,11 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from "react";
-import { STORIES, storySlugFor } from "../growth/stories";
-import { ConnectedCard, type ConnectedCardData } from "../project-detail/Cards";
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from "react";
+import { ConnectedCard } from "../project-detail/Cards";
 import { toneColors } from "../projectColors";
-import BriefingStory, { HOME_DEFAULT_STORY } from "./BriefingStory";
+import BriefingStory from "./BriefingStory";
 import { BRIEFING_CARDS } from "./data";
 
 /*
@@ -99,8 +98,6 @@ export default function Briefing() {
   if (story)
     return (
       <StorySection
-        key={order[0]}
-        card={BRIEFING_CARDS[order[0]]}
         onClose={() => setStory(false)}
         onNext={() => {
           // 다음 브리핑: 박스를 닫고 카드 묶음을 한 장 넘긴다
@@ -219,11 +216,7 @@ const STORY_H = 692;
 const STORY_TOP = 80;
 const STORY_BOTTOM = 38;
 
-function StorySection({ card, onClose, onNext }: { card: ConnectedCardData; onClose: () => void; onNext: () => void }) {
-  // 맨 앞 카드의 이야기 (이야기가 없는 원래 카드는 기본 이야기)
-  const slug = storySlugFor(card.title);
-  const story = slug ? STORIES[slug] : HOME_DEFAULT_STORY;
-  const href = slug ? `/growth/connected/${slug}` : "/growth/connected";
+function StorySection({ onClose, onNext }: { onClose: () => void; onNext: () => void }) {
   const ref = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
   useLayoutEffect(() => {
@@ -247,7 +240,7 @@ function StorySection({ card, onClose, onNext }: { card: ConnectedCardData; onCl
         style={{ width: STORY_W * scale, height: STORY_H * scale, borderRadius: 52 * scale }}
       >
         <div className="absolute top-0 left-0 origin-top-left animate-[growth-fade_0.6s_ease-out]" style={{ scale }}>
-          <BriefingStory story={story} href={href} onClose={onClose} onNext={onNext} />
+          <BriefingStory onClose={onClose} onNext={onNext} />
         </div>
       </section>
     </div>
@@ -255,15 +248,13 @@ function StorySection({ card, onClose, onNext }: { card: ConnectedCardData; onCl
 }
 
 // 패널을 담는 칸의 폭 / 466 (데스크톱은 1)
-// 브리핑 재생 화면에서 돌아오면 묶음 칸이 새로 생기므로, 칸이 붙을 때마다 다시 잰다(콜백 ref).
-// 처음 한 번만 재면 사라지는 칸의 폭 0이 남아 카드가 0배로 안 보였다
 function usePanelScale() {
+  const ref = useRef<HTMLDivElement>(null);
   const [value, setValue] = useState(1);
-  const ref = useCallback((el: HTMLDivElement | null) => {
+  useLayoutEffect(() => {
+    const el = ref.current;
     if (!el) return;
-    const fit = () => el.clientWidth > 0 && setValue(Math.min(1, el.clientWidth / PANEL));
-    fit();
-    const ro = new ResizeObserver(fit);
+    const ro = new ResizeObserver(() => setValue(Math.min(1, el.clientWidth / PANEL)));
     ro.observe(el);
     return () => ro.disconnect();
   }, []);

@@ -1,6 +1,5 @@
 import type { ConnectedCardData } from "../project-detail/Cards";
 import type { ProjectColor } from "../projectColors";
-import { STORIES } from "../growth/stories";
 
 // 홈 (Figma "홈 | 브리핑 받기 전" 100:2968)
 
@@ -10,21 +9,12 @@ export const PROJECT_NAME: Record<ProjectColor, string> = {
   blue: "밴드 동아리",
 };
 
-// 원래 오늘의 브리핑 카드 묶음 (Figma "홈 | 브리핑 받기 전" 100:2968): 앞 → 뒤 순서 (파랑이 맨 앞, 주황 가운데, 분홍 맨 뒤).
-// 이 카드들은 브리핑 재생이 모두 같은 기본 이야기(BriefingStory의 HOME_DEFAULT_STORY)
-export const ORIGINAL_BRIEFING_CARDS: ConnectedCardData[] = [
+// 오늘의 브리핑 카드 묶음: 앞 → 뒤 순서 (Figma: 파랑이 맨 앞, 주황 가운데, 분홍 맨 뒤)
+export const BRIEFING_CARDS: ConnectedCardData[] = [
   { art: 5, tone: "blue", tags: ["밴드 동아리", "마케팅 공모전"], title: "방법을 바로 확정하지 않고,\n작게 시도해 차이를 확인했어요", confidence: 77 },
   { art: 15, tone: "orange", tags: ["자기소개서", "밴드 동아리", "마케팅 공..."], title: "막연했던 어려움을 나눠,\n먼저 바꿀 부분을 찾았어요", confidence: 82 },
   { art: 23, tone: "pink", tags: ["마케팅 공모전", "밴드 동아리"], title: "예상과 다른 결과를 살펴,\n다음 시도에 바꿀 점을 찾았어요", confidence: 86 },
 ];
-
-// 지금은 이야기(Figma "성장" 181:1226)가 있는 카드 3장으로 바꿔, 카드마다 자기 이야기를 재생한다.
-// 원래 카드로 되돌리려면 USE_STORY_CARDS를 false로
-const USE_STORY_CARDS = true;
-const STORY_CARD_SLUGS = ["plan", "audience", "feedback"]; // 파랑 · 주황 · 보라 (앞 → 뒤, Figma처럼 첫 화면은 파랑이 맨 앞)
-export const BRIEFING_CARDS: ConnectedCardData[] = USE_STORY_CARDS
-  ? STORY_CARD_SLUGS.map((slug) => STORIES[slug].connected)
-  : ORIGINAL_BRIEFING_CARDS;
 
 export type Change = { id: string; project: ProjectColor; kind: string; title: string; desc: string; action: string };
 
