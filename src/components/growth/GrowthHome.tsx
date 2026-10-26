@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import FilterChips from "../FilterChips";
 import { ConnectedCard } from "../project-detail/Cards";
 import { GROWTH_CARDS } from "./growthCards";
@@ -117,16 +116,31 @@ const easeOut = (x: number) => 1 - Math.pow(1 - x, 3);
 // 위 칩: 연결된 경험(카드 바퀴) · 성장의 순간(카테고리 카드, Figma 150:2171)
 const TABS = [`연결된 경험 ${GROWTH_CARDS.length}`, `성장의 순간 ${MOMENT_TOTAL}`] as const;
 
+const TAB_EVENT = "steadi:growth-tab";
+const readTab = () => (new URLSearchParams(window.location.search).get("tab") === "moments" ? "moments" : "connected");
+function subscribeTab(onChange: () => void) {
+  window.addEventListener("popstate", onChange);
+  window.addEventListener(TAB_EVENT, onChange);
+  return () => {
+    window.removeEventListener("popstate", onChange);
+    window.removeEventListener(TAB_EVENT, onChange);
+  };
+}
+
 export default function GrowthHome() {
   const n = GROWTH_CARDS.length;
   const [index, setIndex] = useState(0); // 가운데 카드 (목표)
   const [pos, setPos] = useState(0); // 지금 그려지는 위치 (움직이는 동안 실수)
+  const [moved, setMoved] = useState(false); // 한 번이라도 넘겼는지 — 처음 들어올 땐 아래 제목을 바로 보여 준다
   const posRef = useRef(0);
   const anim = useRef<number | null>(null);
-  // 고른 칩은 주소(?tab=moments)에 둔다: 카테고리 화면에서 뒤로 오면 성장의 순간이 열려 있도록
-  const tab = useSearchParams().get("tab") === "moments" ? "moments" : "connected";
-  const changeTab = (label: (typeof TABS)[number]) =>
+  // 고른 칩은 주소(?tab=moments)에 둔다: 카테고리 화면에서 뒤로 오면 성장의 순간이 열려 있도록.
+  // useSearchParams는 Suspense가 필요해 Growth로 넘어올 때 빈 화면이 깜박여서, 주소를 직접 읽는다
+  const tab = useSyncExternalStore(subscribeTab, readTab, () => "connected");
+  const changeTab = (label: (typeof TABS)[number]) => {
     window.history.replaceState(null, "", label === TABS[1] ? "/growth?tab=moments" : "/growth");
+    window.dispatchEvent(new Event(TAB_EVENT));
+  };
 
   // pos를 target까지 0.6초 동안 감속하며 이동
   const goTo = useCallback((target: number) => {
@@ -142,6 +156,7 @@ export default function GrowthHome() {
     };
     anim.current = requestAnimationFrame(step);
     setIndex(target);
+    setMoved(true);
   }, []);
 
   const move = useCallback((d: number) => goTo(Math.round(posRef.current) + d), [goTo]);
@@ -200,7 +215,10 @@ export default function GrowthHome() {
 
       {/* 아래: 가운데 카드 제목 · 연결 수, 양옆 화살표, 자세히 보기 */}
       <div className="absolute top-[571px] left-0 z-20 flex w-[1440px] justify-center">
-        <div key={wrap(index)} className="flex animate-[growth-fade_0.45s_ease-out] flex-col items-center gap-[5px]">
+        <div
+          key={wrap(index)}
+          className={`flex flex-col items-center gap-[5px] ${moved ? "animate-[growth-fade_0.45s_ease-out]" : ""}`}
+        >
           <p className="text-center text-[24px] leading-[33.6px] font-bold whitespace-pre">{active.title}</p>
           <p className="text-[14px] leading-[19.6px] font-semibold text-ink-muted">
             연결된 경험 {active.tags.length}개

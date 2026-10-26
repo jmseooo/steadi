@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
+import GrowthPreload from "./growth/GrowthPreload";
 import NotificationPanel from "./Notifications";
 import { keepOnboarded } from "./OnboardingGate";
 import { ProfileMenu, ProfileModal, type ProfileTab } from "./Profile";
@@ -39,6 +40,7 @@ export default function Gnb({ active }: { active: (typeof MENU)[number] }) {
 
   return (
     <header className="sticky top-0 z-20 bg-canvas px-5">
+      {active !== "Growth" && <GrowthPreload />}
       <div className="mx-auto flex h-[60px] max-w-[1200px] items-center justify-between">
         <div className="flex items-center gap-[80px]">
           {/* 로고를 누르면 홈으로. 이미 홈이면 새로고침해 화면 상태를 처음으로 되돌린다 */}

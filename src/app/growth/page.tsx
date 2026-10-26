@@ -1,11 +1,6 @@
-import { Suspense } from "react";
 import GrowthHome from "@/components/growth/GrowthHome";
 
-// 성장 홈은 ?tab= 을 읽으므로 Suspense 안에서 그린다
+// Suspense로 감싸지 않는다: 감싸면 Growth로 넘어오는 동안 빈 화면이 깜박인다 (탭은 GrowthHome이 주소에서 직접 읽음)
 export default function GrowthPage() {
-  return (
-    <Suspense>
-      <GrowthHome />
-    </Suspense>
-  );
+  return <GrowthHome />;
 }
