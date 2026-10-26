@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createContext, use, useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode, type RefObject } from "react";
 import FolderArt, { FolderTitle } from "../FolderArt";
 import { markOnboarded } from "../OnboardingGate";
+import { track } from "@/lib/ut";
 import GoalChat from "./GoalChat";
 import {
   DEVICE_PROGRESS,
@@ -100,6 +101,13 @@ export default function Onboarding({ debug = {} }: { debug?: OnboardingDebug }) 
     if (goalIndex + 1 < goalProjects.length) setGoalIndex(goalIndex + 1);
     else setStep("done");
   }, [goalIndex, goalProjects.length]);
+
+  // UT 기록: 단계마다 그때까지 고른 값을 남긴다
+  useEffect(() => {
+    track("onboarding_step", { target: step, value: { methods, services, picked, goalIndex } });
+    // 단계가 바뀔 때만 남긴다 (고르는 중간 값은 클릭 기록으로 충분)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step, goalIndex]);
 
   return (
     <Stage

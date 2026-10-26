@@ -54,6 +54,7 @@ const SUGGESTIONS: Suggestion[] = [
 
 const GAP = 750; // 카드 중심 간격
 const EASE = "cubic-bezier(0.23, 1, 0.32, 1)";
+const MOVE = "0.4s cubic-bezier(0.77, 0, 0.175, 1)"; // 화면 안에서 옆으로 옮겨 가는 이동
 
 export default function SuggestionCards({ onLater }: { onLater: () => void }) {
   const [active, setActive] = useState(1); // Figma 첫 화면: 가운데 마케팅 공모전
@@ -103,7 +104,7 @@ export default function SuggestionCards({ onLater }: { onLater: () => void }) {
           <div
             key={s.label}
             className="absolute top-[272px] left-[470px]"
-            style={{ translate: `${off * GAP}px 0`, transition: `translate 0.6s ${EASE}`, zIndex: off === 0 ? 2 : 1 }}
+            style={{ translate: `${off * GAP}px 0`, transition: `translate ${MOVE}`, zIndex: off === 0 ? 2 : 1 }}
           >
             <Card s={s} center={off === 0} onSelect={() => select(i)} onHold={off === 0 ? setHolding : undefined} />
           </div>
@@ -184,20 +185,21 @@ function Card({
         }`}
         style={{
           transform: `rotateX(${tiltX}deg) rotateY(${tiltY}deg)`,
-          transition: hover ? "transform 0.15s ease-out" : `transform 0.6s ${EASE}`,
+          transition: hover ? "transform 0.15s ease-out" : `transform 0.4s ${EASE}`,
         }}
       >
         <div
           aria-hidden
           className="pointer-events-none absolute size-[550px] rounded-full blur-[25px]"
           style={{
-            left: gx - 275,
-            top: gy - 275,
+            top: 0,
+            left: 0,
+            translate: `${gx - 275}px ${gy - 275}px`, // left·top 대신 GPU 이동
             background: `radial-gradient(closest-side, ${s.glow}80, ${s.glow}00)`,
             opacity: hover ? 1 : 0.85,
             transition: hover
-              ? "left 0.12s linear, top 0.12s linear, opacity 0.3s"
-              : `left 0.6s ${EASE}, top 0.6s ${EASE}, opacity 0.3s`,
+              ? "translate 0.12s linear, opacity 0.3s"
+              : `translate 0.4s ${EASE}, opacity 0.3s`,
           }}
         />
 

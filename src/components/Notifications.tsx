@@ -42,6 +42,7 @@ const NOTIS: Record<(typeof TABS)[number], Noti[]> = {
 
 // 410×431 흰 패널. 알림 버튼 기준 왼쪽 -105 · 위 53 (Figma 프레임에서 버튼 1048,12 → 패널 943,65)
 // 닫아도 패널은 남겨 둬서 고른 탭·읽음 표시가 유지된다
+// 열 땐 알림 버튼 위치(왼쪽 123px)를 기준으로 0.97배에서 커지고, 닫을 땐 더 빨리 사라진다
 export default function NotificationPanel({ open }: { open: boolean }) {
   const [tab, setTab] = useState<(typeof TABS)[number]>("스테디");
   const [read, setRead] = useState<string[]>([]); // 누른 알림은 빨간 점을 지운다
@@ -52,8 +53,10 @@ export default function NotificationPanel({ open }: { open: boolean }) {
       role="dialog"
       aria-label="알림"
       inert={!open}
-      className={`absolute top-[53px] -left-[105px] z-40 h-[431px] w-[410px] max-md:right-[-68px] max-md:left-auto max-md:w-[min(410px,calc(100vw-32px))] origin-top flex-col gap-[10px] rounded-[36px] bg-white px-[22px] py-[24px] shadow-[0_4px_30px_rgba(0,0,0,0.06)] transition-[opacity,translate,display] transition-discrete duration-200 ease-out ${
-        open ? "flex starting:-translate-y-[6px] starting:opacity-0" : "hidden -translate-y-[6px] opacity-0"
+      className={`absolute top-[53px] -left-[105px] z-40 h-[431px] w-[410px] max-md:right-[-68px] max-md:left-auto max-md:w-[min(410px,calc(100vw-32px))] flex-col gap-[10px] rounded-[36px] bg-white px-[22px] py-[24px] shadow-[0_4px_30px_rgba(0,0,0,0.06)] origin-[123px_0] max-md:origin-[calc(100%-86px)_0] transition-[opacity,translate,scale,display] transition-discrete ease-out ${
+        open
+          ? "flex duration-180 starting:-translate-y-[4px] starting:scale-97 starting:opacity-0"
+          : "hidden -translate-y-[4px] scale-97 opacity-0 duration-120"
       }`}
     >
       <div className="flex flex-col gap-[8px] px-[4px]">

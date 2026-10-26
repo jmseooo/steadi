@@ -73,7 +73,7 @@ export default function FeedbackCalendar({
                       aria-label={`${day.getMonth() + 1}월 ${day.getDate()}일`}
                       aria-pressed={active}
                       onClick={() => onSelect(day)}
-                      className={`flex size-[28px] items-center justify-center rounded-[20px] text-[14px] leading-[19.6px] font-semibold transition-[background-color,color,scale] duration-300 ${
+                      className={`flex size-[28px] items-center justify-center rounded-[20px] text-[14px] leading-[19.6px] font-semibold transition-[background-color,color,scale] duration-200 ${
                         active ? "bg-ink text-white" : isToday ? "bg-disabled text-white" : inMonth ? "text-ink-muted" : "text-line"
                       }`}
                     >

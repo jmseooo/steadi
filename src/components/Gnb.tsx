@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
 import NotificationPanel from "./Notifications";
+import { keepOnboarded } from "./OnboardingGate";
 import { ProfileMenu, ProfileModal, type ProfileTab } from "./Profile";
 
 const MENU = ["Home", "Project", "Growth", "Connection"] as const;
@@ -47,6 +48,7 @@ export default function Gnb({ active }: { active: (typeof MENU)[number] }) {
             onClick={(e) => {
               if (window.location.pathname !== "/") return;
               e.preventDefault();
+              keepOnboarded(); // 새로 불러와도 온보딩으로 가지 않게
               window.location.reload();
             }}
             className="block shrink-0 transition-[scale] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] hover:scale-108"
@@ -175,6 +177,6 @@ function useDismiss(open: boolean, ref: RefObject<HTMLElement | null>, close: ()
 
 // 링크는 버튼 기본 호버(globals.css)가 안 걸려 hover:scale-108을 따로 준다
 const menuClass = (active: boolean) =>
-  `transition-[color,scale] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+  `transition-[color,scale] duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] ${
     active ? "text-ink" : "text-disabled hover:text-ink-sub"
   }`;

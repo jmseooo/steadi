@@ -40,7 +40,7 @@ export default function FilterChips<T extends string>({
             aria-selected={active}
             onClick={() => onChange(item)}
             style={{ height }}
-            className={`relative rounded-[20px] px-[14px] text-[14px] leading-[19.6px] font-semibold transition-[background-color,color,scale] duration-300 ${
+            className={`relative rounded-[20px] px-[14px] text-[14px] leading-[19.6px] font-semibold transition-[background-color,color,scale] duration-200 ${
               active ? "text-white" : "bg-toggle text-ink-muted hover:text-ink"
             }`}
           >
@@ -52,7 +52,7 @@ export default function FilterChips<T extends string>({
   );
 }
 
-const SLIDE = "transition-[translate,width,scale] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]";
+const SLIDE = "transition-[translate,width,scale] duration-250 ease-[cubic-bezier(0.22,1,0.36,1)]";
 
 // 선택 표시(알약)가 index번째 칩 뒤로 미끄러지도록 위치·폭을 잰다 (웹폰트 로드 후 한 번 더)
 // key: 칩 글자가 바뀌면(개수 표시 등) 폭이 달라지므로 다시 잰다

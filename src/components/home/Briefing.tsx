@@ -23,15 +23,20 @@ const SLOTS = [
 ];
 const PANEL = 466;
 const THROW = 90; // 이만큼 끌면 던져진다
+const FLICK = 0.11; // 또는 이 속도(px/ms) 이상으로 휙 튕기면 던져진다
 const FLY = { x: 300, r: 16 }; // 던져진 카드가 날아가는 거리·기울기
-const FLY_MS = 320;
-const SETTLE = "translate 0.6s cubic-bezier(0.34, 1.3, 0.64, 1), rotate 0.6s cubic-bezier(0.34, 1.3, 0.64, 1)";
+const FLY_MS = 250;
+// 날아갈 땐 손을 뗀 순간부터 바로 빠르게(ease-out), 제자리로 돌아올 땐 살짝만 튕김
+const FLY_EASE = "cubic-bezier(0.23, 1, 0.32, 1)";
+const SETTLE_EASE = "cubic-bezier(0.34, 1.15, 0.64, 1)";
+const SETTLE = `translate 0.4s ${SETTLE_EASE}, rotate 0.4s ${SETTLE_EASE}`;
 
 export default function Briefing() {
   const [order, setOrder] = useState(() => BRIEFING_CARDS.map((_, i) => i)); // order[0] = 맨 앞 카드
   const [flying, setFlying] = useState<{ card: number; dir: 1 | -1 } | null>(null);
   const [drag, setDrag] = useState<{ x: number; y: number } | null>(null);
   const start = useRef<{ x: number; y: number; moved: boolean } | null>(null);
+  const last = useRef<{ x: number; t: number; v: number }>({ x: 0, t: 0, v: 0 }); // 손 뗄 때의 속도 계산용
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
   const [panelRef, scale] = usePanelScale();
   const [story, setStory] = useState(false);
@@ -56,6 +61,7 @@ export default function Briefing() {
     if (flying) return;
     e.currentTarget.setPointerCapture(e.pointerId);
     start.current = { x: e.clientX, y: e.clientY, moved: false };
+    last.current = { x: 0, t: e.timeStamp, v: 0 };
   };
   const onPointerMove = (e: PointerEvent<HTMLDivElement>) => {
     const s = start.current;
@@ -64,14 +70,18 @@ export default function Briefing() {
     const y = (e.clientY - s.y) / scale;
     if (!s.moved && Math.hypot(x, y) < 5) return;
     s.moved = true;
+    const dt = e.timeStamp - last.current.t;
+    if (dt > 0) last.current = { x, t: e.timeStamp, v: (x - last.current.x) / dt };
     setDrag({ x, y });
   };
-  const onPointerUp = () => {
+  const onPointerUp = (e: PointerEvent<HTMLDivElement>) => {
     const s = start.current;
     start.current = null;
     if (!s) return;
     if (!s.moved) return fling(1); // 클릭
     if (drag && Math.abs(drag.x) > THROW) return fling(drag.x > 0 ? 1 : -1);
+    const { v, t } = last.current;
+    if (e.timeStamp - t < 100 && Math.abs(v) > FLICK) return fling(v > 0 ? 1 : -1); // 짧게 휙 튕긴 경우
     setDrag(null); // 덜 끌었으면 제자리로
   };
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
@@ -175,7 +185,7 @@ export default function Briefing() {
                     translate: `${x}px ${y}px`,
                     rotate: `${r}deg`,
                     zIndex: fly ? 4 : SLOTS.length - slot,
-                    transition: dragging ? "none" : fly ? `translate ${FLY_MS}ms ease-in, rotate ${FLY_MS}ms ease-in` : SETTLE,
+                    transition: dragging ? "none" : fly ? `translate ${FLY_MS}ms ${FLY_EASE}, rotate ${FLY_MS}ms ${FLY_EASE}` : SETTLE,
                   }}
                   {...(isFront && {
                     tabIndex: 0,
@@ -226,7 +236,7 @@ function StorySection({ onClose, onNext }: { onClose: () => void; onNext: () => 
     <div ref={ref} className="w-full">
       <section
         aria-label="오늘의 브리핑"
-        className="relative mx-auto animate-[brief-grow_0.6s_cubic-bezier(0.22,1,0.36,1)] overflow-hidden rounded-[52px] bg-white break-keep"
+        className="relative mx-auto animate-[brief-grow_0.45s_cubic-bezier(0.23,1,0.32,1)] overflow-hidden rounded-[52px] bg-white break-keep"
         style={{ width: STORY_W * scale, height: STORY_H * scale, borderRadius: 52 * scale }}
       >
         <div className="absolute top-0 left-0 origin-top-left animate-[growth-fade_0.6s_ease-out]" style={{ scale }}>

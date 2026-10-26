@@ -406,6 +406,7 @@ export default function ConnectedStory({
             {i === ch && (
               <span
                 key={`${ch}-${jumpKey}`}
+                data-motion="keep"
                 className="absolute inset-0 origin-left bg-ink"
                 style={{
                   animation: `story-fill ${CHAPTER_SEC[i]}s linear forwards`,
@@ -419,7 +420,7 @@ export default function ConnectedStory({
 
       {/* 저장 후: 지금 화면을 흐리게 덮고(Figma 배경 블러 25 + #f4f5f7 50%) 제안 카드 캐러셀 */}
       <div
-        className="absolute inset-0 bg-[rgba(244,245,247,0.5)] backdrop-blur-[12.5px] transition-opacity duration-700"
+        className="absolute inset-0 bg-[rgba(244,245,247,0.5)] backdrop-blur-[12.5px] transition-opacity duration-350 ease-out"
         style={{ opacity: suggest ? 1 : 0, pointerEvents: suggest ? "auto" : "none" }}
       >
         <div

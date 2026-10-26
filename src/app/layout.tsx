@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import OnboardingGate from "@/components/OnboardingGate";
+import UtTracker from "@/components/UtTracker";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -21,6 +22,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         />
       </head>
       <body>
+        <UtTracker />
         <OnboardingGate>{children}</OnboardingGate>
       </body>
     </html>

@@ -12,6 +12,7 @@ const NAME = "김다은";
 const EMAIL = "Steadi20261027@gmail.com";
 
 // 350×335 메뉴. 프로필 버튼 기준 왼쪽 -302 · 위 51 (Figma 프레임에서 버튼 1288,14 → 메뉴 986,65)
+// 프로필 버튼 위치(왼쪽 318px)를 기준으로 0.97배에서 커져 나온다 (닫힘은 더 빠르게)
 export function ProfileMenu({ open, onSelect }: { open: boolean; onSelect: (tab: ProfileTab) => void }) {
   const item = "w-fit text-[14px] leading-[20.3px] text-ink-muted transition-colors duration-200 hover:scale-100 hover:text-ink";
   return (
@@ -19,8 +20,10 @@ export function ProfileMenu({ open, onSelect }: { open: boolean; onSelect: (tab:
       id="profile-menu"
       role="menu"
       inert={!open}
-      className={`absolute top-[51px] -left-[302px] z-40 w-[350px] flex-col gap-[15px] rounded-[36px] bg-white/95 px-[30px] pt-[26px] pb-[28px] shadow-[0_4px_30px_rgba(0,0,0,0.06)] transition-[opacity,translate,display] transition-discrete duration-200 ease-out ${
-        open ? "flex starting:-translate-y-[6px] starting:opacity-0" : "hidden -translate-y-[6px] opacity-0"
+      className={`absolute top-[51px] -left-[302px] z-40 w-[350px] flex-col gap-[15px] rounded-[36px] bg-white/95 px-[30px] pt-[26px] pb-[28px] shadow-[0_4px_30px_rgba(0,0,0,0.06)] origin-[318px_0] transition-[opacity,translate,scale,display] transition-discrete ease-out ${
+        open
+          ? "flex duration-180 starting:-translate-y-[4px] starting:scale-97 starting:opacity-0"
+          : "hidden -translate-y-[4px] scale-97 opacity-0 duration-120"
       }`}
     >
       <div className="flex flex-col gap-[4px]">

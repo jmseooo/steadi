@@ -324,6 +324,7 @@ export default function BriefingStory({ onClose, onNext }: { onClose: () => void
             {i === ch && (
               <span
                 key={`${ch}-${jumpKey}`}
+                data-motion="keep"
                 className="absolute inset-0 origin-left bg-ink"
                 style={{ animation: `story-fill ${CHAPTER_SEC[i]}s linear forwards`, animationPlayState: playing ? "running" : "paused" }}
               />

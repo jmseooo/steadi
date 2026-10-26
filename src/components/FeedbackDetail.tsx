@@ -71,10 +71,10 @@ export default function FeedbackDetail({ data, onClose }: { data: FeedbackDetail
               <span className="relative size-[20px]">
                 <Image src="/assets/icon-notion.png" alt="" width={40} height={32} className="absolute top-0 -left-[10px] h-[32px] w-[40px] max-w-none" />
               </span>
-              <span className="text-[13px] leading-[17px] font-semibold text-ink-muted transition-colors duration-300 group-hover:text-ink-sub">
+              <span className="text-[13px] leading-[17px] font-semibold text-ink-muted transition-colors duration-200 group-hover:text-ink-sub">
                 노션에서 열기
               </span>
-              <Image src="/assets/btn-open-link.png" alt="" width={20} height={20} className="transition-[scale] duration-300 group-hover:scale-108" />
+              <Image src="/assets/btn-open-link.png" alt="" width={20} height={20} className="transition-[scale] duration-200 group-hover:scale-108" />
             </a>
           </div>
           <p className="rounded-[16px] bg-canvas px-[20px] py-[14px] text-[14px] leading-[21px] font-medium text-[#47484c]">

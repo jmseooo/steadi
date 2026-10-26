@@ -12,6 +12,10 @@
   --color-toggle: #ebedef;
   --color-disabled: #b9bbc0;
 
+  /* 애니메이션 곡선 (Emil Kowalski 기준) — 등장·퇴장 / 화면 안 이동 */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+
   /* Figma: Drop shadow 0 4 / blur 30 / #000 3% */
   --shadow-soft: 0 4px 30px rgba(0, 0, 0, 0.03);
 }
@@ -59,20 +63,48 @@
   to { opacity: 1; translate: 0 0; }
 }
 
-/* Tailwind v4는 버튼 기본 커서가 default — 눌리는 요소임을 드러내고, 호버 시 1.08배로 살짝 키운다.
+/* Tailwind v4는 버튼 기본 커서가 default — 눌리는 요소임을 드러낸다.
+   호버 확대는 마우스 환경에서만 1.08배(터치는 탭할 때 호버가 잘못 켜짐), 누르는 순간엔 0.97배로 눌림.
    transition 유틸을 따로 준 버튼은 목록에 scale을 넣어야 애니메이션이 유지된다. */
 @layer base {
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;
     transition-property: scale;
-    transition-duration: 200ms;
-    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    transition-duration: 160ms;
+    transition-timing-function: var(--ease-out);
   }
 
-  button:not(:disabled):hover,
-  [role="button"]:not(:disabled):hover {
-    scale: 1.08;
+  @media (hover: hover) and (pointer: fine) {
+    button:not(:disabled):hover,
+    [role="button"]:not(:disabled):hover {
+      scale: 1.08;
+    }
+  }
+
+  button:not(:disabled):active,
+  [role="button"]:not(:disabled):active {
+    scale: 0.97;
+  }
+}
+
+/* 동작 줄이기 설정: 위치·크기 움직임은 끄고 투명도·색 변화만 짧게 남긴다.
+   이야기 진행 막대처럼 시간을 알려 주는 움직임은 data-motion="keep"으로 남긴다 */
+@media (prefers-reduced-motion: reduce) {
+  *:not([data-motion="keep"]),
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-property: opacity, color, background-color, border-color !important;
+    transition-duration: 150ms !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+  }
+  button:hover,
+  button:active,
+  [role="button"]:hover,
+  [role="button"]:active {
+    scale: none !important;
   }
 }
 

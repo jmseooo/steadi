@@ -13,7 +13,7 @@ const TABS = ["경험 모음", "성장의 순간", "피드백", "제안 카드"]
 const VIEWS = ["연결된 경험 카드", "경험 카드"] as const;
 type View = "묶음" | (typeof VIEWS)[number];
 
-const SLIDE = "transition-[translate,width] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)]";
+const SLIDE = "transition-[translate,width] duration-250 ease-[cubic-bezier(0.22,1,0.36,1)]";
 
 export default function ProjectDetail({ project }: { project: ProjectDetailData }) {
   const [tab, setTab] = useState<(typeof TABS)[number]>("경험 모음");

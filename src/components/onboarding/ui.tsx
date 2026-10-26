@@ -29,13 +29,13 @@ export function Heading({ title, desc, accent }: { title: string; desc: string; 
   );
 }
 
-// 상단 진행 막대 (711px, 채움은 검정 → 강조색)
+// 상단 진행 막대 (711px, 채움은 검정 → 강조색). 폭 대신 가로 배율로 늘려 GPU에서 움직인다
 export function ProgressBar({ value, accent = "default" }: { value: number; accent?: Accent }) {
   return (
     <div className="absolute top-[50px] left-[365px] h-[2px] w-[711px] rounded-[5px] bg-[rgba(41,44,45,0.08)]">
       <div
-        className="h-full rounded-[5px] transition-[width] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
-        style={{ width: value * 711, backgroundImage: `linear-gradient(90deg, #1a1a1a, ${ACCENT_END[accent]})` }}
+        className="h-full w-full origin-left rounded-[5px] transition-[scale] duration-700 ease-out"
+        style={{ scale: `${value} 1`, backgroundImage: `linear-gradient(90deg, #1a1a1a, ${ACCENT_END[accent]})` }}
       />
     </div>
   );
@@ -57,7 +57,7 @@ export function Button({
   return (
     <button
       type="button"
-      className={`flex h-[46px] items-center justify-center rounded-[14px] px-[20px] text-[15px] leading-[21px] font-semibold transition-[background-color,scale] duration-300 disabled:cursor-default ${VARIANT[variant]} ${className}`}
+      className={`flex h-[46px] items-center justify-center rounded-[14px] px-[20px] text-[15px] leading-[21px] font-semibold transition-[background-color,scale] duration-200 disabled:cursor-default ${VARIANT[variant]} ${className}`}
       {...props}
     />
   );
@@ -97,6 +97,7 @@ export function StepIcon({ state, doneColor = "#1a1a1a" }: { state: StepState; d
   return (
     <span
       aria-hidden
+      data-motion="keep"
       className={`size-[22px] shrink-0 rounded-full border-[1.5px] border-[rgba(26,26,26,0.15)] ${
         state === "active" ? "animate-spin border-t-ink [animation-duration:1.1s]" : ""
       }`}

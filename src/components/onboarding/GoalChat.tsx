@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import FolderArt, { FolderTitle } from "../FolderArt";
 import { FOLLOW_UP, type FoundProject } from "./data";
 import { GradientText, StepIcon, type Accent } from "./ui";
+import { track } from "@/lib/ut";
 
 // 프로젝트 색별 목표 강조 말풍선·보내기 버튼 색 (Figma)
 const CHAT_COLORS = {
@@ -74,6 +75,7 @@ export default function GoalChat({
     if (!text || done) return;
     setDraft("");
     const mine: Message = { from: "me", text };
+    track("goal_chat", { target: project.name, value: { text, confirm: isConfirm(text) } });
 
     let reply: Message;
     if (isConfirm(text)) {
@@ -123,13 +125,13 @@ export default function GoalChat({
       <ul className="absolute top-[252px] left-[314px] flex w-[170px] flex-col items-end gap-[20px]">
         {projects.map((p, i) =>
           i === index ? (
-            <li key={p.id} className="transition-all duration-500">
+            <li key={p.id} className="transition-opacity duration-300">
               <FolderArt color={p.color!} size={170}>
                 <FolderTitle color={p.color!}>{p.folder ?? p.name}</FolderTitle>
               </FolderArt>
             </li>
           ) : (
-            <li key={p.id} className="flex items-center gap-[15px] opacity-40 transition-all duration-500">
+            <li key={p.id} className="flex items-center gap-[15px] opacity-40 transition-opacity duration-300">
               {i < index && <StepIcon state="done" doneColor={DONE_COLOR[p.color!]} />}
               <FolderArt color={p.color!} size={120}>
                 <FolderTitle color={p.color!}>{p.folder ?? p.name}</FolderTitle>
