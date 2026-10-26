@@ -1,14 +1,15 @@
 import Image from "next/image";
-import type { ProjectColor } from "../projectColors";
+import type { ProjectTone } from "../projectColors";
 
 // 카드 색 계열별 글자 그라데이션 (Figma): 제목은 #292c2d → 끝색, 확신도는 대각선 시작 → 끝
-const CARD_TONE: Record<ProjectColor, { titleEnd: string; pct: [string, string] }> = {
+const CARD_TONE: Record<ProjectTone, { titleEnd: string; pct: [string, string] }> = {
   orange: { titleEnd: "#7e2610", pct: ["#ffae6b", "#ffeee0"] },
   pink: { titleEnd: "#8c0f49", pct: ["#ffa1da", "#fef1f9"] },
   blue: { titleEnd: "#084872", pct: ["#78d0ff", "#eff8ff"] },
+  purple: { titleEnd: "#1d0872", pct: ["#9c78ff", "#f5efff"] },
 };
 
-export type ConnectedCardData = { art: number; tone: ProjectColor; tags?: string[]; title: string; confidence: number };
+export type ConnectedCardData = { art: number; tone: ProjectTone; tags?: string[]; title: string; confidence: number };
 
 const Tag = ({ children }: { children: string }) => (
   <span className="flex h-[28px] shrink-0 items-center rounded-[20px] bg-[rgba(26,26,26,0.05)] px-[10px] text-[12px] leading-[15.6px] font-semibold text-ink-sub backdrop-blur-[10px]">
@@ -79,14 +80,15 @@ export function ConnectedCard({ card, size = 280 }: { card: ConnectedCardData; s
 export type ExperienceCardData = { tag: string; text: string; source: "notion" | "kakao" };
 
 // 경험 카드 글자 그라데이션 (프로젝트 색별)
-const EXP_TEXT: Record<ProjectColor, string> = {
+const EXP_TEXT: Record<ProjectTone, string> = {
   pink: "linear-gradient(90deg, #560128, #a80c55)",
   blue: "linear-gradient(90deg, #062d4b, #02578a)",
   orange: "linear-gradient(90deg, #441006, #9c2b10)",
+  purple: "linear-gradient(90deg, #280c69, #531abd)",
 };
 
 // 경험 카드 228×260: 프로젝트 색 빛 + 유리 도형 + 페이드 위에 프로젝트 태그·출처 아이콘·내용(아래 정렬)
-export function ExperienceCard({ card, tone }: { card: ExperienceCardData; tone: ProjectColor }) {
+export function ExperienceCard({ card, tone }: { card: ExperienceCardData; tone: ProjectTone }) {
   return (
     <article className="relative h-[260px] w-[228px] shrink-0 overflow-hidden rounded-[28px] border-2 border-white bg-white">
       <div className="pointer-events-none absolute -top-[2px] -left-[2px] h-[260px] w-[228px]">
@@ -133,7 +135,7 @@ export function ExperienceCard({ card, tone }: { card: ExperienceCardData; tone:
         )}
       </div>
       <p
-        className="absolute bottom-[26px] left-[25px] w-fit bg-clip-text text-[15px] leading-[23.25px] font-bold whitespace-pre text-transparent"
+        className="absolute bottom-[26px] left-[25px] w-fit bg-clip-text text-left text-[15px] leading-[23.25px] font-bold whitespace-pre text-transparent"
         style={{ backgroundImage: EXP_TEXT[tone] }}
       >
         {card.text}

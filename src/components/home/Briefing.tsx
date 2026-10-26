@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from "react";
 import { ConnectedCard } from "../project-detail/Cards";
-import { PROJECT_COLORS } from "../projectColors";
+import { toneColors } from "../projectColors";
 import BriefingStory from "./BriefingStory";
 import { BRIEFING_CARDS } from "./data";
 
@@ -55,7 +55,7 @@ export default function Briefing() {
   };
 
   const front = BRIEFING_CARDS[flying ? order[1] : order[0]];
-  const tint = PROJECT_COLORS[front.tone];
+  const tint = toneColors(front.tone);
 
   const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
     if (flying) return;

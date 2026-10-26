@@ -62,7 +62,7 @@ SLOTS[-3] = ext(SLOTS[-2], SLOTS[-1], SLOTS[0]);
 const OPACITY: Record<number, number> = { [-3]: 0, [-2]: 0.4, [-1]: 0.6, 0: 1, 1: 0.6, 2: 0.4, 3: 0 };
 
 // 가운데 카드 테두리: 흰색 → 카드 색 → 흰색 (Figma 피드백 카드 #78d0ff)
-const RIM = { blue: "#78d0ff", pink: "#ffa1da", orange: "#ffae6b" } as const;
+const RIM = { blue: "#78d0ff", pink: "#ffa1da", orange: "#ffae6b", purple: "#9c78ff" } as const;
 
 const W = 280;
 const H = 350;

@@ -12,9 +12,15 @@ export default function Modal({ label, onClose, children }: { label: string; onC
     document.addEventListener("keydown", onKey);
     const overflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    // 스크롤 막대 자리(globals.css에서 늘 비워 둠)는 화면 요소가 덮지 못하고 html 배경색이 보인다.
+    // 열려 있는 동안 그 배경을 덮개(검정 30%)를 얹은 색으로 바꿔 오른쪽 끝에 밝은 띠가 남지 않게
+    const root = document.documentElement;
+    const background = root.style.background;
+    root.style.background = "color-mix(in srgb, var(--color-canvas), #000 30%)";
     return () => {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = overflow;
+      root.style.background = background;
     };
   }, [onClose]);
 

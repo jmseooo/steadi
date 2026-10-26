@@ -1,4 +1,4 @@
-import type { ProjectColor } from "../projectColors";
+import type { ProjectTone } from "../projectColors";
 import type { ConnectedCardData, ExperienceCardData } from "./Cards";
 
 export type Step = { label: string; state: "done" | "current" | "todo"; detail?: string; current?: string };
@@ -13,10 +13,10 @@ export type DetailTheme = {
   goalEnd: string;
   insightLabel: [string, string];
   insightTitle: [string, string];
-  expTone: ProjectColor;
+  expTone: ProjectTone;
 };
 
-export const THEMES: Record<ProjectColor, DetailTheme> = {
+export const THEMES: Record<ProjectTone, DetailTheme> = {
   pink: {
     dot: { ring: ["#ff7ac899", "#fef1f91a"], inner: "#ffa1da", border: "#fee5f5" },
     currentDot: "#ff7ac8",
@@ -50,12 +50,24 @@ export const THEMES: Record<ProjectColor, DetailTheme> = {
     insightTitle: ["#441006", "#9c2b10"],
     expTone: "orange",
   },
+  // 영어 스터디 (Figma 158:18130)
+  purple: {
+    dot: { ring: ["#9a81ff99", "#f6f1fe1a"], inner: "#beb2ff", border: "#ebe8ff" },
+    currentDot: "#9a81ff",
+    currentBg: "rgba(190,178,255,0.1)",
+    currentLabel: "#9a81ff",
+    currentText: "#44189a",
+    goalEnd: "#450ca8",
+    insightLabel: ["#7f55fd", "#7f55fd33"],
+    insightTitle: ["#280c69", "#511abd"],
+    expTone: "purple",
+  },
 };
 
 export type ProjectDetailData = {
   id: string;
   name: string;
-  color: ProjectColor;
+  color: ProjectTone;
   theme: DetailTheme;
   status: string;
   goal: string;
@@ -82,6 +94,65 @@ const CONNECTED_BUNDLE: ConnectedCardData[] = [
   { art: 3, tone: "blue", title: "서로 다른 의견을 모아,\n함께 선택할 기준을 찾았어요", confidence: 82 },
   { art: 6, tone: "pink", title: "계획대로 진행하기 어려울 때,\n가능한 조건부터 다시 살폈어요", confidence: 82 },
   { art: 9, tone: "blue", title: "선택지가 여러 개일 때,\n비교할 기준부터 정했어요", confidence: 82 },
+];
+
+// 영어 스터디와 이어진 연결된 경험 카드 (Figma "경험카드 데이터 대체" 158:20125 오른쪽 카드 원본, 그림 c28~c34)
+// 같은 카드가 여러 프로젝트 목록에 나온다
+const ENGLISH_CONNECTED: Record<string, ConnectedCardData> = {
+  feedback: {
+    art: 28,
+    tone: "purple",
+    tags: ["영어 스터디", "자기소개서", "마케팅 공..."],
+    title: "피드백에서 부족한 점을 찾아\n내용을 구체적으로 다듬었어요",
+    confidence: 90,
+  },
+  split: {
+    art: 29,
+    tone: "purple",
+    tags: ["영어 스터디", "밴드 동아리", "자기소..."],
+    title: "한 번에 해결하기 어려운 일을\n작은 단위로 나눠 진행했어요",
+    confidence: 89,
+  },
+  review: {
+    art: 31,
+    tone: "orange",
+    tags: ["자기소개서", "영어 스터디", "밴드 동..."],
+    title: "기록을 되짚어 보며,\n보완할 부분을 찾았어요",
+    confidence: 95,
+  },
+  core: { art: 33, tone: "pink", tags: ["마케팅 공모전", "영어 스터디"], title: "말이 길어질 때\n핵심 한 문장부터 정했어요", confidence: 88 },
+  // Figma 태그는 "밴드 동아리"가 두 번 — 보라(영어 스터디) 카드라 첫 태그를 영어 스터디로
+  compare: {
+    art: 30,
+    tone: "purple",
+    tags: ["영어 스터디", "밴드 동아리", "마케팅 공..."],
+    title: "여러 방법을 시도하고, 결과를\n비교해 방향을 결정했어요",
+    confidence: 85,
+  },
+  small: { art: 34, tone: "blue", tags: ["밴드 동아리", "영어 스터디"], title: "완벽하게 준비하기보다,\n작게 먼저 해보고 맞춰갔어요", confidence: 81 },
+  diff: { art: 32, tone: "orange", tags: ["자기소개서", "영어 스터디"], title: "달라진 점을 확인하려고,\n이전 기록과 비교했어요", confidence: 82 },
+};
+
+// 영어 스터디 연결된 경험 목록·묶음 (뒤 → 앞)
+const ENGLISH_CONNECTED_LIST = [
+  ENGLISH_CONNECTED.feedback,
+  ENGLISH_CONNECTED.split,
+  ENGLISH_CONNECTED.review,
+  ENGLISH_CONNECTED.core,
+  ENGLISH_CONNECTED.compare,
+  ENGLISH_CONNECTED.small,
+  ENGLISH_CONNECTED.diff,
+];
+
+const ENGLISH_EXPERIENCES: ExperienceCardData[] = [
+  { tag: "영어 스터디", source: "notion", text: "영어로 말할 때 오래 멈추는\n순간을 기록하고,\n어떤 주제에서 더 어려운지\n살펴봤어요" },
+  { tag: "영어 스터디", source: "kakao", text: "완벽한 문장을 만들기보다\n짧은 문장으로 먼저 답하는\n연습을 시작했어요" },
+  { tag: "영어 스터디", source: "kakao", text: "스터디원이 준 피드백을\n다음 모임에서 해볼 행동으로\n바꿨어요" },
+  { tag: "영어 스터디", source: "kakao", text: "자주 쓰고 싶은 표현을\n세 개 골라 실제 대화에서\n사용해봤어요" },
+  { tag: "영어 스터디", source: "kakao", text: "준비한 자기 소개뿐 아니라\n즉석 질문에도 한 문장으로\n답해보려 했어요" },
+  { tag: "영어 스터디", source: "notion", text: "말하기 연습을 녹음해\n문장을 오래 고민하는 순간과\n자연스럽게 말한 부분을\n확인했어요" },
+  { tag: "영어 스터디", source: "notion", text: "연습 후 말한 시간과 대화 참여\n횟수를 기록해 변화를\n비교하고 있어요" },
+  { tag: "영어 스터디", source: "notion", text: "익숙한 주제부터 말하는\n시간을 늘리는 방식으로\n목표를 나눴어요" },
 ];
 
 const MARKETING_EXPERIENCES: ExperienceCardData[] = [
@@ -248,6 +319,7 @@ export const PROJECT_DETAILS: Record<string, ProjectDetailData> = {
       },
       experience: { count: 58, createdAgo: "2시간 전", cards: MARKETING_EXPERIENCES.slice(0, 8) },
     },
+    // Figma 158:17172: 4번째 카드가 영어 스터디와 이어진 카드로 바뀜 (원래 6번째 같은 제목 카드는 빠짐)
     connected: [
       {
         art: 1,
@@ -270,6 +342,7 @@ export const PROJECT_DETAILS: Record<string, ProjectDetailData> = {
         title: "처음 계획이 맞지 않을 때,\n조건을 다시 살펴 조정했어요",
         confidence: 83,
       },
+      ENGLISH_CONNECTED.feedback,
       {
         art: 4,
         tone: "pink",
@@ -283,13 +356,6 @@ export const PROJECT_DETAILS: Record<string, ProjectDetailData> = {
         tags: ["밴드 동아리", "마케팅 공모전"],
         title: "여러 방법을 비교해 보고,\n목적에 맞는 방향을 골랐어요",
         confidence: 81,
-      },
-      {
-        art: 6,
-        tone: "pink",
-        tags: ["마케팅 공모전", "자기소개서"],
-        title: "피드백에서 부족한 점을 찾아,\n내용을 구체적으로 다듬었어요",
-        confidence: 96,
       },
       {
         art: 7,
@@ -355,6 +421,7 @@ export const PROJECT_DETAILS: Record<string, ProjectDetailData> = {
         title: "여러 방법을 비교해 보고,\n목적에 맞는 방향을 골랐어요",
         confidence: 81,
       },
+      ENGLISH_CONNECTED.split, // Figma 158:17429에서 추가
       {
         art: 7,
         tone: "blue",
@@ -462,5 +529,33 @@ export const PROJECT_DETAILS: Record<string, ProjectDetailData> = {
       },
     ],
     experiences: RESUME_EXPERIENCES,
+  },
+  // Figma 158:18130(묶음) · 158:17928(경험 카드) · 158:18446(연결된 경험 카드)
+  english: {
+    id: "english",
+    name: "영어 스터디",
+    color: "purple",
+    theme: THEMES.purple,
+    status: "진행 중",
+    goal: "피드백을 반영해 익숙한 주제는 자신있게 말하기",
+    startedAt: "2026.09.15",
+    steps: [
+      { label: "습관\n살펴보기", state: "done" },
+      { label: "짧게 말하기", state: "current", current: "짧은 문장으로 먼저 답하고\n이유를 덧붙이는 연습을 하고 있어요" },
+      { label: "1분\n말하기", state: "todo" },
+      { label: "피드백\n반영하기", state: "todo" },
+      { label: "2분\n말하기", state: "todo" },
+    ],
+    insight: {
+      title: "영어 실력 전체를 한 번에 바꾸기보다,\n대화에 먼저 참여하는 연습부터 시작하고 있어요",
+      // Figma의 "스테디 피드배을"은 오타로 보고 "피드백을"로
+      desc: "처음에는 문장을 완성한 뒤 말하려고 했지만, 최근에는 짧게 먼저 답하고\n이유를 덧붙이는 방법을 시도하고 있어요. 스테디 피드백을 다음 연습\n목표로 바꿔가며 말하기를 이어가는 중이에요.",
+    },
+    bundles: {
+      connected: { count: 24, createdAgo: "2시간 전", cards: ENGLISH_CONNECTED_LIST },
+      experience: { count: 8, createdAgo: "2시간 전", cards: ENGLISH_EXPERIENCES },
+    },
+    connected: ENGLISH_CONNECTED_LIST,
+    experiences: ENGLISH_EXPERIENCES,
   },
 };

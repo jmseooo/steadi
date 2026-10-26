@@ -284,7 +284,8 @@ function Insight({ insight, theme }: { insight: ProjectDetailData["insight"]; th
         height={284}
         className="pointer-events-none absolute top-[31px] left-[271px] h-[284px] w-[264px]"
       />
-      <div className="absolute top-[112px] left-[48px] flex w-[395px] flex-col gap-[15px]">
+      {/* 아래를 기준으로 붙인다: 설명이 3줄이면 위로 늘어남 (Figma 영어 스터디: 제목이 24px 위로) */}
+      <div className="absolute bottom-[43px] left-[48px] flex w-[395px] flex-col gap-[15px]">
         <div className="flex flex-col gap-[8px]">
           <h2
             className="w-fit bg-clip-text text-[16px] leading-[24.8px] font-bold text-transparent"

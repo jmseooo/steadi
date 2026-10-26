@@ -1,7 +1,7 @@
 "use client";
 
 import Modal from "../Modal";
-import { PROJECT_COLORS, type ProjectColor } from "../projectColors";
+import { toneColors, type ProjectTone } from "../projectColors";
 import type { ExperienceCardData } from "./Cards";
 import { THEMES } from "./data";
 
@@ -24,7 +24,8 @@ const SAMPLE = {
 };
 
 // 단계 이름 색: 파랑은 Figma(#027fc7), 분홍·주황은 시안이 없어 같은 밝기로 맞춘 색
-const STEP_LABEL: Record<ProjectColor, string> = { blue: "#027fc7", pink: "#d4247f", orange: "#d9560f" };
+// 보라(영어 스터디)는 창 시안이 없어 프로젝트 태그 글자색을 씀
+const STEP_LABEL: Record<ProjectTone, string> = { blue: "#027fc7", pink: "#d4247f", orange: "#d9560f", purple: "#7f55fd" };
 
 export default function ExperienceModal({
   card,
@@ -36,12 +37,12 @@ export default function ExperienceModal({
 }: {
   card: ExperienceCardData;
   project: string;
-  color: ProjectColor;
+  color: ProjectTone;
   archived: boolean;
   onArchive: () => void;
   onClose: () => void;
 }) {
-  const c = PROJECT_COLORS[color];
+  const c = toneColors(color);
   const dot = THEMES[color].dot;
   const accentText = { backgroundImage: `linear-gradient(90deg, #1a1a1a, ${c.tagText})` };
   // 카드 글은 4줄 → 창에서는 두 줄로 (앞 두 줄 / 나머지)
@@ -188,8 +189,8 @@ export default function ExperienceModal({
 }
 
 // 섹션 이름 + 겹친 유리 마름모 아이콘 (Figma 27×22, 프로젝트 색 빛)
-function SectionLabel({ color, children }: { color: ProjectColor; children: string }) {
-  const c = PROJECT_COLORS[color];
+function SectionLabel({ color, children }: { color: ProjectTone; children: string }) {
+  const c = toneColors(color);
   const id = `exp-deco-${color}`;
   return (
     <h3 className="flex items-center gap-[8px] text-[13px] leading-[16.9px] font-semibold" style={{ color: c.tagText }}>
