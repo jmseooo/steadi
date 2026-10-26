@@ -1,8 +1,8 @@
-import { GROWTH_CARDS, type GrowthCard } from "./growthCards";
+import { BASE_CARDS, type GrowthCard } from "./growthCards";
 
 // 성장의 순간 카테고리 5개 (Figma "성장 | 성장의 순간 (홈)" 150:2171)
 // 도형은 카테고리마다 다른 유리 도형. 카드 오른쪽 아래(마스크로 잘림)와 카테고리 화면 아이콘(40px)에 같이 쓴다.
-// cards: GROWTH_CARDS의 art 번호. 문제 해결만 Figma(150:2399)에 있고, 나머지는 제목이 맞는 연결 카드를 골라 넣음
+// cards: 원래 성장 카드 27장(BASE_CARDS)의 art 번호. 문제 해결만 Figma(150:2399)에 있고, 나머지는 제목이 맞는 연결 카드를 골라 넣음
 export type Moment = {
   slug: string;
   title: string;
@@ -88,4 +88,4 @@ export const MOMENTS: Moment[] = [
 export const MOMENT_TOTAL = MOMENTS.reduce((n, m) => n + m.cards.length, 0);
 
 export const momentCards = (m: Moment): GrowthCard[] =>
-  m.cards.map((art) => GROWTH_CARDS.find((c) => c.art === art)!);
+  m.cards.map((art) => BASE_CARDS.find((c) => c.art === art)!); // 이야기 카드도 같은 그림 번호를 쓰므로 원래 27장에서만 찾는다
