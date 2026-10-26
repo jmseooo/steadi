@@ -4,15 +4,13 @@ import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import Breadcrumb from "../Breadcrumb";
 import Stage from "./Stage";
 import SuggestionCards from "./SuggestionCards";
-import { ConnectedCard, ExperienceCard } from "../project-detail/Cards";
-import type { ProjectTone } from "../projectColors";
-import type { Story, StoryEntry } from "./stories";
+import { ConnectedCard, ExperienceCard, type ExperienceCardData } from "../project-detail/Cards";
+import type { ProjectColor } from "../projectColors";
 
 /*
  * 성장 > 연결된 경험 자세히 보기 (Figma "성장" 섹션 장면 1~15)
  * 모든 요소를 한 번만 그리고, 장면이 바뀔 때 값(위치·기울기·크기·투명도)만 바꿔 CSS 전환으로 잇는다 (Smart Animate 방식).
  * 좌표는 Figma 1440×810 프레임 기준. 장면 사이 대기·전환 시간과 곡선은 Figma 프로토타입 값 그대로.
- * 내용(경험 카드 2~3장, 연결된 경험 카드, 공통점·판단·저장 문구)은 이야기 데이터(stories.ts)에서 받는다.
  */
 
 type Ease = "gentle" | "slow" | "easeOut" | "linear";
@@ -56,32 +54,63 @@ const CHAPTER_SEC = CHAPTERS.map((start, i) => {
 });
 const chapterOf = (s: number) => CHAPTERS.filter((c) => c <= s).length - 1;
 
-// 1부(장면 1~8) 카드 자리 3곳: 왼쪽 위·가운데 아래·오른쪽 (Figma 기본 이야기의 마케팅·자기소개서·밴드 자리).
-// 카드가 2장이면 왼쪽 위·오른쪽 (Figma 181:1242 등). 기울기는 Figma relativeTransform [1, c; 0, d] + 장면별 y
-const SLOTS = [
-  { skew: [0.19, 0.98], card: { x: 385, y: (s: number) => (s === 1 ? 1048 : 168) }, glow: { x: 453.39, y: (s: number) => (s === 1 ? 1069 : 189.02) } },
-  { skew: [0.19, 0.98], card: { x: 556.45, y: (s: number) => (s < 4 ? 843 : 409.23) }, glow: { x: 368, y: (s: number) => (s < 4 ? 912 : 478.23) } },
-  { skew: [-0.22, 0.97], card: { x: 790.94, y: (s: number) => (s < 3 ? 921 : 215.23) }, glow: { x: 858, y: (s: number) => (s < 3 ? 932 : 226.23) } },
-] as const;
-const slotsFor = (n: number) => (n === 2 ? [SLOTS[0], SLOTS[2]] : SLOTS.slice(0, n));
-// 카드 색별 1부 빛 (Figma 프로젝트 색)
-const GLOW: Record<ProjectTone, [string, string]> = {
-  pink: ["#ff7ac8", "#ffc5e7"],
-  orange: ["#ffae6b", "#ffe9d7"],
-  blue: ["#44bcf8", "#dbf3ff"],
-  purple: ["#9a81ff", "#d8c5ff"],
+const CARDS: Record<"marketing" | "resume" | "band", { card: ExperienceCardData; tone: ProjectColor }> = {
+  marketing: {
+    tone: "pink",
+    card: {
+      tag: "마케팅 공모전",
+      source: "notion",
+      text: "처음 세운 타깃이 넓다는\n피드백을 바탕으로 자료를 살펴\n타깃을 나눈 이유와 근거를\n보완했어요",
+    },
+  },
+  resume: {
+    tone: "orange",
+    card: {
+      tag: "자기소개서",
+      source: "notion",
+      text: "문제 해결 경험을 돌아보며\n당시의 상황과 선택한 행동을\n순서대로 나눠 적고\n결정한 이유를 덧붙였어요",
+    },
+  },
+  band: {
+    tone: "blue",
+    card: {
+      tag: "밴드 동아리",
+      source: "kakao",
+      text: "빠른 구간에서 박자가 어긋나\n팀원들과 속도를 낮춰 맞춘 뒤\n원래 속도로 돌아가\n함께 연주했어요",
+    },
+  },
 };
-// 2부(장면 9~15) 반듯한 카드: 263×300 → 12장면부터 219×250(0.833배)로 줄며 왼쪽에 겹침 → 14장면부터 한 자리에 모임.
-// 한 줄(288.08 간격)과 겹침(89 간격)은 카드 수에 맞춰 가운데 정렬 (3장 기준 300 · 190 시작)
-const part2 = (i: number, n: number, s: number): [number, number, number] =>
-  s < 12
-    ? [300 + (3 - n) * 144.04 + i * 288.08, 265, 1]
-    : s < 14
-      ? [190 + (3 - n) * 44.5 + i * 89, 295, 0.8333]
-      : [339, 290, 0.8333];
-export default function ConnectedStory({ story, startScene = 1 }: { story: Story; startScene?: number }) {
-  const { title, cards } = story;
-  const slots = slotsFor(cards.length);
+
+// 1부(장면 1~8) 기울어진 카드·빛: Figma relativeTransform [1, c; 0, d] + 장면별 y
+const SKEW = { marketing: [0.19, 0.98], resume: [0.19, 0.98], band: [-0.22, 0.97] } as const;
+const PART1 = {
+  marketing: { x: 385, y: (s: number) => (s === 1 ? 1048 : 168) },
+  resume: { x: 556.45, y: (s: number) => (s < 4 ? 843 : 409.23) },
+  band: { x: 790.94, y: (s: number) => (s < 3 ? 921 : 215.23) },
+};
+const GLOWS = {
+  marketing: { x: 453.39, y: (s: number) => (s === 1 ? 1069 : 189.02), from: "#ff7ac8", to: "#ffc5e7" },
+  resume: { x: 368, y: (s: number) => (s < 4 ? 912 : 478.23), from: "#ffae6b", to: "#ffe9d7" },
+  band: { x: 858, y: (s: number) => (s < 3 ? 932 : 226.23), from: "#44bcf8", to: "#dbf3ff" },
+};
+// 2부(장면 9~15) 반듯한 카드: 263×300 → 12장면부터 219×250(0.833배)로 줄며 왼쪽에 겹침 → 14장면부터 한 자리에 모임
+const PART2 = {
+  marketing: (s: number) => (s < 12 ? [300, 265, 1] : s < 14 ? [190, 295, 0.8333] : [339, 290, 0.8333]),
+  resume: (s: number) => (s < 12 ? [588.08, 265, 1] : s < 14 ? [279, 295, 0.8333] : [339, 290, 0.8333]),
+  band: (s: number) => (s < 12 ? [876.16, 265, 1] : s < 14 ? [368, 295, 0.8333] : [339, 290, 0.8333]),
+};
+const SCAN_X = { marketing: 296, resume: 585, band: 874 };
+const ORDER = ["marketing", "resume", "band"] as const;
+
+export default function ConnectedStory({
+  title,
+  cardTitle,
+  startScene = 1,
+}: {
+  title: string; // 경로에 쓰는 한 줄 제목
+  cardTitle: string; // 연결된 경험 카드 제목 (줄바꿈 포함)
+  startScene?: number;
+}) {
   const [scene, setScene] = useState(startScene);
   // 마지막 장면에서 "성장의 순간으로 저장"을 누르면 제안 카드가 뜬다
   const [suggest, setSuggest] = useState(false);
@@ -135,41 +164,39 @@ export default function ConnectedStory({ story, startScene = 1 }: { story: Story
     <Stage gnb="Growth">
       {/* 1부 빛 3개 (레이어 블러 300 → CSS blur 150px) */}
       {part1 &&
-        cards.map((entry, i) => {
-          const { glow: g, skew } = slots[i];
-          const [c, d] = skew;
-          const [from, to] = GLOW[entry.tone];
+        ORDER.map((k) => {
+          const g = GLOWS[k];
+          const [c, d] = SKEW[k];
           return (
             <div
-              key={`glow-${i}`}
+              key={`glow-${k}`}
               aria-hidden
               className="pointer-events-none absolute top-0 left-0 size-[400px] origin-top-left blur-[150px]"
               style={{
                 transform: `matrix(1, 0, ${c}, ${d}, ${g.x}, ${g.y(scene)})`,
                 opacity: part1Visible ? 1 : 0,
-                background: `radial-gradient(closest-side, ${from}99, ${to}99)`,
+                background: `radial-gradient(closest-side, ${g.from}99, ${g.to}99)`,
                 ...tr("transform, opacity"),
               }}
             />
           );
         })}
 
-      {/* 1부 기울어진 카드 (뒤 → 앞) */}
+      {/* 1부 기울어진 카드 (뒤 → 앞: 마케팅, 자기소개서, 밴드) */}
       {part1 &&
-        cards.map((entry, i) => {
-          const { card: pos, skew } = slots[i];
-          const [c, d] = skew;
+        ORDER.map((k) => {
+          const [c, d] = SKEW[k];
           return (
             <div
-              key={`p1-${i}`}
+              key={`p1-${k}`}
               className="absolute top-0 left-0 origin-top-left"
               style={{
-                transform: `matrix(1, 0, ${c}, ${d}, ${pos.x}, ${pos.y(scene)})`,
+                transform: `matrix(1, 0, ${c}, ${d}, ${PART1[k].x}, ${PART1[k].y(scene)})`,
                 opacity: part1Visible ? 1 : 0,
                 ...tr("transform, opacity"),
               }}
             >
-              <StoryCard entry={entry} />
+              <StoryCard k={k} />
             </div>
           );
         })}
@@ -188,10 +215,12 @@ export default function ConnectedStory({ story, startScene = 1 }: { story: Story
         새로운 연결을 발견했어요
       </p>
       <p
-        className="absolute top-[412px] left-[220px] w-[1000px] text-center text-[18px] leading-[28.8px] font-medium whitespace-pre-line text-ink-muted"
+        className="absolute top-[412px] left-[383px] w-[675px] text-center text-[18px] leading-[28.8px] font-medium text-ink-muted"
         style={swap(scene === 7)}
       >
-        {story.discovery}
+        최근 프로젝트를 분석하는 과정에서 이전에는 서로 다른 경험으로 남아 있던 기록들이
+        <br />
+        하나의 패턴으로 이어질 가능성을 발견했습니다
       </p>
 
       {/* 2부 배경 빛 (장면 13~) */}
@@ -206,28 +235,28 @@ export default function ConnectedStory({ story, startScene = 1 }: { story: Story
       />
 
       {/* 2부 반듯한 카드 + 스캔 막대 */}
-      {cards.map((entry, i) => {
-        const [x, y, s] = part2(i, cards.length, scene);
+      {ORDER.map((k) => {
+        const [x, y, s] = PART2[k](scene);
         return (
           <div
-            key={`p2-${i}`}
+            key={`p2-${k}`}
             className="absolute top-0 left-0 origin-top-left"
             style={{
               transform: `translate(${x}px, ${y}px) scale(${s})`,
               ...swap(scene >= 9 && scene < 14, "transform"),
             }}
           >
-            <StoryCard entry={entry} />
+            <StoryCard k={k} />
           </div>
         );
       })}
-      {cards.map((_, i) => (
+      {ORDER.map((k) => (
         <div
-          key={`scan-${i}`}
+          key={`scan-${k}`}
           aria-hidden
           className="pointer-events-none absolute w-[271px]"
           style={{
-            left: part2(i, cards.length, 9)[0] - 3, // 카드보다 3px 왼쪽 (Figma 296·585·874)
+            left: SCAN_X[k],
             top: scene >= 11 ? 559 : 261,
             height: scene >= 11 ? 11 : 81,
             opacity: scene === 10 || scene === 11 ? 1 : 0,
@@ -241,7 +270,15 @@ export default function ConnectedStory({ story, startScene = 1 }: { story: Story
 
       {/* 장면 14~: 세 경험이 하나의 연결된 경험 카드로 */}
       <div className="absolute top-[240px] left-[282px]" style={swap(scene >= 14)}>
-        <ConnectedCard card={story.connected} />
+        <ConnectedCard
+          card={{
+            art: 7,
+            tone: "blue",
+            tags: ["밴드 동아리", "자기소개서", "마케팅 공..."],
+            title: cardTitle,
+            confidence: 82,
+          }}
+        />
       </div>
 
       {/* 오른쪽 문구: 13 공통점 / 14 판단 / 15 저장 안내 */}
@@ -250,7 +287,11 @@ export default function ConnectedStory({ story, startScene = 1 }: { story: Story
           스테디는 다음과 같은 공통점을 발견했습니다
         </h2>
         <ul className="mt-[24px] flex flex-col gap-[10px]">
-          {story.common.map((t) => (
+          {[
+            "행동하기 전에 기준을 먼저 정의했어요",
+            "여러 선택지를 같은 기준으로 비교했어요",
+            "상황이 바뀌어도 기준을 유지하며 결정했어요",
+          ].map((t) => (
             <li
               key={t}
               className="flex h-[27px] items-center gap-[15px] text-[18px] leading-[27px] font-bold text-ink-muted"
@@ -280,14 +321,13 @@ export default function ConnectedStory({ story, startScene = 1 }: { story: Story
           서로 다른 상황에서도 반복적으로 나타난 것은
         </p>
         <p className="mt-[2px] flex items-baseline gap-[1px] text-[18px] leading-[28.8px] font-bold text-ink-muted">
-          {story.pattern.lead && <span className="mr-[5px]">{story.pattern.lead}</span>}
           <span className="bg-[linear-gradient(90deg,#292c2d,#85194e)] bg-clip-text text-[20px] leading-[32px] text-transparent">
-            {story.pattern.highlight}
+            판단 기준을 먼저 세우는 방식
           </span>
           이었습니다
         </p>
         <p className="mt-[10px] text-[16px] leading-[25.6px] font-semibold text-disabled">
-          {story.pattern.note}
+          이는 앞으로 비슷한 선택의 순간에서도 활용될 수 있는
           <br />
           사용자의 고유한 방식일 가능성이 있습니다
         </p>
@@ -296,7 +336,7 @@ export default function ConnectedStory({ story, startScene = 1 }: { story: Story
       <Fade style={swap(scene === 15)} className="top-[282px] w-[494px]">
         <p className="text-[18px] leading-[28.8px] font-bold text-ink-muted">이 연결을 성장의 순간으로 저장하면</p>
         <h2 className="text-shimmer mt-[20px] w-fit text-[28px] leading-[42px] font-bold whitespace-pre">
-          {`나만의 성장패턴으로 축적되고\n${story.save}\n자동으로 이어 분석할 수 있습니다`}
+          {"나만의 성장패턴으로 축적되고\n앞으로 비슷한 경험이 생겼을 때\n자동으로 이어 분석할 수 있습니다"}
         </h2>
         <button
           type="button"
@@ -397,11 +437,11 @@ export default function ConnectedStory({ story, startScene = 1 }: { story: Story
 }
 
 // 이야기 카드 263×300 = 경험 카드(228×260)를 1.154배로
-function StoryCard({ entry }: { entry: StoryEntry }) {
+function StoryCard({ k }: { k: keyof typeof CARDS }) {
   return (
     <div className="h-[300px] w-[263.08px]">
       <div style={{ zoom: 263.08 / 228 }}>
-        <ExperienceCard card={entry.card} tone={entry.tone} />
+        <ExperienceCard card={CARDS[k].card} tone={CARDS[k].tone} />
       </div>
     </div>
   );

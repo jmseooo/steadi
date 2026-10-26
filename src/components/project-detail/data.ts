@@ -144,7 +144,7 @@ const ENGLISH_CONNECTED_LIST = [
   ENGLISH_CONNECTED.diff,
 ];
 
-export const ENGLISH_EXPERIENCES: ExperienceCardData[] = [
+const ENGLISH_EXPERIENCES: ExperienceCardData[] = [
   { tag: "영어 스터디", source: "notion", text: "영어로 말할 때 오래 멈추는\n순간을 기록하고,\n어떤 주제에서 더 어려운지\n살펴봤어요" },
   { tag: "영어 스터디", source: "kakao", text: "완벽한 문장을 만들기보다\n짧은 문장으로 먼저 답하는\n연습을 시작했어요" },
   { tag: "영어 스터디", source: "kakao", text: "스터디원이 준 피드백을\n다음 모임에서 해볼 행동으로\n바꿨어요" },
@@ -155,7 +155,7 @@ export const ENGLISH_EXPERIENCES: ExperienceCardData[] = [
   { tag: "영어 스터디", source: "notion", text: "익숙한 주제부터 말하는\n시간을 늘리는 방식으로\n목표를 나눴어요" },
 ];
 
-export const MARKETING_EXPERIENCES: ExperienceCardData[] = [
+const MARKETING_EXPERIENCES: ExperienceCardData[] = [
   {
     tag: "마케팅 공모전",
     text: "공모전의 평가 기준을 읽고\n주제와 제출 요건을 나눠\n기획에서 놓치지 않을\n항목을 정리했어요",
@@ -203,7 +203,7 @@ export const MARKETING_EXPERIENCES: ExperienceCardData[] = [
   },
 ];
 
-export const BAND_EXPERIENCES: ExperienceCardData[] = [
+const BAND_EXPERIENCES: ExperienceCardData[] = [
   {
     tag: "밴드 동아리",
     source: "kakao",
@@ -246,7 +246,7 @@ export const BAND_EXPERIENCES: ExperienceCardData[] = [
   },
 ];
 
-export const RESUME_EXPERIENCES: ExperienceCardData[] = [
+const RESUME_EXPERIENCES: ExperienceCardData[] = [
   {
     tag: "자기소개서",
     source: "notion",

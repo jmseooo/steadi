@@ -7,7 +7,6 @@ import { ConnectedCard } from "../project-detail/Cards";
 import { GROWTH_CARDS } from "./growthCards";
 import MomentGrid from "./MomentGrid";
 import { MOMENT_TOTAL } from "./moments";
-import { storySlugFor } from "./stories";
 import Stage from "./Stage";
 
 /*
@@ -229,9 +228,8 @@ export default function GrowthHome() {
       <ArrowButton label="이전 경험" className="left-[463px]" onClick={() => move(-1)} flip />
       <ArrowButton label="다음 경험" className="left-[937px]" onClick={() => move(1)} />
 
-      {/* 이야기가 있는 카드는 그 이야기로, 나머지는 기본 이야기로 */}
       <Link
-        href={storySlugFor(active.title) ? `/growth/connected/${storySlugFor(active.title)}` : "/growth/connected"}
+        href="/growth/connected"
         className="absolute top-[694px] left-[651px] z-20 flex h-[46px] items-center gap-[8px] rounded-[30px] bg-ink pr-[8px] pl-[18px] text-[16px] leading-[20.8px] font-semibold text-white shadow-[0_4px_30px_rgba(0,0,0,0.03)] transition-[scale] duration-200 hover:scale-108"
       >
         자세히 보기

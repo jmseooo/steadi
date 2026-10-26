@@ -1,12 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useCallback, useLayoutEffect, useRef, useState } from "react";
 import Breadcrumb from "../Breadcrumb";
 import FilterChips from "../FilterChips";
 import FolderArt from "../FolderArt";
-import { storySlugFor } from "../growth/stories";
 import { ConnectedCard, ExperienceCard, type ConnectedCardData, type ExperienceCardData } from "./Cards";
 import type { DetailTheme, ProjectDetailData, Step } from "./data";
 import ExperienceModal from "./ExperienceModal";
@@ -167,27 +165,10 @@ function ConnectedGrid({ cards, reveal }: { cards: ConnectedCardData[]; reveal: 
       {cards.map((c, i) => (
         // 앞 카드가 위에 오도록(묶음에서 뒤 카드가 먼저 출발) 쌓임 순서 지정
         <li key={c.title} className="relative origin-top-left" style={{ zIndex: cards.length - i }}>
-          <StoryLink title={c.title}>
-            <ConnectedCard card={c} />
-          </StoryLink>
+          <ConnectedCard card={c} />
         </li>
       ))}
     </ul>
-  );
-}
-
-// 이야기(연결된 경험 자세히 보기)가 있는 카드만 눌러서 그 이야기로 간다
-function StoryLink({ title, children }: { title: string; children: React.ReactNode }) {
-  const slug = storySlugFor(title);
-  if (!slug) return children;
-  return (
-    <Link
-      href={`/growth/connected/${slug}`}
-      aria-label={`연결된 경험 자세히 보기: ${title.replaceAll("\n", " ")}`}
-      className="block rounded-[26px] transition-[scale] duration-200 hover:scale-[1.02]"
-    >
-      {children}
-    </Link>
   );
 }
 
