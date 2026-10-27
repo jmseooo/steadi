@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import Breadcrumb from "../Breadcrumb";
+import { blurredDisk } from "../blurredDisk";
 import Stage from "./Stage";
 import SuggestionCards from "./SuggestionCards";
 import { ConnectedCard, ExperienceCard } from "../project-detail/Cards";
@@ -133,21 +134,24 @@ export default function ConnectedStory({ story, startScene = 1 }: { story: Story
 
   return (
     <Stage gnb="Growth">
-      {/* 1부 빛 3개 (레이어 블러 300 → CSS blur 150px) */}
+      {/* 1부 빛 (Figma 원 400 + 레이어 블러 300을 blurredDisk로 — Safari에서 blur 필터가 잘려 끊겨 보여서) */}
       {part1 &&
         cards.map((entry, i) => {
           const { glow: g, skew } = slots[i];
           const [c, d] = skew;
           const [from, to] = GLOW[entry.tone];
+          const disk = blurredDisk(400, 300, from, to, 1, 0.3); // Figma 원 400 · 레이어 블러 300
           return (
             <div
               key={`glow-${i}`}
               aria-hidden
-              className="pointer-events-none absolute top-0 left-0 size-[400px] origin-top-left blur-[150px]"
+              className="pointer-events-none absolute top-0 left-0 origin-top-left"
               style={{
-                transform: `matrix(1, 0, ${c}, ${d}, ${g.x}, ${g.y(scene)})`,
+                width: disk.size,
+                height: disk.size,
+                transform: `matrix(1, 0, ${c}, ${d}, ${g.x}, ${g.y(scene)}) translate(${-disk.offset}px, ${-disk.offset}px)`,
                 opacity: part1Visible ? 1 : 0,
-                background: `radial-gradient(closest-side, ${from}99, ${to}99)`,
+                background: disk.background,
                 ...tr("transform, opacity"),
               }}
             />
