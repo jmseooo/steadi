@@ -29,6 +29,7 @@ let session: Session | null = null;
 let held: Held[] = []; // 부스 PC에서 다음 관람객이 아직 아무것도 누르지 않았을 때의 기록
 let queue: Event[] = [];
 let timer: ReturnType<typeof setTimeout> | null = null;
+let startedAt = 0; // 지금 관람객 체험이 시작된 시각(performance.now). 머문 시간은 이보다 앞을 세지 않는다
 
 function read<T>(key: string): T | null {
   try {
@@ -60,9 +61,12 @@ function current(): Session | null {
 }
 
 export const hasSession = () => current() !== null;
+// 화면에 머문 시간: 관람객이 오기 전(부스 PC에서 첫 클릭 전) 대기 시간은 빼고 잰다
+export const dwellMs = (enter: number) => Math.round(performance.now() - Math.max(enter, startedAt));
 
 export function startSession() {
   flush();
+  startedAt = performance.now();
   session = { id: crypto.randomUUID(), seq: 0 };
   write(SESSION_KEY, session);
   track("session_start", { value: { ua: navigator.userAgent, screen: `${innerWidth}x${innerHeight}` } });

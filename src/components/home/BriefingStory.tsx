@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
+import { blurredDisk } from "../blurredDisk";
 import { RoundButton } from "../growth/ConnectedStory";
 import type { Story, StoryEntry } from "../growth/stories";
 import { ConnectedCard, ExperienceCard } from "../project-detail/Cards";
@@ -162,21 +163,24 @@ export default function BriefingStory({
 
   return (
     <div className="relative h-[692px] w-[1200px] overflow-hidden rounded-[52px] bg-white">
-      {/* 1부 빛 (레이어 블러 248 → CSS 124px) */}
+      {/* 1부 빛 (Figma 원 331 + 레이어 블러 248을 blurredDisk로 — Safari에서 blur 필터가 잘려 끊겨 보여서) */}
       {part1 &&
         cards.map((entry, i) => {
           const { glow: g, skew } = slots[i];
           const [c, d] = skew;
           const [from, to] = GLOW[entry.tone];
+          const disk = blurredDisk(331, 248, from, to, 1, 0.3); // Figma 원 331 · 레이어 블러 248
           return (
             <div
               key={`glow-${i}`}
               aria-hidden
-              className="pointer-events-none absolute top-0 left-0 size-[331px] origin-top-left blur-[124px]"
+              className="pointer-events-none absolute top-0 left-0 origin-top-left"
               style={{
-                transform: `matrix(1, 0, ${c}, ${d}, ${g.x}, ${g.y(scene)})`,
+                width: disk.size,
+                height: disk.size,
+                transform: `matrix(1, 0, ${c}, ${d}, ${g.x}, ${g.y(scene)}) translate(${-disk.offset}px, ${-disk.offset}px)`,
                 opacity: part1Visible ? 1 : 0,
-                background: `radial-gradient(closest-side, ${from}99, ${to}99)`,
+                background: disk.background,
                 ...tr("transform, opacity"),
               }}
             />

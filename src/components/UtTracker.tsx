@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { booth, endSession, flush, hasSession, startSession, track } from "@/lib/ut";
+import { booth, dwellMs, endSession, flush, hasSession, startSession, track } from "@/lib/ut";
 import { keepOnboarded } from "./OnboardingGate";
 
 // 부스 PC: 이 시간 동안 조작이 없으면 다음 관람객을 위해 홈 처음으로 돌아간다.
@@ -25,7 +25,7 @@ export default function UtTracker() {
     }
     const enter = performance.now();
     track("page_view");
-    return () => track("page_leave", { value: { path: pathname, ms: Math.round(performance.now() - enter) } });
+    return () => track("page_leave", { value: { path: pathname, ms: dwellMs(enter) } });
   }, [pathname]);
 
   useEffect(() => {
