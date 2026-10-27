@@ -283,7 +283,7 @@ export default function GrowthHome() {
       <div className="absolute top-[100px] left-0 z-20 flex w-[1440px] flex-col items-center gap-[18px]">
         <div className="flex flex-col items-center gap-[5px]">
           <h1 className="text-[24px] leading-[33.6px] font-bold">내 경험</h1>
-          <p className="text-[14px] leading-[19.6px] font-semibold text-ink-muted">3개의 프로젝트에서 모인 나의 경험</p>
+          <p className="text-[14px] leading-[19.6px] font-semibold text-ink-muted">4개의 프로젝트에서 모인 나의 경험</p>
         </div>
         <FilterChips items={TABS} value={TABS[tab === "moments" ? 1 : 0]} onChange={changeTab} />
       </div>
