@@ -39,3 +39,6 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# AI 실험 결과 (scripts/ai/digest.mjs가 만듦)
+/scripts/ai/out/
