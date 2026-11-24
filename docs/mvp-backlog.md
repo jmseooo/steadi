@@ -14,8 +14,18 @@
 
 ## 0주차 · 합류 준비
 
-- [ ] **제나** GitHub 초대(JenaSeo) 수락 → `git switch mvp` → `npm ci` → `.env.local` 넣기 → `npm run dev`
+- [x] **제나** GitHub 초대(JenaSeo) 수락
+- [ ] **제나** `git switch mvp` → `npm ci` → `.env.local` 넣기 → `npm run dev`
 - [ ] **민서** 제나에게 `.env.local` 값 3개 비공개 전달 (`NEXT_PUBLIC_APP_SUPABASE_URL`, `..._PUBLISHABLE_KEY`, `GEMINI_API_KEY`)
+
+- [ ] **팀원 2명 추가 합류** (2026-11-24 결정)
+  - [ ] **민서** 두 사람에게 합류 안내 보내기 (준비물·처음 실행·꼭 읽기·규칙 — 아래 "합류 안내" 문구)
+  - [ ] 두 사람 GitHub 아이디 받아 레포 초대 (yunjin4011014-hub는 이미 협업자)
+  - [ ] 제나(Supabase Owner)가 `Steadi` 조직에 Developer로 초대
+  - [x] `CLAUDE.md` 규칙 4명 기준으로 갱신 (합류 예정 2칸, 백로그에 이름 적고 시작, 데이터는 data.ts로만, mvp 직접 푸시 금지, PR 전 검사, Gemini 키 각자)
+  - [ ] 역할 확정 → `CLAUDE.md` 역할 표의 "합류 예정" 칸 채우기
+  - [ ] 각자 Gemini 개발용 키 따로 발급 (무료 한도를 4명이 나눠 쓰지 않게)
+  - [ ] `.env.local` 값 비공개 전달, 첫 실행 확인
 
 ## DB 표
 
@@ -66,3 +76,30 @@
 - [ ] 격주로 실제 기록을 넣어 카드가 잘 나오는지 확인
 - [ ] 9~10주차 사용자 5~10명 테스트, 데모 영상
 - [ ] 테스트를 다른 사람에게 받을 때 Vercel 미리보기 주소의 로그인 보호 끄기
+
+## 합류 안내 (새 팀원에게 그대로 보내기)
+
+**준비물**
+- GitHub 계정 (아이디 알려 주기 → 레포 초대 수락)
+- Supabase 계정 (GitHub로 가입 → 초대 메일 수락)
+- Node.js 20 이상, Claude Code
+- Gemini API 키: https://aistudio.google.com/apikey 에서 각자 발급
+
+**처음 실행**
+```
+git clone https://github.com/jmseooo/steadi.git
+cd steadi
+git switch mvp
+npm ci
+```
+`steadi` 폴더에 `.env.local`을 만들고 민서가 따로 보낸 값 2개(`NEXT_PUBLIC_APP_SUPABASE_URL`, `NEXT_PUBLIC_APP_SUPABASE_PUBLISHABLE_KEY`)와 본인 `GEMINI_API_KEY`를 넣는다.
+`npm run dev` → http://localhost:3120
+
+**꼭 읽기**: `CLAUDE.md`(작업 규칙, Claude Code가 자동으로 읽음), `docs/mvp-backlog.md`(남은 일·담당)
+
+**규칙**
+- 일을 시작하기 전에 백로그 항목에 자기 이름 적기
+- `mvp`에서 기능마다 브랜치(`feat/이름`) → PR을 `mvp`로 → 민서 리뷰 후 합침 (`mvp`에 직접 푸시 금지)
+- PR 전에 `npx tsc --noEmit`, `npm run lint`, `npm run build` 통과 확인
+- 키·비밀번호는 코드·PR·이슈에 절대 쓰지 않는다 (레포 공개)
+- 운영 주소(steadi-gold)에 배포하지 않는다 (`--prod` 금지)

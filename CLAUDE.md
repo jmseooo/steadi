@@ -3,7 +3,7 @@
 # Steadi MVP 작업 규칙
 
 전시용 프로토타입(steadi-gold.vercel.app)을 실제로 쓸 수 있는 서비스로 만드는 중이다.
-근거 문서: Figma `Steadi_바이브` 231:1306 「Steadi 구현 가능성 검토」(2026.11.10) — 2인 팀, 월 0원.
+근거 문서: Figma `Steadi_바이브` 231:1306 「Steadi 구현 가능성 검토」(2026.11.10) — 원래 2인 기준, 지금은 4명. 월 0원.
 모든 답변·커밋 메시지·코드 주석은 한국어로 쓴다.
 남은 일은 `docs/mvp-backlog.md`에 모은다. 일을 끝내거나 새로 생기면 거기를 고친다.
 
@@ -13,25 +13,30 @@
 |---|---|---|
 | 민서 (개발 리드 · 분석) | jmseooo | DB 표·AI 응답 형식 최종 결정, PR 리뷰와 `mvp` 합치기, Gemini 프롬프트, 프로젝트 묶기·목표 대화, 경험·피드백·제안 카드 생성, 새벽 배치, 임베딩·연결된 경험, Project·Home·Growth·Connection·알림 화면에 실제 데이터 연결 |
 | 제나 (수집) | JenaSeo | 카카오·구글 로그인(Supabase Auth 설정), DB 표 생성·보안 규칙(RLS), 카톡·AI 대화 파일 파서, Notion 등 외부 연동, AI 분석 동의·업로드·연결 화면, Profile(연동 관리·탈퇴) |
+| (합류 예정) | — | 역할 확정 전. 제안: 연동 확장(캘린더·Drive·Slack·GitHub·Figma·Discord, AI 대화 파일 파서) |
+| (합류 예정) | — | 역할 확정 전. 제안: 화면 연결(알림·프로필·온보딩·경험 카드 상세를 데이터 함수로, 화면 문구, 동의·업로드·탈퇴 확인 같은 작은 화면) |
 
-자기 담당이 아닌 파일을 크게 고쳐야 하면 먼저 상대에게 알린다.
+- 일을 시작하기 전에 `docs/mvp-backlog.md`에서 그 항목에 자기 이름을 적어 겹치지 않게 한다.
+- 자기 담당이 아닌 파일을 크게 고쳐야 하면 먼저 담당자에게 알린다.
+- 화면은 `src/lib/data.ts`(데이터 함수)로만 데이터를 받는다. 화면 파일에 가짜 데이터를 새로 넣지 않는다. 데이터 형식은 `src/lib/model.ts`가 기준이고, 형식을 바꾸려면 리드와 먼저 정한다.
 
 ## 브랜치와 배포
 
-- 기준 브랜치는 `mvp`. 기능마다 `mvp`에서 브랜치를 따고(`feat/kakao-login`, `feat/notion` 처럼) PR을 `mvp`로 보낸다. 리드가 리뷰한 뒤 합친다.
+- 기준 브랜치는 `mvp`. 기능마다 `mvp`에서 브랜치를 따고(`feat/kakao-login`, `feat/notion` 처럼) PR을 `mvp`로 보낸다. 리드가 리뷰한 뒤 합친다. 리드 외에는 `mvp`에 직접 푸시하지 않는다.
+- PR을 올리기 전에 `npx tsc --noEmit`, `npm run lint`, `npm run build`가 통과하는지 확인한다.
 - `home`·`growth-stories`·`project` 등 다른 브랜치는 전시 프로토타입이다. MVP 작업을 섞지 않는다.
 - 운영 주소 steadi-gold.vercel.app은 프로토타입 그대로 둔다. MVP는 Vercel **미리보기(preview)** 배포로만 확인한다 (`vercel deploy`, `--prod` 금지).
 - 로컬 개발 서버는 `npm run dev` (포트 3120).
 
 ## 환경변수와 키
 
-`.env.local`에 넣는다. 값은 리드에게 따로 받고, **레포·PR·이슈·코드에 절대 쓰지 않는다** (레포가 공개다).
+`.env.local`에 넣는다. Supabase 값은 리드에게 따로 받고, Gemini 키는 각자 발급한다(https://aistudio.google.com/apikey — 무료 한도를 나눠 쓰지 않게). 키는 **레포·PR·이슈·코드에 절대 쓰지 않는다** (레포가 공개다).
 
 | 이름 | 용도 |
 |---|---|
 | `NEXT_PUBLIC_APP_SUPABASE_URL` | MVP Supabase (조직 Steadi · Steadi-project · 도쿄) |
 | `NEXT_PUBLIC_APP_SUPABASE_PUBLISHABLE_KEY` | 위 프로젝트의 publishable 키 (브라우저에 노출돼도 되는 키 — RLS가 지켜야 한다) |
-| `GEMINI_API_KEY` | Gemini. 서버에서만 읽는다. `NEXT_PUBLIC_`을 붙이지 않는다 |
+| `GEMINI_API_KEY` | Gemini. 서버에서만 읽는다. `NEXT_PUBLIC_`을 붙이지 않는다. 로컬은 각자 키, 미리보기 배포는 리드 키 |
 | `NEXT_PUBLIC_SUPABASE_URL` · `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | 전시 UT 기록용(steadi-guestbook). MVP에서 쓰지 않는다 |
 
 Supabase secret 키와 DB 비밀번호는 코드에 두지 않는다. 필요하면 서버 환경변수로만.
