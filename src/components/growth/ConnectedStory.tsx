@@ -7,7 +7,7 @@ import Stage from "./Stage";
 import SuggestionCards from "./SuggestionCards";
 import { ConnectedCard, ExperienceCard } from "../project-detail/Cards";
 import type { ProjectTone } from "../projectColors";
-import type { Story, StoryEntry } from "./stories";
+import type { Story, StoryEntry, Suggestion } from "./stories";
 
 /*
  * 성장 > 연결된 경험 자세히 보기 (Figma "성장" 섹션 장면 1~15)
@@ -80,7 +80,15 @@ const part2 = (i: number, n: number, s: number): [number, number, number] =>
     : s < 14
       ? [190 + (3 - n) * 44.5 + i * 89, 295, 0.8333]
       : [339, 290, 0.8333];
-export default function ConnectedStory({ story, startScene = 1 }: { story: Story; startScene?: number }) {
+export default function ConnectedStory({
+  story,
+  suggestions,
+  startScene = 1,
+}: {
+  story: Story;
+  suggestions: Suggestion[];
+  startScene?: number;
+}) {
   const { title, cards } = story;
   const slots = slotsFor(cards.length);
   const [scene, setScene] = useState(startScene);
@@ -393,7 +401,7 @@ export default function ConnectedStory({ story, startScene = 1 }: { story: Story
         <div className="absolute top-[85px] left-[120px]">
           <Breadcrumb parent="연결된 경험" href="/growth" current={title} />
         </div>
-        {suggest && <SuggestionCards onLater={() => setSuggest(false)} />}
+        {suggest && <SuggestionCards suggestions={suggestions} onLater={() => setSuggest(false)} />}
       </div>
 
     </Stage>

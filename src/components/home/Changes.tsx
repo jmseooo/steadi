@@ -3,14 +3,14 @@
 import { useState, type CSSProperties, type ReactNode } from "react";
 import FilterChips from "../FilterChips";
 import { PROJECT_COLORS, type ProjectColor } from "../projectColors";
-import { CHANGES, PROJECT_NAME, type Change } from "./data";
+import type { Change } from "./data";
 
 // 주요 변경 사항 (Figma 100:2970): 프로젝트 필터 + 237×237 카드 3열. X를 누르면 카드를 닫고 개수도 줄어든다
 const ORDER: ProjectColor[] = ["pink", "orange", "blue"];
 const CLOSE_MS = 220;
 
-export default function Changes() {
-  const [items, setItems] = useState(CHANGES);
+export default function Changes({ changes, projectNames }: { changes: Change[]; projectNames: Record<ProjectColor, string> }) {
+  const [items, setItems] = useState(changes);
   const [closing, setClosing] = useState<string[]>([]);
   const [filter, setFilter] = useState<ProjectColor | "all">("all");
 
@@ -18,7 +18,7 @@ export default function Changes() {
   const count = (p: ProjectColor) => items.filter((c) => c.project === p).length;
   const projects = ORDER.filter((p) => count(p) > 0);
   const current = filter !== "all" && count(filter) === 0 ? "all" : filter;
-  const labels = [`전체 ${items.length}`, ...projects.map((p) => `${PROJECT_NAME[p]} ${count(p)}`)];
+  const labels = [`전체 ${items.length}`, ...projects.map((p) => `${projectNames[p]} ${count(p)}`)];
   const keys: (ProjectColor | "all")[] = ["all", ...projects];
 
   const close = (id: string) => {
@@ -51,7 +51,7 @@ export default function Changes() {
               className="transition-[opacity,scale] ease-out"
               style={{ transitionDuration: `${CLOSE_MS}ms`, ...(closing.includes(c.id) && { opacity: 0, scale: 0.94 }) }}
             >
-              <ChangeCard change={c} onClose={() => close(c.id)} />
+              <ChangeCard change={c} projectName={projectNames[c.project]} onClose={() => close(c.id)} />
             </li>
           ))}
         </ul>
@@ -72,12 +72,12 @@ export const Chip = ({ className = "", style, children }: { className?: string; 
   </span>
 );
 
-function ChangeCard({ change, onClose }: { change: Change; onClose: () => void }) {
+function ChangeCard({ change, projectName, onClose }: { change: Change; projectName: string; onClose: () => void }) {
   const color = PROJECT_COLORS[change.project];
   return (
     <article className="relative h-[237px] rounded-[24px] bg-white">
       <div className="absolute top-[20px] left-[20px] flex gap-[5px]">
-        <Chip style={{ background: color.tagBg, color: color.tagText }}>{PROJECT_NAME[change.project]}</Chip>
+        <Chip style={{ background: color.tagBg, color: color.tagText }}>{projectName}</Chip>
         <Chip className="bg-canvas text-ink-muted">{change.kind}</Chip>
       </div>
 

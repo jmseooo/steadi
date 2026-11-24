@@ -3,16 +3,8 @@
 import Image from "next/image";
 import { useState } from "react";
 import FilterChips from "./FilterChips";
-import ProjectFolder, { type Project } from "./ProjectFolder";
-
-type Status = "진행 중" | "종료";
-
-const PROJECTS: (Project & { status: Status })[] = [
-  { title: "마케팅 공모전", color: "pink", experiences: 32, hours: 2, startedAt: "2026.09.01", status: "진행 중", href: "/projects/marketing" },
-  { title: "자기소개서", color: "orange", experiences: 32, hours: 2, startedAt: "2026.09.01", status: "진행 중", href: "/projects/resume" },
-  { title: "밴드 동아리", color: "blue", experiences: 32, hours: 2, startedAt: "2026.09.01", status: "진행 중", href: "/projects/band" },
-  { title: "영어 스터디", color: "purple", experiences: 32, hours: 2, startedAt: "2026.09.15", status: "진행 중", href: "/projects/english" },
-];
+import type { ProjectListItem, ProjectStatus as Status } from "./project-detail/data";
+import ProjectFolder from "./ProjectFolder";
 
 const STATUSES: Status[] = ["진행 중", "종료"];
 
@@ -22,9 +14,9 @@ const EMPTY: Record<Status, { title: string; desc: string }> = {
   종료: { title: "아직 종료된 프로젝트가 없어요", desc: "프로젝트가 종료되면 이곳으로 모아요" },
 };
 
-export default function ProjectHome() {
+export default function ProjectHome({ projects: all }: { projects: ProjectListItem[] }) {
   const [status, setStatus] = useState<Status>("진행 중");
-  const projects = PROJECTS.filter((p) => p.status === status);
+  const projects = all.filter((p) => p.status === status);
 
   return (
     <main className="px-5 pt-[40px] pb-[80px]">
@@ -34,7 +26,7 @@ export default function ProjectHome() {
             <div className="flex flex-col gap-[5px]">
               <h1 className="text-[24px] leading-[34px] font-bold">내 프로젝트</h1>
               <p className="text-[14px] leading-[20px] font-semibold text-ink-muted">
-                {PROJECTS.length}개의 프로젝트
+                {all.length}개의 프로젝트
               </p>
             </div>
 

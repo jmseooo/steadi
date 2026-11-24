@@ -1,6 +1,6 @@
 import type { ConnectedCardData } from "../project-detail/Cards";
 import type { ProjectColor } from "../projectColors";
-import { STORIES } from "../growth/stories";
+import { STORIES, type Story } from "../growth/stories";
 
 // 홈 (Figma "홈 | 브리핑 받기 전" 100:2968)
 
@@ -11,7 +11,7 @@ export const PROJECT_NAME: Record<ProjectColor, string> = {
 };
 
 // 원래 오늘의 브리핑 카드 묶음 (Figma "홈 | 브리핑 받기 전" 100:2968): 앞 → 뒤 순서 (파랑이 맨 앞, 주황 가운데, 분홍 맨 뒤).
-// 이 카드들은 브리핑 재생이 모두 같은 기본 이야기(BriefingStory의 HOME_DEFAULT_STORY)
+// 이 카드들은 브리핑 재생이 모두 같은 기본 이야기(아래 HOME_DEFAULT_STORY)
 export const ORIGINAL_BRIEFING_CARDS: ConnectedCardData[] = [
   { art: 5, tone: "blue", tags: ["밴드 동아리", "마케팅 공모전"], title: "방법을 바로 확정하지 않고,\n작게 시도해 차이를 확인했어요", confidence: 77 },
   { art: 15, tone: "orange", tags: ["자기소개서", "밴드 동아리", "마케팅 공..."], title: "막연했던 어려움을 나눠,\n먼저 바꿀 부분을 찾았어요", confidence: 82 },
@@ -22,9 +22,28 @@ export const ORIGINAL_BRIEFING_CARDS: ConnectedCardData[] = [
 // 원래 카드로 되돌리려면 USE_STORY_CARDS를 false로
 const USE_STORY_CARDS = true;
 const STORY_CARD_SLUGS = ["plan", "audience", "feedback"]; // 파랑 · 주황 · 보라 (앞 → 뒤, Figma처럼 첫 화면은 파랑이 맨 앞)
-export const BRIEFING_CARDS: ConnectedCardData[] = USE_STORY_CARDS
-  ? STORY_CARD_SLUGS.map((slug) => STORIES[slug].connected)
-  : ORIGINAL_BRIEFING_CARDS;
+
+// 원래 홈 카드(ORIGINAL_BRIEFING_CARDS)가 재생하던 기본 이야기. 이야기가 없는 카드는 이걸 재생한다
+export const HOME_DEFAULT_STORY: Story = {
+  title: "정답이 보이지 않을 때, 먼저 기준부터 세우는 편이에요",
+  discovery: "최근 프로젝트를 분석하는 과정에서 이전에는 서로 다른 경험으로 남아 있던 기록들이\n하나의 패턴으로 이어질 가능성을 발견했습니다",
+  cards: [
+    { tone: "pink", card: { tag: "마케팅 공모전", source: "notion", text: "캠페인 방향이 막연하게 느껴져\n타깃·문제·메시지를 나눠\n살피고 좁힐 대상을 정했어요" } },
+    { tone: "orange", card: { tag: "자기소개서", source: "notion", text: "경험을 글로 풀기 어려워\n상황·역할·행동을 나눠 적고\n설명이 부족한 부분을 찾았어요" } },
+    { tone: "blue", card: { tag: "밴드 동아리", source: "kakao", text: "합주 소리가 어긋나는 구간을\n박자·음량·시작 신호로 나눠\n먼저 맞춰 볼 부분을 정했어요" } },
+  ],
+  connected: ORIGINAL_BRIEFING_CARDS[1], // 막연했던 어려움을 나눠, 먼저 바꿀 부분을 찾았어요 (82%)
+  common: ["행동하기 전에 기준을 먼저 정의했어요", "여러 선택지를 같은 기준으로 비교했어요", "상황이 바뀌어도 기준을 유지하며 결정했어요"],
+  pattern: { highlight: "판단 기준을 먼저 세우는 방식", note: "이는 앞으로 비슷한 선택의 순간에서도 활용될 수 있는" },
+  save: "앞으로 비슷한 경험이 생겼을 때",
+};
+
+// 브리핑 카드 한 장: 묶음에 보이는 카드, 재생할 이야기, "자세히 보러가기" 주소
+export type BriefingItem = { card: ConnectedCardData; story: Story; href: string };
+
+export const BRIEFINGS: BriefingItem[] = USE_STORY_CARDS
+  ? STORY_CARD_SLUGS.map((slug) => ({ card: STORIES[slug].connected, story: STORIES[slug], href: `/growth/connected/${slug}` }))
+  : ORIGINAL_BRIEFING_CARDS.map((card) => ({ card, story: HOME_DEFAULT_STORY, href: "/growth/connected" }));
 
 export type Change = { id: string; project: ProjectColor; kind: string; title: string; desc: string; action: string };
 

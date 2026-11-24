@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { MomentShape } from "./MomentShape";
-import { MOMENTS } from "./moments";
+import type { Moment } from "./moments";
 
 // 성장의 순간 카테고리 카드 220×220 3열 (Figma 150:2171). 호버하면 검게 뒤집히고(150:2285) 누르면 카테고리 화면으로
-export default function MomentGrid() {
+export default function MomentGrid({ moments }: { moments: Moment[] }) {
   return (
     <ul className="absolute top-[268px] left-[370px] grid w-[700px] grid-cols-3 gap-[20px]">
-      {MOMENTS.map((m) => (
+      {moments.map((m) => (
         <li key={m.slug}>
           <Link
             href={`/growth/moments/${m.slug}`}

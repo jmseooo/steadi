@@ -1,11 +1,11 @@
 import { notFound } from "next/navigation";
 import Gnb from "@/components/Gnb";
 import ProjectDetail from "@/components/project-detail/ProjectDetail";
-import { PROJECT_DETAILS } from "@/components/project-detail/data";
+import { getProjectDetail } from "@/lib/data";
 
 export default async function ProjectDetailPage({ params }: PageProps<"/projects/[id]">) {
   const { id } = await params;
-  const project = PROJECT_DETAILS[id];
+  const project = await getProjectDetail(id);
   if (!project) notFound();
 
   return (

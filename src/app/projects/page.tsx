@@ -1,11 +1,13 @@
 import Gnb from "@/components/Gnb";
 import ProjectHome from "@/components/ProjectHome";
+import { getProjects } from "@/lib/data";
 
-export default function Projects() {
+export default async function Projects() {
+  const projects = await getProjects();
   return (
     <>
       <Gnb active="Project" />
-      <ProjectHome />
+      <ProjectHome projects={projects} />
     </>
   );
 }

@@ -3,16 +3,16 @@
 import Image from "next/image";
 import { useState } from "react";
 import FilterChips from "../FilterChips";
-import { PROJECT_COLORS } from "../projectColors";
+import { PROJECT_COLORS, type ProjectColor } from "../projectColors";
 import { Chip } from "./Changes";
-import { HISTORY, PROJECT_NAME, SOURCE_NAME, type Source } from "./data";
+import { SOURCE_NAME, type HistoryItem, type Source } from "./data";
 
 // 스테디 히스토리 (Figma 100:3093): 450×484 흰 패널 안 목록을 스크롤, 아래 50px은 흰색으로 흐려진다
 const FILTERS = ["전체", "진행중", "완료"] as const;
 
-export default function History() {
+export default function History({ history, projectNames }: { history: HistoryItem[]; projectNames: Record<ProjectColor, string> }) {
   const [filter, setFilter] = useState<(typeof FILTERS)[number]>("전체");
-  const items = HISTORY.filter((h) => filter === "전체" || (filter === "완료") === Boolean(h.time));
+  const items = history.filter((h) => filter === "전체" || (filter === "완료") === Boolean(h.time));
 
   return (
     <section className="flex w-full shrink-0 flex-col gap-[18px] lg:w-[450px]">
@@ -49,7 +49,7 @@ export default function History() {
                     <Chip style={{ background: color.tagBg, color: color.tagText }}>
                       <span>{SOURCE_NAME[h.source]}</span>
                       <span>·</span>
-                      <span>{PROJECT_NAME[h.project]}</span>
+                      <span>{projectNames[h.project]}</span>
                     </Chip>
                   </div>
                   <p className="text-[14px] leading-[18.9px] font-semibold text-ink-sub">{h.text}</p>

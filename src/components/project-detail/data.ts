@@ -1,4 +1,5 @@
 import type { ProjectTone } from "../projectColors";
+import type { Project } from "../ProjectFolder";
 import type { ConnectedCardData, ExperienceCardData } from "./Cards";
 
 export type Step = { label: string; state: "done" | "current" | "todo"; detail?: string; current?: string };
@@ -559,3 +560,14 @@ export const PROJECT_DETAILS: Record<string, ProjectDetailData> = {
     experiences: ENGLISH_EXPERIENCES,
   },
 };
+
+// 프로젝트 홈 폴더 목록 (ProjectHome)
+export type ProjectStatus = "진행 중" | "종료";
+export type ProjectListItem = Project & { status: ProjectStatus };
+
+export const PROJECT_LIST: ProjectListItem[] = [
+  { title: "마케팅 공모전", color: "pink", experiences: 32, hours: 2, startedAt: "2026.09.01", status: "진행 중", href: "/projects/marketing" },
+  { title: "자기소개서", color: "orange", experiences: 32, hours: 2, startedAt: "2026.09.01", status: "진행 중", href: "/projects/resume" },
+  { title: "밴드 동아리", color: "blue", experiences: 32, hours: 2, startedAt: "2026.09.01", status: "진행 중", href: "/projects/band" },
+  { title: "영어 스터디", color: "purple", experiences: 32, hours: 2, startedAt: "2026.09.15", status: "진행 중", href: "/projects/english" },
+];

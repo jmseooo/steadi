@@ -7,7 +7,6 @@ import { RoundButton } from "../growth/ConnectedStory";
 import type { Story, StoryEntry } from "../growth/stories";
 import { ConnectedCard, ExperienceCard } from "../project-detail/Cards";
 import type { ProjectTone } from "../projectColors";
-import { ORIGINAL_BRIEFING_CARDS } from "./data";
 
 /*
  * 홈 > 브리핑 받기 (Figma "홈 브리핑" 155:7391). 장면은 연결된 경험 자세히 보기 프로토타입(63:13471)처럼 15개 —
@@ -58,21 +57,6 @@ const CHAPTER_SEC = CHAPTERS.map((start, i) => {
 });
 const chapterOf = (s: number) => CHAPTERS.filter((c) => c <= s).length - 1;
 const COUNTDOWN = 3; // 브리핑 끝 → 다음 브리핑까지
-
-// 원래 홈 카드(ORIGINAL_BRIEFING_CARDS)가 재생하던 기본 이야기. 이야기가 없는 카드는 이걸 재생한다
-export const HOME_DEFAULT_STORY: Story = {
-  title: "정답이 보이지 않을 때, 먼저 기준부터 세우는 편이에요",
-  discovery: "최근 프로젝트를 분석하는 과정에서 이전에는 서로 다른 경험으로 남아 있던 기록들이\n하나의 패턴으로 이어질 가능성을 발견했습니다",
-  cards: [
-    { tone: "pink", card: { tag: "마케팅 공모전", source: "notion", text: "캠페인 방향이 막연하게 느껴져\n타깃·문제·메시지를 나눠\n살피고 좁힐 대상을 정했어요" } },
-    { tone: "orange", card: { tag: "자기소개서", source: "notion", text: "경험을 글로 풀기 어려워\n상황·역할·행동을 나눠 적고\n설명이 부족한 부분을 찾았어요" } },
-    { tone: "blue", card: { tag: "밴드 동아리", source: "kakao", text: "합주 소리가 어긋나는 구간을\n박자·음량·시작 신호로 나눠\n먼저 맞춰 볼 부분을 정했어요" } },
-  ],
-  connected: ORIGINAL_BRIEFING_CARDS[1], // 막연했던 어려움을 나눠, 먼저 바꿀 부분을 찾았어요 (82%)
-  common: ["행동하기 전에 기준을 먼저 정의했어요", "여러 선택지를 같은 기준으로 비교했어요", "상황이 바뀌어도 기준을 유지하며 결정했어요"],
-  pattern: { highlight: "판단 기준을 먼저 세우는 방식", note: "이는 앞으로 비슷한 선택의 순간에서도 활용될 수 있는" },
-  save: "앞으로 비슷한 경험이 생겼을 때",
-};
 
 // 1부(장면 1~8): 기울어진 카드 218×248과 빛 331px. matrix(1, 0, c, d) + 장면별 y (아래에서 떠오름)
 // 자리 3곳: 왼쪽 위 · 가운데 아래 · 오른쪽. 카드가 2장이면 왼쪽 위 · 오른쪽 (연결된 경험 자세히 보기와 같은 규칙)

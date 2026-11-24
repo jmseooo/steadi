@@ -9,7 +9,8 @@ const CARD_TONE: Record<ProjectTone, { titleEnd: string; pct: [string, string] }
   purple: { titleEnd: "#1d0872", pct: ["#9c78ff", "#f5efff"] },
 };
 
-export type ConnectedCardData = { art: number; tone: ProjectTone; tags?: string[]; title: string; confidence: number };
+// href: 누르면 갈 연결된 경험 자세히 보기 주소 (이야기가 있는 카드만, 데이터 함수가 붙여 준다)
+export type ConnectedCardData = { art: number; tone: ProjectTone; tags?: string[]; title: string; confidence: number; href?: string };
 
 const Tag = ({ children }: { children: string }) => (
   <span className="flex h-[28px] shrink-0 items-center rounded-[20px] bg-[rgba(26,26,26,0.05)] px-[10px] text-[12px] leading-[15.6px] font-semibold text-ink-sub backdrop-blur-[10px]">

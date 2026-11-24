@@ -4,10 +4,9 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import FilterChips from "../FilterChips";
 import { ConnectedCard } from "../project-detail/Cards";
-import { GROWTH_CARDS } from "./growthCards";
+import type { GrowthCard } from "./growthCards";
 import MomentGrid from "./MomentGrid";
-import { MOMENT_TOTAL } from "./moments";
-import { storySlugFor } from "./stories";
+import type { Moment } from "./moments";
 import Stage from "./Stage";
 
 /*
@@ -114,9 +113,6 @@ function toMatrix3d(q: Quad) {
 
 const easeOut = (x: number) => 1 - Math.pow(1 - x, 3);
 
-// 위 칩: 연결된 경험(카드 바퀴) · 성장의 순간(카테고리 카드, Figma 150:2171)
-const TABS = [`연결된 경험 ${GROWTH_CARDS.length}`, `성장의 순간 ${MOMENT_TOTAL}`] as const;
-
 const TAB_EVENT = "steadi:growth-tab";
 const readTab = () => (new URLSearchParams(window.location.search).get("tab") === "moments" ? "moments" : "connected");
 function subscribeTab(onChange: () => void) {
@@ -128,8 +124,11 @@ function subscribeTab(onChange: () => void) {
   };
 }
 
-export default function GrowthHome() {
-  const n = GROWTH_CARDS.length;
+export default function GrowthHome({ cards, moments }: { cards: GrowthCard[]; moments: Moment[] }) {
+  const n = cards.length;
+  // 위 칩: 연결된 경험(카드 바퀴) · 성장의 순간(카테고리 카드, Figma 150:2171)
+  const momentTotal = moments.reduce((sum, m) => sum + m.cards.length, 0);
+  const TABS = [`연결된 경험 ${n}`, `성장의 순간 ${momentTotal}`];
   const [index, setIndex] = useState(0); // 가운데 카드 (목표)
   const [pos, setPos] = useState(0); // 지금 그려지는 위치 (움직이는 동안 실수)
   const [moved, setMoved] = useState(false); // 한 번이라도 넘겼는지 — 처음 들어올 땐 아래 제목을 바로 보여 준다
@@ -138,7 +137,7 @@ export default function GrowthHome() {
   // 고른 칩은 주소(?tab=moments)에 둔다: 카테고리 화면에서 뒤로 오면 성장의 순간이 열려 있도록.
   // useSearchParams는 Suspense가 필요해 Growth로 넘어올 때 빈 화면이 깜박여서, 주소를 직접 읽는다
   const tab = useSyncExternalStore(subscribeTab, readTab, () => "connected");
-  const changeTab = (label: (typeof TABS)[number]) => {
+  const changeTab = (label: string) => {
     window.history.replaceState(null, "", label === TABS[1] ? "/growth?tab=moments" : "/growth");
     window.dispatchEvent(new Event(TAB_EVENT));
   };
@@ -173,13 +172,13 @@ export default function GrowthHome() {
   }, [move, tab]);
 
   const wrap = (v: number) => ((v % n) + n) % n;
-  const active = GROWTH_CARDS[wrap(index)];
+  const active = cards[wrap(index)];
 
   // 연결된 경험: 카드 바퀴 + 아래 제목·화살표·자세히 보기·보관함
   const carousel = (
     <>
       {/* 카드 바퀴: 가운데에서 가까운 카드가 위로 */}
-      {GROWTH_CARDS.map((card, i) => {
+      {cards.map((card, i) => {
         let t = i - pos;
         t = t - Math.round(t / n) * n; // 가장 가까운 방향으로 (-n/2 ~ n/2)
         if (Math.abs(t) > 3) return null;
@@ -231,7 +230,7 @@ export default function GrowthHome() {
 
       {/* 이야기가 있는 카드는 그 이야기로, 나머지는 기본 이야기로 */}
       <Link
-        href={storySlugFor(active.title) ? `/growth/connected/${storySlugFor(active.title)}` : "/growth/connected"}
+        href={active.href ?? "/growth/connected"}
         className="absolute top-[694px] left-[651px] z-20 flex h-[46px] items-center gap-[8px] rounded-[30px] bg-ink pr-[8px] pl-[18px] text-[16px] leading-[20.8px] font-semibold text-white shadow-[0_4px_30px_rgba(0,0,0,0.03)] transition-[scale] duration-200 hover:scale-108"
       >
         자세히 보기
@@ -273,7 +272,7 @@ export default function GrowthHome() {
 
   return (
     <Stage bleed gnb="Growth">
-      {tab === "moments" ? <MomentGrid /> : carousel}
+      {tab === "moments" ? <MomentGrid moments={moments} /> : carousel}
 
       {/* 위쪽: GNB 아래 흐림 띠 + 제목 · 칩 */}
       <div

@@ -1,11 +1,11 @@
-import { ConnectedCard } from "../project-detail/Cards";
+import { ConnectedCard, type ConnectedCardData } from "../project-detail/Cards";
 import { MomentIcon } from "./MomentShape";
-import { momentCards, type Moment } from "./moments";
+import type { Moment } from "./moments";
 import Stage from "./Stage";
 
 // 성장의 순간 > 카테고리 (Figma "성장 | 성장의 순간 (카테고리 내부)" 150:2399)
 // 아이콘 · 제목 · 설명, 오른쪽 수정·메모·삭제(동작 미정), 아래 저장된 연결 카드(280×350 카드를 224×280으로 축소)
-export default function MomentDetail({ moment }: { moment: Moment }) {
+export default function MomentDetail({ moment, cards }: { moment: Moment; cards: ConnectedCardData[] }) {
   return (
     <Stage gnb="Growth">
       <div className="absolute top-[100px] left-[130px] flex flex-col gap-[18px]">
@@ -29,7 +29,7 @@ export default function MomentDetail({ moment }: { moment: Moment }) {
       </div>
 
       <ul className="absolute top-[267px] left-[120px] flex flex-wrap gap-[20px]">
-        {momentCards(moment).map((card) => (
+        {cards.map((card) => (
           <li key={card.art}>
             <ConnectedCard card={card} size={224} />
           </li>

@@ -2,11 +2,10 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type KeyboardEvent, type PointerEvent } from "react";
-import { STORIES, storySlugFor } from "../growth/stories";
-import { ConnectedCard, type ConnectedCardData } from "../project-detail/Cards";
+import { ConnectedCard } from "../project-detail/Cards";
 import { toneColors } from "../projectColors";
-import BriefingStory, { HOME_DEFAULT_STORY } from "./BriefingStory";
-import { BRIEFING_CARDS } from "./data";
+import BriefingStory from "./BriefingStory";
+import type { BriefingItem } from "./data";
 
 /*
  * 오늘의 브리핑 (Figma 100:3260, 1200×530)
@@ -32,8 +31,8 @@ const FLY_EASE = "cubic-bezier(0.23, 1, 0.32, 1)";
 const SETTLE_EASE = "cubic-bezier(0.34, 1.15, 0.64, 1)";
 const SETTLE = `translate 0.4s ${SETTLE_EASE}, rotate 0.4s ${SETTLE_EASE}`;
 
-export default function Briefing() {
-  const [order, setOrder] = useState(() => BRIEFING_CARDS.map((_, i) => i)); // order[0] = 맨 앞 카드
+export default function Briefing({ items }: { items: BriefingItem[] }) {
+  const [order, setOrder] = useState(() => items.map((_, i) => i)); // order[0] = 맨 앞 카드
   const [flying, setFlying] = useState<{ card: number; dir: 1 | -1 } | null>(null);
   const [drag, setDrag] = useState<{ x: number; y: number } | null>(null);
   const start = useRef<{ x: number; y: number; moved: boolean } | null>(null);
@@ -55,7 +54,7 @@ export default function Briefing() {
     }, FLY_MS);
   };
 
-  const front = BRIEFING_CARDS[flying ? order[1] : order[0]];
+  const front = items[flying ? order[1] : order[0]].card;
   const tint = toneColors(front.tone);
 
   const onPointerDown = (e: PointerEvent<HTMLDivElement>) => {
@@ -100,7 +99,7 @@ export default function Briefing() {
     return (
       <StorySection
         key={order[0]}
-        card={BRIEFING_CARDS[order[0]]}
+        item={items[order[0]]}
         onClose={() => setStory(false)}
         onNext={() => {
           // 다음 브리핑: 박스를 닫고 카드 묶음을 한 장 넘긴다
@@ -200,7 +199,7 @@ export default function Briefing() {
                     onKeyDown,
                   })}
                 >
-                  <ConnectedCard card={BRIEFING_CARDS[card]} />
+                  <ConnectedCard card={items[card].card} />
                 </div>
               );
             })}
@@ -219,11 +218,9 @@ const STORY_H = 692;
 const STORY_TOP = 80;
 const STORY_BOTTOM = 38;
 
-function StorySection({ card, onClose, onNext }: { card: ConnectedCardData; onClose: () => void; onNext: () => void }) {
-  // 맨 앞 카드의 이야기 (이야기가 없는 원래 카드는 기본 이야기)
-  const slug = storySlugFor(card.title);
-  const story = slug ? STORIES[slug] : HOME_DEFAULT_STORY;
-  const href = slug ? `/growth/connected/${slug}` : "/growth/connected";
+// 맨 앞 카드의 이야기 재생
+function StorySection({ item, onClose, onNext }: { item: BriefingItem; onClose: () => void; onNext: () => void }) {
+  const { story, href } = item;
   const ref = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
   useLayoutEffect(() => {

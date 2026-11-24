@@ -160,3 +160,48 @@ export const STORIES: Record<string, Story> = {
 const key = (title: string) => title.replace(/[\s,]/g, "");
 const BY_TITLE = new Map(Object.entries(STORIES).map(([slug, s]) => [key(s.connected.title), slug]));
 export const storySlugFor = (title: string) => BY_TITLE.get(key(title));
+
+// 연결된 경험 자세히 보기 끝의 제안 카드 (SuggestionCards)
+export type Suggestion = {
+  label: string; // 프로젝트 · 단계
+  title: string;
+  desc: string;
+  candidates: string;
+  criteria: string;
+  action: string; // 오른쪽 검정 버튼 (Desktop/assets 카드 이미지 기준)
+  accent: string; // 라벨·제목 그라데이션 끝색
+  glow: string; // 호버 글로우 색
+};
+
+export const SUGGESTIONS: Suggestion[] = [
+  {
+    label: "밴드 동아리 · 합주 및 편곡",
+    title: "다음 합주에서 먼저 연습할\n부분을 정해 볼까요?",
+    desc: "기준부터 세웠던 경험을\n팀원들과 연습 순서를 정하는 데 활용해요",
+    candidates: "박자 맞추기 · 음량 조정 · 곡 연결",
+    criteria: "합주에 미치는 영향 · 필요한 연습 시간",
+    action: "연습 우선순위표 초안 만들기",
+    accent: "#0365a1",
+    glow: "#bae4fd",
+  },
+  {
+    label: "마케팅 공모전 · 전략 수립",
+    title: "캠페인 후보를 비교할 \n기준을 정해 볼까요?",
+    desc: "기준부터 세웠던 경험을\n이번 ‘대학생 텀블러 사용 확대’ 캠페인 선택에 활용해요",
+    candidates: "카페 할인 · 사용 인증 · 신입생 키트",
+    criteria: "타깃 적합성 · 실행 가능성",
+    action: "캠페인 비교표 초안 만들기",
+    accent: "#cc0a67",
+    glow: "#ffcbec",
+  },
+  {
+    label: "자기소개서 · 경험 정리",
+    title: "문항에 담을 경험을 고를\n기준을 정해 볼까요?",
+    desc: "기준부터 세웠던 경험을\n이번 자기소개서의 소재 선택에 활용해요",
+    candidates: "공모전 기획 · 합주 조율 · 공연 준비",
+    criteria: "직무 관련성 · 역할의 구체성",
+    action: "경험 비교표 초안 만들기",
+    accent: "#c53509",
+    glow: "#ffd2a9",
+  },
+];
