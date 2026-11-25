@@ -84,7 +84,8 @@ git 명령은 외울 필요 없다. `steadi` 폴더에서 `claude`를 실행하�
    - 옮길 곳: `src/lib/parsers/kakao.ts`. 결과는 `src/lib/model.ts`의 `RawRecord` 모양으로
    - 아이폰·안드로이드 내보내기 형식도 읽게: 본인 카톡에서 내보내 형식을 보고, **가짜 대화로** 같은 형식 시험 파일을 `scripts/ai/samples/`에 만든다
 3. 🟡 **로그인 공급자 등록**: Kakao Developers 앱 + Google Cloud OAuth 클라이언트 → Supabase Auth 공급자 설정
-   - 민서가 안내서를 주면 시작 (백로그 민서 칸 "제나 콘솔 설정 안내서")
+   - 안내서: `docs/team/jena-console.md` (콘솔 설정만, 코드 작업 없음)
+   - 안내서 3번에 넣을 Vercel 미리보기 주소 패턴은 민서가 개인 메시지로 보낸다 (못 받았으면 민서에게 요청)
 
 ### 민서 작업이 끝나면 (백로그 민서 칸에서 해당 항목이 `[x]`인지 확인)
 

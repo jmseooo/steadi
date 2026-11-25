@@ -77,12 +77,14 @@
 - [ ] 🔴 ③ 데이터 함수(`src/lib/data.ts`)를 Supabase 조회로 바꾸는 구조 + Project부터 연결
 - [ ] 🔴 ③ 프로젝트 묶기·온보딩 목표 대화 Gemini 호출
 - [ ] 🔴 ④ 새벽 배치, 임베딩, 연결된 경험
-- [ ] 제나 콘솔 설정 안내서, PR 리뷰·합치기
+- [x] 제나 콘솔 설정 안내서 `docs/team/jena-console.md`
+- [ ] 제나에게 Vercel 미리보기 주소 패턴 개인 메시지로 전달 (Supabase Redirect URLs용)
+- [ ] PR 리뷰·합치기
 
 ## 제나 (로그인 · 카톡 · 동의)
 
 - [ ] 🟢 Supabase Owner 일: 윤진·다현을 `Steadi` 조직에 Developer로 초대, secret 키 발급해 민서에게 비공개 전달
-- [ ] 🟡 Kakao Developers 앱 등록 + Google Cloud OAuth 클라이언트 → Supabase Auth 공급자 설정 (민서 안내서 참고)
+- [ ] 🟡 Kakao Developers 앱 등록 + Google Cloud OAuth 클라이언트 → Supabase Auth 공급자 설정 (`docs/team/jena-console.md`)
 - [ ] 🟡 ① 로그인 화면 버튼을 실제 카카오·구글 로그인에 연결, 로그아웃 (민서 로그인 뼈대 위에)
 - [ ] 🟡 ② 카톡 대화 파일 파서를 `src/`로 옮기기 (`scripts/ai/digest.mjs`의 `parseKakao`에서 시작) + 아이폰·안드로이드 내보내기 형식 지원
 - [ ] 🟡 ② 카톡 파일 업로드 → 파서 → 민서의 저장 함수로 `raw_records`에 넣기
