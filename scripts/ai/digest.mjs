@@ -1,15 +1,25 @@
 // AI 1차 실험: 카톡 대화 파일 → 새벽 배치 "프로젝트 정리"(src/lib/model.ts AiProjectDigest)
-// 실행: node scripts/ai/digest.mjs [대화 파일] [모델]   (기본: samples/kakao-band.txt, gemini-3.5-flash-lite)
+// 실행: node scripts/ai/digest.mjs [대화 파일] [--me 이름] [--project 프로젝트 이름] [--goal 목표] [--model 모델]
+//   예) node scripts/ai/digest.mjs scripts/ai/samples/marketing.txt --me 민서 --project "마케팅 공모전" --goal "공모전 기획안 제출하기"
+//   기본: samples/kakao-band.txt · 민서 · 밴드 동아리 · gemini-3.5-flash-lite
 // 결과 JSON은 scripts/ai/out/에 저장하고, 화면 규칙(줄 수·줄 길이·근거 기록)을 검사해 보여 준다.
 import fs from "node:fs";
 import path from "node:path";
+import { parseArgs } from "node:util";
 
 process.loadEnvFile(new URL("../../.env.local", import.meta.url));
 const KEY = process.env.GEMINI_API_KEY;
-const file = process.argv[2] ?? new URL("./samples/kakao-band.txt", import.meta.url).pathname;
-const MODEL = process.argv[3] ?? "gemini-3.5-flash-lite";
-const ME = "민서"; // 대화방에서 "나" — 실제로는 업로드할 때 사용자가 고른다
-const PROJECT = { name: "밴드 동아리", goal: "곡의 분위기에 맞는 무대를 준비하고, 정한 순서대로 공연을 마치기" };
+const { values: opt, positionals } = parseArgs({
+  allowPositionals: true,
+  options: { me: { type: "string" }, project: { type: "string" }, goal: { type: "string" }, model: { type: "string" } },
+});
+const file = positionals[0] ?? new URL("./samples/kakao-band.txt", import.meta.url).pathname;
+const MODEL = opt.model ?? positionals[1] ?? "gemini-3.5-flash-lite";
+const ME = opt.me ?? "민서"; // 대화방에서 "나" — 실제로는 업로드할 때 사용자가 고른다
+const PROJECT = {
+  name: opt.project ?? "밴드 동아리",
+  goal: opt.goal ?? "곡의 분위기에 맞는 무대를 준비하고, 정한 순서대로 공연을 마치기",
+};
 
 // ─── 카톡 PC 내보내기(.txt) 파서: "[이름] [오후 8:02] 내용" ───
 function parseKakao(text) {

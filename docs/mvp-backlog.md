@@ -25,10 +25,11 @@
 
 - [x] **제나** GitHub 초대(JenaSeo) 수락
 - [ ] **제나** `git switch mvp` → `npm ci` → `.env.local` 넣기 → `npm run dev`
-- [ ] **민서** 제나에게 `.env.local` 값 3개 비공개 전달 (`NEXT_PUBLIC_APP_SUPABASE_URL`, `..._PUBLISHABLE_KEY`, `GEMINI_API_KEY`)
+- [ ] **민서** 제나에게 제나용 합류 안내 보내기 (아래 "합류 안내"에서 GitHub·Supabase 초대 줄 빼고, Owner 일 추가: 윤진·다현 Developer 초대, secret 키 민서에게 개인 메시지로)
+- [ ] **민서** 제나에게 `.env.local` Supabase 값 2개 비공개 전달 (`NEXT_PUBLIC_APP_SUPABASE_URL`, `..._PUBLISHABLE_KEY`). Gemini 키는 제나가 직접 발급
 
 - [ ] **팀원 2명 추가 합류** (2026-11-24 결정)
-  - [ ] **민서** 두 사람에게 합류 안내 보내기 (준비물·처음 실행·꼭 읽기·규칙 — 아래 "합류 안내" 문구)
+  - [ ] **민서** 윤진·다현에게 합류 안내 보내기 (아래 "합류 안내" 문구 그대로)
   - [ ] 윤진: GitHub `yunjin4011014-hub`가 윤진 계정인지 확인 (이미 레포 협업자라 맞으면 초대 불필요)
   - [ ] 다현: GitHub 아이디 받아 레포 초대
   - [ ] 제나(Supabase Owner)가 `Steadi` 조직에 Developer로 초대
@@ -115,9 +116,11 @@
 
 ## 합류 안내 (새 팀원에게 그대로 보내기)
 
+사람별로 합류 안내와 할 일을 합친 파일: `docs/team/jena.md` · `docs/team/yunjin.md` · `docs/team/dahyun.md` — 이 파일 하나만 보내면 된다.
+
 **준비물**
 - GitHub 계정 (아이디 알려 주기 → 레포 초대 수락)
-- Supabase 계정 (GitHub로 가입 → 초대 메일 수락)
+- Supabase 계정 (GitHub로 가입 → 가입한 이메일 알려 주기 → 제나가 보낸 초대 메일 수락)
 - Node.js 20 이상, Claude Code
 - Gemini API 키: https://aistudio.google.com/apikey 에서 각자 발급
 

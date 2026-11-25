@@ -29,6 +29,8 @@
 
 - 기준 브랜치는 `mvp`. 기능마다 `mvp`에서 브랜치를 따고(`feat/kakao-login`, `feat/notion` 처럼) PR을 `mvp`로 보낸다. 리드가 리뷰한 뒤 합친다. 리드 외에는 `mvp`에 직접 푸시하지 않는다.
 - PR을 올리기 전에 `npx tsc --noEmit`, `npm run lint`, `npm run build`가 통과하는지 확인한다.
+- 팀원 작업 순서 (각자 `docs/team/<이름>.md`에 같은 내용): 시작할 때 `mvp` 최신으로 받기 → `feat/…` 브랜치 → 백로그 항목에 이름 적어 커밋 → **draft PR**로 올려 누가 무엇을 하는지 보이게. 끝나면 검사 → 백로그 체크 → PR을 ready로 바꾸고 리뷰어 `jmseooo` 지정. 소통은 PR 댓글로.
+- 실제 카톡·AI 대화 내보내기 파일은 커밋하지 않는다 (다른 사람 대화). 시험 파일은 가짜로 `scripts/ai/samples/`에.
 - `home`·`growth-stories`·`project` 등 다른 브랜치는 전시 프로토타입이다. MVP 작업을 섞지 않는다.
 - 운영 주소 steadi-gold.vercel.app은 프로토타입 그대로 둔다. MVP는 Vercel **미리보기(preview)** 배포로만 확인한다 (`vercel deploy`, `--prod` 금지).
 - 로컬 개발 서버는 `npm run dev` (포트 3120).
