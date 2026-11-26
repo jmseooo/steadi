@@ -89,7 +89,7 @@
 - [ ] 🟢 Supabase Owner 일: 윤진·다현을 `Steadi` 조직에 Developer로 초대, secret 키 발급해 민서에게 비공개 전달
 - [ ] 🟡 Kakao Developers 앱 등록 + Google Cloud OAuth 클라이언트 → Supabase Auth 공급자 설정 (`docs/team/jena-console.md`)
 - [ ] 🟡 ① 로그인 화면 버튼을 실제 카카오·구글 로그인에 연결, 로그아웃 (민서 로그인 뼈대 위에)
-- [ ] 🟡 ② 카톡 대화 파일 파서를 `src/`로 옮기기 (`scripts/ai/digest.mjs`의 `parseKakao`에서 시작) + 아이폰·안드로이드 내보내기 형식 지원
+- [ ] 🟡 ② **제나 진행 중** 카톡 대화 파일 파서를 `src/`로 옮기기 (`scripts/ai/digest.mjs`의 `parseKakao`에서 시작) + 아이폰·안드로이드 내보내기 형식 지원
 - [ ] 🟡 ② 카톡 파일 업로드 → 파서 → 민서의 저장 함수로 `raw_records`에 넣기
 - [ ] 🟡 ② AI 분석 동의: 화면에서 고른 대화방을 `consents`에 저장, 동의 안 한 기록은 분석에서 빼기
 
