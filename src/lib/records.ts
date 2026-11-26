@@ -29,7 +29,7 @@ export type SaveResult = {
 export function recordHash(r: NewRawRecord): string {
   const key = r.externalId
     ? ["id", r.source, r.externalId]
-    : ["text", r.source, r.sourceTitle, r.author ?? "", new Date(r.at).toISOString(), r.text];
+    : ["text", r.source, r.sourceTitle, r.author ?? "", new Date(r.at).toISOString(), r.text, ...(r.seq ? [String(r.seq)] : [])];
   return createHash("sha256").update(key.join("\u0000")).digest("hex");
 }
 

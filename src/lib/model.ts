@@ -52,7 +52,16 @@ export type RawRecord = {
  * externalId: 노션 페이지 id·캘린더 일정 id처럼 서비스가 주는 고유 id. 있으면 원본이 고쳐졌을 때 같은 줄을 덮어쓰고,
  * 없으면(카톡·AI 대화 파일) 내용이 같은 기록은 한 번만 저장한다.
  */
-export type NewRawRecord = Omit<RawRecord, "id" | "projectId"> & { externalId?: string };
+export type NewRawRecord = Omit<RawRecord, "id" | "projectId"> & {
+  externalId?: string;
+  /**
+   * 같은 시각(카톡은 분 단위)·같은 사람·같은 글이 반복될 때 몇 번째인지. 0부터, 처음 것은 비워 둔다.
+   * 파서가 파일 순서대로 센다 → 같은 파일을 다시 올려도 같은 순번이 나와 중복은 그대로 막힌다.
+   *   [민서] [오후 8:02] ㅋㅋ  → seq 없음
+   *   [민서] [오후 8:02] ㅋㅋ  → seq 1
+   */
+  seq?: number;
+};
 
 // ─── 1. 화면이 읽는 형태 ─────────────────────────────────
 
