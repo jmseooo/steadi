@@ -35,7 +35,7 @@ export const SOURCE_NAME: Record<SourceApp, string> = {
 export const MOMENT_CATEGORIES = ["problem-solving", "decision-making", "adaptation", "analysis", "planning"] as const;
 export type MomentCategory = (typeof MOMENT_CATEGORIES)[number];
 
-/** 원본 기록 하나 (카톡 한 메시지 묶음, 노션 한 블록 묶음 …). 수집 담당이 저장하고 AI는 읽기만 한다 */
+/** 원본 기록 하나 = 카톡·AI 대화는 메시지 1개, 노션은 페이지 1개, 캘린더는 일정 1개. 수집 담당이 저장하고 AI는 읽기만 한다 */
 export type RawRecord = {
   id: string;
   source: SourceApp;
@@ -46,6 +46,13 @@ export type RawRecord = {
   at: string;
   projectId?: string; // AI가 프로젝트로 묶은 뒤 채워진다
 };
+
+/**
+ * 파서·연동이 만들어 저장 함수(src/lib/records.ts saveRawRecords)에 넘기는 모양. id는 DB가 정한다.
+ * externalId: 노션 페이지 id·캘린더 일정 id처럼 서비스가 주는 고유 id. 있으면 원본이 고쳐졌을 때 같은 줄을 덮어쓰고,
+ * 없으면(카톡·AI 대화 파일) 내용이 같은 기록은 한 번만 저장한다.
+ */
+export type NewRawRecord = Omit<RawRecord, "id" | "projectId"> & { externalId?: string };
 
 // ─── 1. 화면이 읽는 형태 ─────────────────────────────────
 

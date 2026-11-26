@@ -81,7 +81,7 @@ git 명령은 외울 필요 없다. `steadi` 폴더에서 `claude`를 실행하�
    - 이 일은 PR 없이 끝난다. 끝나면 민서에게 알리기
 2. 🟡 **카톡 파서를 `src/`로 옮기기**
    - 시작점: `scripts/ai/digest.mjs`의 `parseKakao` (지금은 PC 내보내기 형식만 읽는다)
-   - 옮길 곳: `src/lib/parsers/kakao.ts`. 결과는 `src/lib/model.ts`의 `RawRecord` 모양으로
+   - 옮길 곳: `src/lib/parsers/kakao.ts`. 결과는 `src/lib/model.ts`의 `NewRawRecord` 모양으로
    - 아이폰·안드로이드 내보내기 형식도 읽게: 본인 카톡에서 내보내 형식을 보고, **가짜 대화로** 같은 형식 시험 파일을 `scripts/ai/samples/`에 만든다
 3. 🟡 **로그인 공급자 등록**: Kakao Developers 앱 + Google Cloud OAuth 클라이언트 → Supabase Auth 공급자 설정
    - 안내서: `docs/team/jena-console.md` (콘솔 설정만, 코드 작업 없음)
@@ -94,7 +94,9 @@ git 명령은 외울 필요 없다. `steadi` 폴더에서 `claude`를 실행하�
    - 로그인한 사람 정보는 서버에서 `getCurrentUser()` (`src/lib/supabase/server.ts`)
    - 로그인 실패하면 `/onboarding?error=login`으로 돌아온다 → 오류 문구 보여 주기
    - 로그인 강제는 `.env.local`에 `STEADI_REQUIRE_LOGIN=1`을 넣으면 켜진다 (평소엔 끔)
-5. 🟡 카톡 파일 업로드 → 2번 파서 → 저장 함수로 `raw_records`에 넣기 — **"원본 기록 저장 함수"** 이후. 업로드 화면은 다현이 만든다
+5. 🟡 카톡 파일 업로드 → 2번 파서 → 저장 함수로 `raw_records`에 넣기 — **"원본 기록 저장 함수"** 이후 (완료됨). 업로드 화면은 다현이 만든다
+   - 쓸 것: `src/lib/records.ts`의 `saveRawRecords(기록 목록)` — 서버(서버 액션)에서 부른다. 입력은 `src/lib/model.ts`의 `NewRawRecord` 모양. 결과 `{ saved, skipped, updated }`로 "120개 저장, 3개는 이미 있음"을 보여 줄 수 있다
+   - 파서 결과도 처음부터 `NewRawRecord[]` 모양으로 만들면 바로 넘길 수 있다 (2번)
 6. 🟡 AI 분석 동의: 고른 대화방을 `consents`에 저장, 동의 안 한 기록은 분석에서 빼기 — **"schema.sql 실행"** 이후. 동의 화면은 다현과 맞추기
 
 예상 시간: 15~27시간

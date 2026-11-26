@@ -84,12 +84,13 @@ git 명령은 외울 필요 없다. `steadi` 폴더에서 `claude`를 실행하�
    - 1번 결과의 카드마다: 기록에 있는 내용인가 / 민서가 직접 한 행동인가 / 줄바꿈이 Figma처럼 3~4줄·한 줄 16자 안팎인가
    - 문제 있는 카드는 원문과 함께 적는다 → 민서가 프롬프트 고칠 근거
 3. 🟡 **AI 대화 파일 파서** `src/lib/parsers/ai-chat.ts`
-   - ChatGPT·Claude 설정의 "데이터 내보내기"로 받은 `conversations.json`을 읽어 `src/lib/model.ts`의 `RawRecord` 모양으로
+   - ChatGPT·Claude 설정의 "데이터 내보내기"로 받은 `conversations.json`을 읽어 `src/lib/model.ts`의 `NewRawRecord` 모양으로
    - 본인 파일로 형식을 보고, 시험 파일은 **가짜로** 만들어 `scripts/ai/samples/`에
 
 ### 민서 작업이 끝나면 (백로그 민서 칸에서 해당 항목이 `[x]`인지 확인)
 
-4. 🟡 3번 파서 결과를 저장 함수로 `raw_records`에 넣기 — **"원본 기록 저장 함수"** 이후
+4. 🟡 3번 파서 결과를 저장 함수로 `raw_records`에 넣기 — **"원본 기록 저장 함수"** 이후 (완료됨)
+   - 쓸 것: `src/lib/records.ts`의 `saveRawRecords(기록 목록)` — 서버(서버 액션)에서 부른다. 입력은 `src/lib/model.ts`의 `NewRawRecord` 모양. 결과 `{ saved, skipped, updated }`로 "120개 저장, 3개는 이미 있음"을 보여 줄 수 있다
 5. 🟡 사진 업로드: 사용자가 고른 사진만 압축해서 Supabase Storage에, 사진 설명 글은 `raw_records`에 — **"원본 기록 저장 함수"** 이후
 6. 🟡 Profile > 서비스 연결: 연결된 서비스 목록 보여 주기·해제 (`connections` 표, 화면 `src/components/Profile.tsx`) — **"schema.sql 실행"** 이후. 다현이 Profile을 데이터 함수로 옮기는 중이면 먼저 맞추기
 7. 🟡 Google 캘린더 일정 읽기 (읽기 전용) → `raw_records` — **"로그인 뼈대"** 이후
