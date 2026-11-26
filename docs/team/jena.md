@@ -89,7 +89,11 @@ git 명령은 외울 필요 없다. `steadi` 폴더에서 `claude`를 실행하�
 
 ### 민서 작업이 끝나면 (백로그 민서 칸에서 해당 항목이 `[x]`인지 확인)
 
-4. 🟡 로그인 화면 버튼(`src/components/onboarding/Onboarding.tsx`의 "카카오로 회원가입"·"구글로 회원가입")을 실제 로그인에 연결, 로그아웃 — **"로그인 뼈대"** 이후
+4. 🟡 로그인 화면 버튼(`src/components/onboarding/Onboarding.tsx`의 "카카오로 회원가입"·"구글로 회원가입")을 실제 로그인에 연결, 로그아웃 — **"로그인 뼈대"** 이후 (완료됨, 3번 콘솔 설정이 끝나면 시작)
+   - 쓸 것: `src/lib/auth.ts`의 `signInWith("kakao" | "google", 돌아갈 주소)`, `signOut()` — 서버 액션이라 `<form action={…}>`이나 `startTransition`으로 부른다
+   - 로그인한 사람 정보는 서버에서 `getCurrentUser()` (`src/lib/supabase/server.ts`)
+   - 로그인 실패하면 `/onboarding?error=login`으로 돌아온다 → 오류 문구 보여 주기
+   - 로그인 강제는 `.env.local`에 `STEADI_REQUIRE_LOGIN=1`을 넣으면 켜진다 (평소엔 끔)
 5. 🟡 카톡 파일 업로드 → 2번 파서 → 저장 함수로 `raw_records`에 넣기 — **"원본 기록 저장 함수"** 이후. 업로드 화면은 다현이 만든다
 6. 🟡 AI 분석 동의: 고른 대화방을 `consents`에 저장, 동의 안 한 기록은 분석에서 빼기 — **"schema.sql 실행"** 이후. 동의 화면은 다현과 맞추기
 

@@ -72,7 +72,8 @@
 ## 민서 (리드) — 위 "AI"·"DB 표" 칸 포함
 
 - [x] 🔴 ① DB 표 검토 3개 결정 → `schema.sql` 실행, RLS 확인
-- [ ] 🔴 ① 로그인 뼈대: Supabase Auth 클라이언트·세션 유지·로그인 안 된 사용자 막기 (버튼 연결은 제나)
+- [x] 🔴 ① 로그인 뼈대: Supabase Auth 클라이언트·세션 유지·로그인 안 된 사용자 막기 (버튼 연결은 제나) — `src/lib/supabase/`, `src/lib/auth.ts`, `src/proxy.ts`, `/auth/callback`
+- [ ] 카카오·구글 공급자가 켜지면: 실제 로그인으로 세션·RLS(내 데이터만 보임) 확인 → `STEADI_REQUIRE_LOGIN=1`을 Vercel 미리보기에 켜기
 - [ ] 🔴 ② 원본 기록 저장 함수(`raw_records`에 넣기·중복 막기) — 파서들은 이 함수만 부르면 되게
 - [ ] 🔴 ② Notion 연동 (OAuth, 토큰은 `connection_secrets`)
 - [ ] 🔴 ③ 데이터 함수(`src/lib/data.ts`)를 Supabase 조회로 바꾸는 구조 + Project부터 연결

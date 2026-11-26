@@ -43,10 +43,13 @@
 |---|---|
 | `NEXT_PUBLIC_APP_SUPABASE_URL` | MVP Supabase (조직 Steadi · Steadi-project · 도쿄) |
 | `NEXT_PUBLIC_APP_SUPABASE_PUBLISHABLE_KEY` | 위 프로젝트의 publishable 키 (브라우저에 노출돼도 되는 키 — RLS가 지켜야 한다) |
+| `STEADI_REQUIRE_LOGIN` | `1`이면 로그인 안 한 사용자를 회원가입(`/onboarding`)으로 보낸다. 카카오·구글 로그인이 실제로 될 때까지 비워 둔다 (화면 작업이 막히지 않게) |
 | `GEMINI_API_KEY` | Gemini. 서버에서만 읽는다. `NEXT_PUBLIC_`을 붙이지 않는다. 로컬은 각자 키, 미리보기 배포는 리드 키 |
 | `NEXT_PUBLIC_SUPABASE_URL` · `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | 전시 UT 기록용(steadi-guestbook). MVP에서 쓰지 않는다 |
 
 Supabase secret 키와 DB 비밀번호는 코드에 두지 않는다. 필요하면 서버 환경변수로만.
+
+로그인: 서버에서는 `src/lib/supabase/server.ts`의 `createClient()`·`getCurrentUser()`, 브라우저에서는 `src/lib/supabase/client.ts`. 로그인 시작·로그아웃은 `src/lib/auth.ts`의 서버 액션 `signInWith`·`signOut`. 세션 갱신·로그인 강제는 `src/proxy.ts`(Next 16에서 middleware 대신). 표는 이미 실행됐으니 `supabase/mvp/schema.sql`을 다시 돌리지 않는다.
 
 ## 데이터와 AI 원칙
 
