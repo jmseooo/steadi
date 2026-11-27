@@ -80,7 +80,8 @@
 - [ ] 노션 연결 실제로 해 보기 (로그인이 돼야 함 — 카카오·구글 또는 시험용 로그인)
 - [ ] 노션 다시 읽기(새벽 배치)와 토큰 갱신 — 배치 만들 때
 - [ ] 🔴 ③ 데이터 함수(`src/lib/data.ts`)를 Supabase 조회로 바꾸는 구조 + Project부터 연결
-- [ ] 🔴 ③ 프로젝트 묶기·온보딩 목표 대화 Gemini 호출
+- [x] 🔴 ③ 프로젝트 묶기·온보딩 목표 대화 Gemini 호출 — `src/lib/ai/` (`gemini.ts` 공통·재시도, `group.ts` `groupProjects`, `goal.ts` `askGoal`·`reflectGoal`). 섞인 시험 기록 31개 → 프로젝트 3개, 잡담 제외 확인
+- [ ] 온보딩 화면에 연결: 연동 끝 → 기록 읽기 → `groupProjects` → `projects`에 저장 → 목표 대화 (다현 온보딩 연결 화면과 맞추기)
 - [ ] 🔴 ④ 새벽 배치, 임베딩, 연결된 경험
 - [x] 제나 콘솔 설정 안내서 `docs/team/jena-console.md`
 - [ ] 제나에게 Vercel 미리보기 주소 패턴 개인 메시지로 전달 (Supabase Redirect URLs용)
