@@ -44,6 +44,7 @@
 | `NEXT_PUBLIC_APP_SUPABASE_URL` | MVP Supabase (조직 Steadi · Steadi-project · 도쿄) |
 | `NEXT_PUBLIC_APP_SUPABASE_PUBLISHABLE_KEY` | 위 프로젝트의 publishable 키 (브라우저에 노출돼도 되는 키 — RLS가 지켜야 한다) |
 | `STEADI_REQUIRE_LOGIN` | `1`이면 로그인 안 한 사용자를 회원가입(`/onboarding`)으로 보낸다. 카카오·구글 로그인이 실제로 될 때까지 비워 둔다 (화면 작업이 막히지 않게) |
+| `NOTION_CLIENT_ID` · `NOTION_CLIENT_SECRET` | 노션 공개 통합 "Steadi"(민서 노션, 읽기 전용). 서버에서만. 리디렉션은 localhost:3120과 `mvp` 미리보기 주소만 등록돼 있다 — 리드에게 받는다 |
 | `GEMINI_API_KEY` | Gemini. 서버에서만 읽는다. `NEXT_PUBLIC_`을 붙이지 않는다. 로컬은 각자 키, 미리보기 배포는 리드 키 |
 | `NEXT_PUBLIC_SUPABASE_URL` · `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | 전시 UT 기록용(steadi-guestbook). MVP에서 쓰지 않는다 |
 

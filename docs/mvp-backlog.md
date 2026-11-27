@@ -76,7 +76,9 @@
 - [ ] 카카오·구글 공급자가 켜지면: 실제 로그인으로 세션·RLS(내 데이터만 보임) 확인 → `STEADI_REQUIRE_LOGIN=1`을 Vercel 미리보기에 켜기
 - [x] 🔴 ② 원본 기록 저장 함수(`raw_records`에 넣기·중복 막기) — `src/lib/records.ts` `saveRawRecords`, 입력 모양 `NewRawRecord`(model.ts)
 - [ ] 실제 로그인 세션으로 `saveRawRecords` 한 번 돌려 보기 (카카오·구글 공급자 켜진 뒤)
-- [ ] 🔴 ② Notion 연동 (OAuth, 토큰은 `connection_secrets`)
+- [x] 🔴 ② Notion 연동 코드 — 공개 통합 "Steadi" 등록(읽기 전용), `/api/notion/connect` → 콜백 → 토큰 저장(`save_connection`, `002_save_connection.sql` 실행됨) → 고른 페이지 읽기 → `saveRawRecords`
+- [ ] 노션 연결 실제로 해 보기 (로그인이 돼야 함 — 카카오·구글 또는 시험용 로그인)
+- [ ] 노션 다시 읽기(새벽 배치)와 토큰 갱신 — 배치 만들 때
 - [ ] 🔴 ③ 데이터 함수(`src/lib/data.ts`)를 Supabase 조회로 바꾸는 구조 + Project부터 연결
 - [ ] 🔴 ③ 프로젝트 묶기·온보딩 목표 대화 Gemini 호출
 - [ ] 🔴 ④ 새벽 배치, 임베딩, 연결된 경험

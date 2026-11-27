@@ -47,6 +47,7 @@ git 명령은 외울 필요 없다. `steadi` 폴더에서 `claude`를 실행하�
 → "나는 윤진이야. docs/team/yunjin.md 할 일 1번 시작하자. mvp 최신으로 받고 브랜치 만들고, 백로그 그 항목에 내 이름 적어서 draft PR로 올려줘"
 - Claude Code가 `feat/…` 브랜치를 만들고, 빈 작업 상태의 **draft PR**을 올린다. 다른 사람이 PR 목록에서 "누가 무엇을 하는 중인지" 볼 수 있다.
 - `mvp` 브랜치에 바로 커밋·푸시하지 않는다.
+- `mvp`를 최신으로 받은 뒤에는 `npm ci`를 한 번 한다 (새 패키지가 추가됐을 수 있다. 안 하면 localhost가 안 열리거나 `Module not found` 오류). Claude Code에게 "mvp 최신으로 받고 npm ci 해줘"라고 해도 된다
 
 **② 작업**
 - 하고 싶은 걸 말로 시키고, 결과는 http://localhost:3120 (내 컴퓨터)에서 확인한다.
